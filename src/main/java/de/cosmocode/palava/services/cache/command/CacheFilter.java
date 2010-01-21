@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.cosmocode.palava.command.cache;
+package de.cosmocode.palava.services.cache.command;
 
 import java.util.Locale;
 

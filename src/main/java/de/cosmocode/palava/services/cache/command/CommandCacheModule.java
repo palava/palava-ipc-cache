@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.cosmocode.palava.command.cache;
+package de.cosmocode.palava.services.cache.command;
 
 import de.cosmocode.palava.core.call.filter.definition.Matchers;
 import de.cosmocode.palava.core.inject.AbstractApplicationModule;
@@ -27,7 +27,7 @@ import de.cosmocode.palava.core.inject.AbstractApplicationModule;
  *
  * @author Willi Schoenborn
  */
-public final class CacheModule extends AbstractApplicationModule {
+public final class CommandCacheModule extends AbstractApplicationModule {
 
     @Override
     protected void configureApplication() {

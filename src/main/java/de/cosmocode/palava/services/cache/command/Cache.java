@@ -17,22 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.cosmocode.palava.command.cache;
+package de.cosmocode.palava.services.cache.command;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * 
- * @author Oliver Lorenz
+ * Annotation to declare a cachable state.
+ *
+ * @author Willi Schoenborn
  */
-public enum CachePolicy {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Cache {
 
-    /**
-     * 
-     */
-    SMART,
-    
-    /**
-     * 
-     */
-    STATIC;
+    CachePolicy cachePolicy() default CachePolicy.SMART;
     
 }
