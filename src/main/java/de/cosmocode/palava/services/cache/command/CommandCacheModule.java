@@ -20,14 +20,14 @@
 package de.cosmocode.palava.services.cache.command;
 
 import de.cosmocode.palava.core.call.filter.definition.Matchers;
-import de.cosmocode.palava.core.inject.AbstractApplicationModule;
+import de.cosmocode.palava.core.inject.PalavaModule;
 
 /**
  * 
  *
  * @author Willi Schoenborn
  */
-public final class CommandCacheModule extends AbstractApplicationModule {
+public final class CommandCacheModule extends PalavaModule {
 
     @Override
     protected void configureApplication() {
