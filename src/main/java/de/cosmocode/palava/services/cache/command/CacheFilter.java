@@ -19,16 +19,19 @@
 
 package de.cosmocode.palava.services.cache.command;
 
+import java.io.Serializable;
 import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import de.cosmocode.palava.bridge.Content;
+import de.cosmocode.palava.bridge.call.Arguments;
 import de.cosmocode.palava.bridge.call.Call;
 import de.cosmocode.palava.bridge.call.filter.Filter;
 import de.cosmocode.palava.bridge.call.filter.FilterChain;
@@ -42,6 +45,7 @@ import de.cosmocode.palava.services.cache.CacheService;
  * to provide caching.
  *
  * @author Willi Schoenborn
+ * @author Oliver Lorenz
  */
 @Singleton
 final class CacheFilter implements Filter {
@@ -86,13 +90,34 @@ final class CacheFilter implements Filter {
         }
     }
     
-    private Content cacheSmart(Call call, FilterChain chain) throws FilterException {
+    private Content cacheSmart(final Call call, final FilterChain chain) throws FilterException {
         final Class<?> commandClass = Commands.getClass(call.getCommand());
         final HttpSession session = call.getHttpRequest().getHttpSession();
         final Locale locale = session == null ? null : session.getLocale();
-        final Object arguments = null;
+        final Arguments arguments = call.getArguments();
+        final Serializable cacheItem;
+        final Content cached;
         
-        throw new UnsupportedOperationException(CachePolicy.SMART.name());
+        if (locale == null) {
+            // no caching if locale is null
+            return chain.filter(call);
+        } else if (arguments == null) {
+            cacheItem = ImmutableSet.of(commandClass, locale);
+        } else {
+            cacheItem = ImmutableSet.of(commandClass, locale, arguments);
+        }
+        
+        cached = service.read(cacheItem);
+
+        if (cached == null) {
+            final Content content = chain.filter(call);
+            log.debug("Caching content from {} smart with CacheItem {}", commandClass, cacheItem);
+            service.store(cacheItem, content);
+            return content;
+        } else {
+            log.debug("Found cached content for {} (CacheItem: {})", commandClass, cacheItem);
+            return cached;
+        }
     }
     
 }
