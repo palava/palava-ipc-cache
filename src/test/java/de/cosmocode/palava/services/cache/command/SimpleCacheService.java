@@ -27,7 +27,7 @@ import com.google.common.collect.Maps;
 import de.cosmocode.palava.services.cache.CacheService;
 
 /**
- * A simple {@link CacheService} that delegates every call to a map.
+ * A simple {@link CacheService} that delegates its methods to a map.
  * 
  * @author Oliver Lorenz
  *

@@ -19,19 +19,39 @@
 
 package de.cosmocode.palava.services.cache.command;
 
+import de.cosmocode.palava.bridge.call.Call;
+import de.cosmocode.palava.bridge.command.Command;
+import de.cosmocode.palava.bridge.session.HttpSession;
+
 /**
+ * A CachePolicy decides how to cache a {@link Command}.
  * 
  * @author Oliver Lorenz
  */
 public enum CachePolicy {
 
     /**
-     * 
+     * <p> A CachePolicy where the fully qualified name of the command-class,
+     * the {@linkplain Call#getArguments() Arguments} of a Call
+     * and the {@linkplain HttpSession#getLocale() Locale} of the Session of a Call
+     * are taken into consideration for caching.
+     * </p>
+     * <h4>This policy behaves differently if nulls occur: </h4>
+     * <ul>
+     *   <li> If the locale is null, then no caching occurs. </li> 
+     *   <li> If the arguments are null, then they are ignored 
+     *        and only the locale and the fully qualified name are taken for caching </li>
+     * </ul>
      */
     SMART,
     
     /**
-     * 
+     * <p> A CachePolicy where only the fully qualified name of the command-class
+     * is used for caching.
+     * </p>
+     * <p> This means that the Command annotated with this CachePolicy
+     * always returns the same Content, independent of the call.
+     * </p>
      */
     STATIC;
     

@@ -40,7 +40,7 @@ import de.cosmocode.palava.bridge.command.Command;
 import de.cosmocode.palava.bridge.request.HttpRequest;
 
 /**
- * A simple {@link Call} that the given command, request
+ * A simple {@link Call} that saves the given command, request
  * and the Strings as arguments,
  * taking every other argument as the value to the previous argument.
  * 
@@ -53,7 +53,6 @@ final class SimpleCall implements Call {
     private final HttpRequest request;
     
     /**
-     * 
      * Saves the given command and request.
      * The Strings are taken as arguments,
      * treating every other argument as the value to the previous argument.
