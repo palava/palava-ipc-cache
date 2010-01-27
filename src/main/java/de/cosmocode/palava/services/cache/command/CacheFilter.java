@@ -28,13 +28,13 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import de.cosmocode.palava.core.call.Call;
-import de.cosmocode.palava.core.call.filter.Filter;
-import de.cosmocode.palava.core.call.filter.FilterChain;
-import de.cosmocode.palava.core.call.filter.FilterException;
-import de.cosmocode.palava.core.command.Commands;
-import de.cosmocode.palava.core.protocol.content.Content;
-import de.cosmocode.palava.core.session.HttpSession;
+import de.cosmocode.palava.core.bridge.call.Call;
+import de.cosmocode.palava.core.bridge.call.filter.Filter;
+import de.cosmocode.palava.core.bridge.call.filter.FilterChain;
+import de.cosmocode.palava.core.bridge.call.filter.FilterException;
+import de.cosmocode.palava.core.bridge.command.Commands;
+import de.cosmocode.palava.core.bridge.session.HttpSession;
+import de.cosmocode.palava.core.bridge.simple.content.Content;
 import de.cosmocode.palava.services.cache.CacheService;
 
 /**
