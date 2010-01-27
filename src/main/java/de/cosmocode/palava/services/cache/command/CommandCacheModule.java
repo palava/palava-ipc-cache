@@ -23,8 +23,10 @@ import de.cosmocode.palava.bridge.call.filter.definition.Matchers;
 import de.cosmocode.palava.bridge.inject.AbstractApplication;
 
 /**
- * 
+ * Module that enables caching for Commands.
+ * Cached commands are identified by an {@code @Cache} annotation.
  *
+ * @author Oliver Lorenz
  * @author Willi Schoenborn
  */
 public final class CommandCacheModule extends AbstractApplication {

@@ -26,6 +26,7 @@ import de.cosmocode.palava.bridge.session.HttpSession;
 /**
  * A CachePolicy decides how to cache a {@link Command}.
  * 
+ * @author Willi Schoenborn
  * @author Oliver Lorenz
  */
 public enum CachePolicy {
