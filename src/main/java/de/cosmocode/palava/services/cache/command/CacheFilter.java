@@ -50,7 +50,7 @@ import de.cosmocode.palava.services.cache.CacheService;
 @Singleton
 final class CacheFilter implements Filter {
 
-    private static final Logger log = LoggerFactory.getLogger(CacheFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CacheFilter.class);
 
     private final CacheService service;
     
@@ -81,11 +81,11 @@ final class CacheFilter implements Filter {
         final Content cached = service.read(type);
         if (cached == null) {
             final Content content = chain.filter(call);
-            log.debug("Caching content from {} statically", type);
+            LOG.debug("Caching content from {} statically", type);
             service.store(type, content);
             return content;
         } else {
-            log.debug("Found statically cached content for {}", type);
+            LOG.debug("Found statically cached content for {}", type);
             return cached;
         }
     }
@@ -111,11 +111,11 @@ final class CacheFilter implements Filter {
 
         if (cached == null) {
             final Content content = chain.filter(call);
-            log.debug("Caching content from {} smart with CacheItem {}", commandClass, cacheItem);
+            LOG.debug("Caching content from {} smart with CacheItem {}", commandClass, cacheItem);
             service.store(cacheItem, content);
             return content;
         } else {
-            log.debug("Found cached content for {} (CacheItem: {})", commandClass, cacheItem);
+            LOG.debug("Found cached content for {} (CacheItem: {})", commandClass, cacheItem);
             return cached;
         }
     }
