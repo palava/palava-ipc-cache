@@ -25,8 +25,10 @@ package de.cosmocode.palava.services.cache.command;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.UnmodifiableIterator;
 
 import de.cosmocode.collections.utility.ForwardingUtilityMap;
 import de.cosmocode.collections.utility.Utility;
@@ -100,7 +102,44 @@ final class SimpleCall implements Call {
     public InputStream getInputStream() {
         return null;
     }
+
     
+    @Override
+    public <K> boolean contains(K key) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public <K, V> V get(K key) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public UnmodifiableIterator<Entry<Object, Object>> iterator() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <K, V> void putAll(Map<? extends K, ? extends V> map) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public <K, V> V remove(K key) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <K, V> void set(K key, V value) {
+        // TODO Auto-generated method stub
+        
+    }
+
     @Override
     public void discard() throws ConnectionLostException, IOException {
     }
