@@ -40,6 +40,7 @@ import de.cosmocode.palava.bridge.call.Call;
 import de.cosmocode.palava.bridge.call.MissingArgumentException;
 import de.cosmocode.palava.bridge.command.Command;
 import de.cosmocode.palava.bridge.request.HttpRequest;
+import de.cosmocode.palava.ipc.IpcConnection;
 import de.cosmocode.palava.ipc.IpcSession;
 
 /**
@@ -92,17 +93,16 @@ final class SimpleCall implements Call {
     public HttpRequest getHttpRequest() {
         return request;
     }
-
-    @Override
-    public IpcSession getSession() {
-        return request == null ? null : request.getHttpSession();
-    }
     
+    @Override
+    public IpcConnection getConnection() {
+        return getHttpRequest();
+    }
+
     @Override
     public InputStream getInputStream() {
         return null;
     }
-
     
     @Override
     public <K> boolean contains(K key) {
