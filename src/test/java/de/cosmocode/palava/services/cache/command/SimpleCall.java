@@ -38,6 +38,7 @@ import de.cosmocode.palava.bridge.call.Call;
 import de.cosmocode.palava.bridge.call.MissingArgumentException;
 import de.cosmocode.palava.bridge.command.Command;
 import de.cosmocode.palava.bridge.request.HttpRequest;
+import de.cosmocode.palava.ipc.IpcSession;
 
 /**
  * A simple {@link Call} that saves the given command, request
@@ -90,6 +91,11 @@ final class SimpleCall implements Call {
         return request;
     }
 
+    @Override
+    public IpcSession getSession() {
+        return request == null ? null : request.getHttpSession();
+    }
+    
     @Override
     public InputStream getInputStream() {
         return null;
