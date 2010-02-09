@@ -141,6 +141,13 @@ final class SimpleCall implements Call {
 
     @Override
     public void discard() throws ConnectionLostException, IOException {
+        
+    }
+    
+    @Override
+    public void destroy() {
+        // TODO Auto-generated method stub
+        
     }
     
     /**
