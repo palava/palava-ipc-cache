@@ -40,9 +40,7 @@ import de.cosmocode.palava.bridge.call.Call;
 import de.cosmocode.palava.bridge.call.MissingArgumentException;
 import de.cosmocode.palava.bridge.command.Command;
 import de.cosmocode.palava.bridge.request.HttpRequest;
-import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcConnection;
-import de.cosmocode.palava.ipc.IpcSession;
 
 /**
  * A simple {@link Call} that saves the given command, request
@@ -85,11 +83,6 @@ final class SimpleCall implements Call {
         return command;
     }
 
-    @Override
-    public IpcCommand command() {
-        throw new UnsupportedOperationException();
-    }
-    
     @Override
     public Header getHeader() {
         return null;
