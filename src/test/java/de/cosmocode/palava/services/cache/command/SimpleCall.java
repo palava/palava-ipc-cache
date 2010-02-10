@@ -144,12 +144,6 @@ final class SimpleCall implements Call {
         
     }
     
-    @Override
-    public void destroy() {
-        // TODO Auto-generated method stub
-        
-    }
-    
     /**
      * The backing Arguments class for the SimpleCall.
      * 
