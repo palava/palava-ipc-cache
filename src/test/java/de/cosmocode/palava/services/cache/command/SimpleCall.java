@@ -184,9 +184,10 @@ final class SimpleCall implements Call {
             return connection.contains(key);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <K, V> V get(K key) {
-            return connection.get(key);
+            return (V) connection.get(key);
         }
 
         @Override
@@ -229,9 +230,10 @@ final class SimpleCall implements Call {
             connection.putAll(map);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <K, V> V remove(K key) {
-            return connection.remove(key);
+            return (V) connection.remove(key);
         }
 
         @Override
