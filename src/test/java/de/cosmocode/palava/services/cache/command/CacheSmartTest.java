@@ -35,7 +35,7 @@ import de.cosmocode.palava.bridge.session.HttpSession;
  * 
  * @author Oliver Lorenz
  */
-public class CacheSmartTest extends AbstractCacheTest {
+public final class CacheSmartTest extends AbstractCacheTest {
     
     private final CacheFilter filter;
     private final Command command;

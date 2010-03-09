@@ -35,7 +35,7 @@ import de.cosmocode.palava.bridge.session.HttpSession;
  * 
  * @author Oliver Lorenz
  */
-public class CacheStaticTest extends AbstractCacheTest {
+public final class CacheStaticTest extends AbstractCacheTest {
     
     private final CacheFilter filter;
     private final Command command;
@@ -57,15 +57,15 @@ public class CacheStaticTest extends AbstractCacheTest {
         return filter;
     }
     
-    /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
+    /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.STATIC)}. */
     @Cache(cachePolicy = CachePolicy.STATIC)
     protected class SmartCacheCommand extends DummyCommand { }
 
-    /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
+    /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.STATIC)}. */
     @Cache(cachePolicy = CachePolicy.STATIC)
     protected class NamedCommand1 extends DummyCommand { }
 
-    /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
+    /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.STATIC)}. */
     @Cache(cachePolicy = CachePolicy.STATIC)
     protected class NamedCommand2 extends DummyCommand { }
     

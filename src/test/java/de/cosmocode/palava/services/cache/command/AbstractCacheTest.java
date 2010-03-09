@@ -28,6 +28,7 @@ import org.json.JSONArray;
 
 import de.cosmocode.palava.bridge.Content;
 import de.cosmocode.palava.bridge.call.Call;
+import de.cosmocode.palava.bridge.call.filter.Filter;
 import de.cosmocode.palava.bridge.call.filter.FilterChain;
 import de.cosmocode.palava.bridge.call.filter.FilterException;
 import de.cosmocode.palava.bridge.command.Command;
@@ -73,7 +74,7 @@ public abstract class AbstractCacheTest {
      * Get the {@link CacheFilter} implementation to call on {@link #filterAndExecute(Call)}.
      * @return a CacheFilter
      */
-    protected abstract CacheFilter getFilter();
+    protected abstract Filter getFilter();
     
     /**
      * Returns random content on every invocation.

@@ -24,9 +24,14 @@ package de.cosmocode.palava.services.cache.command;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 import com.google.common.collect.UnmodifiableIterator;
 
@@ -40,7 +45,9 @@ import de.cosmocode.palava.bridge.call.Call;
 import de.cosmocode.palava.bridge.call.MissingArgumentException;
 import de.cosmocode.palava.bridge.command.Command;
 import de.cosmocode.palava.bridge.request.HttpRequest;
+import de.cosmocode.palava.bridge.session.HttpSession;
 import de.cosmocode.palava.ipc.IpcConnection;
+import de.cosmocode.palava.ipc.IpcSession;
 
 /**
  * A simple {@link Call} that saves the given command, request
@@ -54,6 +61,7 @@ final class SimpleCall implements Call {
     private final Arguments arguments;
     private final Command command;
     private final HttpRequest request;
+    private final Map<Object, Object> context = Maps.newHashMap();
     
     /**
      * Saves the given command and request.
@@ -66,6 +74,23 @@ final class SimpleCall implements Call {
     public SimpleCall(final Command command, final HttpRequest request, final String... arguments) {
         this.command = command;
         this.request = request;
+        if (arguments.length > 0) {
+            this.arguments = new SimpleArguments(arguments);
+        } else {
+            this.arguments = null;
+        }
+    }
+    
+    /**
+     * Saves the given connection as HttpRequest.
+     * The Strings are taken as arguments,
+     * treating every other argument as the value to the previous argument.
+     * @param request
+     * @param arguments
+     */
+    public SimpleCall(final IpcConnection connection, final String... arguments) {
+        this.command = null;
+        this.request = new ForwardingRequest(connection);
         if (arguments.length > 0) {
             this.arguments = new SimpleArguments(arguments);
         } else {
@@ -100,47 +125,124 @@ final class SimpleCall implements Call {
 
     @Override
     public InputStream getInputStream() {
-        return null;
+        throw new UnsupportedOperationException("no input stream");
     }
     
     @Override
     public <K> boolean contains(K key) {
-        // TODO Auto-generated method stub
-        return false;
+        return context.containsKey(key);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <K, V> V get(K key) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public UnmodifiableIterator<Entry<Object, Object>> iterator() {
-        // TODO Auto-generated method stub
-        return null;
+        return (V) context.get(key);
     }
 
     @Override
     public <K, V> void putAll(Map<? extends K, ? extends V> map) {
-        // TODO Auto-generated method stub
-        
+        context.putAll(map);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <K, V> V remove(K key) {
-        // TODO Auto-generated method stub
-        return null;
+        return (V) context.remove(key);
     }
 
     @Override
     public <K, V> void set(K key, V value) {
-        // TODO Auto-generated method stub
-        
+        context.put(key, value);
+    }
+
+    @Override
+    public UnmodifiableIterator<Entry<Object, Object>> iterator() {
+        return Iterators.unmodifiableIterator(context.entrySet().iterator());
     }
 
     @Override
     public void discard() throws ConnectionLostException, IOException {
+        
+    }
+    
+    /**
+     * A forwarding HttpRequest that delegates its calls to an IpcConnection.
+     * Not every method is supported, only those that are backed by the IpcConnection.
+     * 
+     * @author Oliver Lorenz
+     */
+    private static final class ForwardingRequest implements HttpRequest {
+        
+        private final IpcConnection connection;
+        
+        public ForwardingRequest(final IpcConnection forwarded) {
+            this.connection = Preconditions.checkNotNull(forwarded, "Forwarded IpcConnection");
+        }
+
+        @Override
+        public <K> boolean contains(K key) {
+            return connection.contains(key);
+        }
+
+        @Override
+        public <K, V> V get(K key) {
+            return connection.get(key);
+        }
+
+        @Override
+        public HttpSession getHttpSession() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public URL getReferer() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String getRemoteAddress() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public URI getRequestUri() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String getUserAgent() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <K, V> void set(K key, V value) {
+            connection.set(key, value);
+        }
+
+        @Override
+        public IpcSession getSession() {
+            return connection.getSession();
+        }
+
+        @Override
+        public <K, V> void putAll(Map<? extends K, ? extends V> map) {
+            connection.putAll(map);
+        }
+
+        @Override
+        public <K, V> V remove(K key) {
+            return connection.remove(key);
+        }
+
+        @Override
+        public Iterator<Entry<Object, Object>> iterator() {
+            return connection.iterator();
+        }
+
+        @Override
+        public void destroy() {
+            throw new UnsupportedOperationException();
+        }
         
     }
     
