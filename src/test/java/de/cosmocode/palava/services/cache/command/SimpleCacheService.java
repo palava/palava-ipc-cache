@@ -21,6 +21,7 @@ package de.cosmocode.palava.services.cache.command;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.collect.Maps;
 
@@ -60,6 +61,32 @@ final class SimpleCacheService implements CacheService {
     @Override
     public void store(Serializable key, Object value) {
         cache.put(key, value);
+    }
+    
+    
+    @Override
+    public long getMaxAge() {
+        throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public long getMaxAge(TimeUnit unit) {
+        throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public void setMaxAge(long maxAge, TimeUnit maxAgeUnit) {
+        throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public void setMaxAge(long maxAgeSeconds) {
+        throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public void store(Serializable key, Object value, long maxAge, TimeUnit maxAgeUnit) {
+        throw new UnsupportedOperationException();
     }
 
 }

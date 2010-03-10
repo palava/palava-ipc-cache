@@ -128,29 +128,34 @@ final class IpcCacheFilter implements IpcCallFilter {
         
         final Cache annotation = command.getClass().getAnnotation(Cache.class);
         
-        switch (annotation.cachePolicy()) {
+        switch (annotation.policy()) {
             case STATIC: {
-                return cacheStatic(call, command, chain);
+                return cacheStatic(call, command, chain, annotation);
             }
             case SMART: {
-                return cacheSmart(call, command, chain);
+                return cacheSmart(call, command, chain, annotation);
             }
             default: {
-                throw new IllegalArgumentException("Unknown cache policy " + annotation.cachePolicy());
+                throw new IllegalArgumentException("Unknown cache policy " + annotation.policy());
             }
         }
     }
     
     private Map<String, Object> cacheStatic(
-        final IpcCall call, final IpcCommand command, final IpcCallFilterChain chain)
-        throws IpcCommandExecutionException {
+        final IpcCall call, final IpcCommand command, final IpcCallFilterChain chain,
+        final Cache annotation) throws IpcCommandExecutionException {
         
         final Class<?> type = command.getClass();
         final Map<String, Object> cached = service.read(type);
         if (cached == null) {
             final Map<String, Object> content = chain.filter(call, command);
             LOG.debug("Caching content from {} statically", type);
-            service.store(type, content);
+            final long maxAge = annotation.maxAge();
+            if (maxAge > 0) {
+                service.store(type, content, maxAge, annotation.maxAgeUnit());
+            } else {
+                service.store(type, content);
+            }
             return content;
         } else {
             LOG.debug("Found statically cached content for {}", type);
@@ -159,11 +164,42 @@ final class IpcCacheFilter implements IpcCallFilter {
     }
     
     private Map<String, Object> cacheSmart(
-        final IpcCall call, final IpcCommand command, final IpcCallFilterChain chain)
-        throws IpcCommandExecutionException {
+        final IpcCall call, final IpcCommand command, final IpcCallFilterChain chain,
+        final Cache annotation) throws IpcCommandExecutionException {
         
         final Class<?> commandClass = command.getClass();
         final IpcArguments arguments = call.getArguments();
+        final Set<Object> scopeRelevant = getScopeRelevant(call);
+        
+        final Serializable cacheItem;
+        final Map<String, Object> cached;
+        
+        // determine the cache item, based on arguments
+        if (arguments == null) {
+            cacheItem = ImmutableSet.of(commandClass, scopeRelevant);
+        } else {
+            cacheItem = ImmutableSet.of(commandClass, arguments, scopeRelevant);
+        }
+        
+        cached = service.read(cacheItem);
+
+        if (cached == null) {
+            final Map<String, Object> content = chain.filter(call, command);
+            LOG.debug("Caching content from {} smart with CacheItem {}", commandClass, cacheItem);
+            final long maxAge = annotation.maxAge();
+            if (maxAge > 0) {
+                service.store(cacheItem, content, maxAge, annotation.maxAgeUnit());
+            } else {
+                service.store(cacheItem, content);
+            }
+            return content;
+        } else {
+            LOG.debug("Found cached content for {} (CacheItem: {})", commandClass, cacheItem);
+            return cached;
+        }
+    }
+    
+    private Set<Object> getScopeRelevant(final IpcCall call) {
         final Set<Object> scopeRelevant = new HashSet<Object>();
 
         // look in call scope
@@ -187,27 +223,7 @@ final class IpcCacheFilter implements IpcCallFilter {
             scopeRelevant.add(obj);
         }
         
-        final Serializable cacheItem;
-        final Map<String, Object> cached;
-        
-        // determine the cache item, based on arguments
-        if (arguments == null) {
-            cacheItem = ImmutableSet.of(commandClass, scopeRelevant);
-        } else {
-            cacheItem = ImmutableSet.of(commandClass, arguments, scopeRelevant);
-        }
-        
-        cached = service.read(cacheItem);
-
-        if (cached == null) {
-            final Map<String, Object> content = chain.filter(call, command);
-            LOG.debug("Caching content from {} smart with CacheItem {}", commandClass, cacheItem);
-            service.store(cacheItem, content);
-            return content;
-        } else {
-            LOG.debug("Found cached content for {} (CacheItem: {})", commandClass, cacheItem);
-            return cached;
-        }
+        return scopeRelevant;
     }
 
 }

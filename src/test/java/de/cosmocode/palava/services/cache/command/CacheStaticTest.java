@@ -58,15 +58,15 @@ public final class CacheStaticTest extends AbstractCacheTest {
     }
     
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.STATIC)}. */
-    @Cache(cachePolicy = CachePolicy.STATIC)
+    @Cache(policy = CachePolicy.STATIC)
     protected class SmartCacheCommand extends DummyCommand { }
 
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.STATIC)}. */
-    @Cache(cachePolicy = CachePolicy.STATIC)
+    @Cache(policy = CachePolicy.STATIC)
     protected class NamedCommand1 extends DummyCommand { }
 
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.STATIC)}. */
-    @Cache(cachePolicy = CachePolicy.STATIC)
+    @Cache(policy = CachePolicy.STATIC)
     protected class NamedCommand2 extends DummyCommand { }
     
     

@@ -63,7 +63,7 @@ final class CacheFilter implements Filter {
     public Content filter(Call call, FilterChain chain) throws FilterException {
         final Cache annotation = Commands.getClass(call.getCommand()).getAnnotation(Cache.class);
         
-        switch (annotation.cachePolicy()) {
+        switch (annotation.policy()) {
             case STATIC: {
                 return cacheStatic(call, chain);
             }
@@ -71,7 +71,7 @@ final class CacheFilter implements Filter {
                 return cacheSmart(call, chain);
             }
             default: {
-                throw new IllegalArgumentException("Unknown cache policy " + annotation.cachePolicy());
+                throw new IllegalArgumentException("Unknown cache policy " + annotation.policy());
             }
         }
     }

@@ -19,6 +19,8 @@
 
 package de.cosmocode.palava.services.cache.command;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
@@ -74,15 +76,15 @@ public final class IpcCacheStaticTest extends AbstractIpcCacheTest {
     
     
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.STATIC)}. */
-    @Cache(cachePolicy = CachePolicy.STATIC)
+    @Cache(policy = CachePolicy.STATIC)
     protected class SmartCacheCommand extends DummyCommand implements IpcCommand { }
 
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.STATIC)}. */
-    @Cache(cachePolicy = CachePolicy.STATIC)
+    @Cache(policy = CachePolicy.STATIC)
     protected class NamedCommand1 extends DummyCommand implements IpcCommand { }
 
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.STATIC)}. */
-    @Cache(cachePolicy = CachePolicy.STATIC)
+    @Cache(policy = CachePolicy.STATIC)
     protected class NamedCommand2 extends DummyCommand implements IpcCommand { }
     
     
