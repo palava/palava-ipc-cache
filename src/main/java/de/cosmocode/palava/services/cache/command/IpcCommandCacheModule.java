@@ -37,7 +37,7 @@ public class IpcCommandCacheModule extends FilterModule {
 
     @Override
     protected void configure() {
-        filter(Commands.annotatedWith(Cache.class)).through(IpcCacheFilter.class);
+        filter(Commands.annotatedWith(Cache.class)).through(CacheFilter.class);
     }
     
 }

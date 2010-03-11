@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.collect.Maps;
 
-import de.cosmocode.palava.services.cache.CacheService;
+import de.cosmocode.palava.cache.CacheService;
 
 /**
  * A simple {@link CacheService} that delegates its methods to a map.

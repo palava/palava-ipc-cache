@@ -34,7 +34,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
-import de.cosmocode.palava.bridge.call.Call;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCallFilter;
 import de.cosmocode.palava.ipc.IpcCallFilterChain;
@@ -366,7 +365,7 @@ public abstract class AbstractIpcCacheTest {
      */
     
     /**
-     * Tests the {@link IpcCacheFilter} on a request with different command names but the same arguments.
+     * Tests the {@link CacheFilter} on a request with different command names but the same arguments.
      */
     @Test
     public void differentNameSameArguments() {
@@ -377,7 +376,7 @@ public abstract class AbstractIpcCacheTest {
     }
     
     /**
-     * Tests the {@link IpcCacheFilter} on a request with different command names and no arguments.
+     * Tests the {@link CacheFilter} on a request with different command names and no arguments.
      */
     @Test
     public void differentNameNoArguments() {
@@ -388,7 +387,7 @@ public abstract class AbstractIpcCacheTest {
     }
     
     /**
-     * Tests the {@link IpcCacheFilter} on two commands with different command names
+     * Tests the {@link CacheFilter} on two commands with different command names
      * with the same call scope parameters and same arguments.
      */
     @Test
@@ -401,7 +400,7 @@ public abstract class AbstractIpcCacheTest {
     }
     
     /**
-     * Tests the {@link IpcCacheFilter} on two commands with different command names
+     * Tests the {@link CacheFilter} on two commands with different command names
      * with the same arguments and the same connection scope parameters.
      */
     @Test
@@ -414,7 +413,7 @@ public abstract class AbstractIpcCacheTest {
     }
     
     /**
-     * Tests the {@link IpcCacheFilter} on two commands with different command names
+     * Tests the {@link CacheFilter} on two commands with different command names
      * with the same arguments and the same session scope parameters.
      */
     @Test

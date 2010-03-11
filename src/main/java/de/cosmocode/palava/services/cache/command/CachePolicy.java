@@ -19,10 +19,6 @@
 
 package de.cosmocode.palava.services.cache.command;
 
-import de.cosmocode.palava.bridge.call.Call;
-import de.cosmocode.palava.bridge.command.Command;
-import de.cosmocode.palava.bridge.session.HttpSession;
-
 /**
  * A CachePolicy decides how to cache a {@link Command}.
  * 
@@ -33,7 +29,7 @@ public enum CachePolicy {
 
     /**
      * <p> A CachePolicy where the fully qualified name of the command-class,
-     * the {@linkplain Call#getArguments() Arguments} of a Call
+     * the {@linkplain IpcCall#getArguments() Arguments} of a Call
      * and the {@linkplain HttpSession#getLocale() Locale} of the Session of a Call
      * are taken into consideration for caching.
      * </p>

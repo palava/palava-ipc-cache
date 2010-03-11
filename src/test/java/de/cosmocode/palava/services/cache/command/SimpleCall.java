@@ -22,32 +22,20 @@
  */
 package de.cosmocode.palava.services.cache.command;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 import com.google.common.collect.UnmodifiableIterator;
 
-import de.cosmocode.collections.utility.ForwardingUtilityMap;
 import de.cosmocode.collections.utility.Utility;
 import de.cosmocode.collections.utility.UtilityMap;
-import de.cosmocode.palava.bridge.ConnectionLostException;
-import de.cosmocode.palava.bridge.Header;
-import de.cosmocode.palava.bridge.call.Arguments;
-import de.cosmocode.palava.bridge.call.Call;
-import de.cosmocode.palava.bridge.call.MissingArgumentException;
-import de.cosmocode.palava.bridge.command.Command;
-import de.cosmocode.palava.bridge.request.HttpRequest;
-import de.cosmocode.palava.bridge.session.HttpSession;
+import de.cosmocode.collections.utility.UtilitySet;
+import de.cosmocode.palava.ipc.AbstractIpcArguments;
+import de.cosmocode.palava.ipc.IpcArguments;
+import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcConnection;
-import de.cosmocode.palava.ipc.IpcSession;
 
 /**
  * A simple {@link Call} that saves the given command, request
@@ -56,30 +44,11 @@ import de.cosmocode.palava.ipc.IpcSession;
  * 
  * @author Oliver Lorenz
  */
-final class SimpleCall implements Call {
+final class SimpleCall implements IpcCall {
     
-    private final Arguments arguments;
-    private final Command command;
-    private final HttpRequest request;
+    private final IpcArguments arguments;
+    private final IpcConnection request;
     private final Map<Object, Object> context = Maps.newHashMap();
-    
-    /**
-     * Saves the given command and request.
-     * The Strings are taken as arguments,
-     * treating every other argument as the value to the previous argument.
-     * @param command
-     * @param request
-     * @param arguments
-     */
-    public SimpleCall(final Command command, final HttpRequest request, final String... arguments) {
-        this.command = command;
-        this.request = request;
-        if (arguments.length > 0) {
-            this.arguments = new SimpleArguments(arguments);
-        } else {
-            this.arguments = null;
-        }
-    }
     
     /**
      * Saves the given connection as HttpRequest.
@@ -89,8 +58,7 @@ final class SimpleCall implements Call {
      * @param arguments
      */
     public SimpleCall(final IpcConnection connection, final String... arguments) {
-        this.command = null;
-        this.request = new ForwardingRequest(connection);
+        this.request = connection;
         if (arguments.length > 0) {
             this.arguments = new SimpleArguments(arguments);
         } else {
@@ -99,33 +67,13 @@ final class SimpleCall implements Call {
     }
 
     @Override
-    public Arguments getArguments() {
+    public IpcArguments getArguments() {
         return arguments;
-    }
-
-    @Override
-    public Command getCommand() {
-        return command;
-    }
-
-    @Override
-    public Header getHeader() {
-        return null;
-    }
-
-    @Override
-    public HttpRequest getHttpRequest() {
-        return request;
     }
     
     @Override
     public IpcConnection getConnection() {
-        return getHttpRequest();
-    }
-
-    @Override
-    public InputStream getInputStream() {
-        throw new UnsupportedOperationException("no input stream");
+        return request;
     }
     
     @Override
@@ -159,101 +107,13 @@ final class SimpleCall implements Call {
     public UnmodifiableIterator<Entry<Object, Object>> iterator() {
         return Iterators.unmodifiableIterator(context.entrySet().iterator());
     }
-
-    @Override
-    public void discard() throws ConnectionLostException, IOException {
-        
-    }
-    
-    /**
-     * A forwarding HttpRequest that delegates its calls to an IpcConnection.
-     * Not every method is supported, only those that are backed by the IpcConnection.
-     * 
-     * @author Oliver Lorenz
-     */
-    private static final class ForwardingRequest implements HttpRequest {
-        
-        private final IpcConnection connection;
-        
-        public ForwardingRequest(final IpcConnection forwarded) {
-            this.connection = Preconditions.checkNotNull(forwarded, "Forwarded IpcConnection");
-        }
-
-        @Override
-        public <K> boolean contains(K key) {
-            return connection.contains(key);
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public <K, V> V get(K key) {
-            return (V) connection.get(key);
-        }
-
-        @Override
-        public HttpSession getHttpSession() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public URL getReferer() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String getRemoteAddress() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public URI getRequestUri() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String getUserAgent() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public <K, V> void set(K key, V value) {
-            connection.set(key, value);
-        }
-
-        @Override
-        public IpcSession getSession() {
-            return connection.getSession();
-        }
-
-        @Override
-        public <K, V> void putAll(Map<? extends K, ? extends V> map) {
-            connection.putAll(map);
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public <K, V> V remove(K key) {
-            return (V) connection.remove(key);
-        }
-
-        @Override
-        public Iterator<Entry<Object, Object>> iterator() {
-            return connection.iterator();
-        }
-
-        @Override
-        public void destroy() {
-            throw new UnsupportedOperationException();
-        }
-        
-    }
     
     /**
      * The backing Arguments class for the SimpleCall.
      * 
      * @author Oliver Lorenz
      */
-    private static final class SimpleArguments extends ForwardingUtilityMap<String, Object> implements Arguments {
+    private static final class SimpleArguments extends AbstractIpcArguments {
         
         private final UtilityMap<String, Object> forwarded;
         
@@ -270,18 +130,15 @@ final class SimpleCall implements Call {
             }
             this.forwarded = Utility.asUtilityMap(map);
         }
-        
+
         @Override
-        public void require(final String... keys) throws MissingArgumentException {
-            for (final String key : keys) {
-                if (forwarded.containsKey(key)) continue;
-                throw new MissingArgumentException(key);
-            }
+        public UtilitySet<Entry<String, Object>> entrySet() {
+            return forwarded.entrySet();
         }
-        
+
         @Override
-        protected UtilityMap<String, Object> delegate() {
-            return forwarded;
+        public Object put(String key, Object value) {
+            return forwarded.put(key, value);
         }
         
     }

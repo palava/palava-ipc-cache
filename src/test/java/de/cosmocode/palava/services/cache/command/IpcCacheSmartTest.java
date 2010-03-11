@@ -26,7 +26,7 @@ import de.cosmocode.palava.ipc.IpcCallFilter;
 import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
- * Tests {@link IpcCacheFilter} on some IpcCommands with the {@code @Cache} annotation 
+ * Tests {@link CacheFilter} on some IpcCommands with the {@code @Cache} annotation 
  * and the cachePolicy set to {@link CachePolicy#SMART}.
  * 
  * @author Oliver Lorenz
@@ -41,7 +41,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
     
     
     public IpcCacheSmartTest() {
-        final IpcCacheFilter cacheFilter = new IpcCacheFilter(new SimpleCacheService());
+        final CacheFilter cacheFilter = new CacheFilter(new SimpleCacheService());
         cacheFilter.setCallScopeKeys(StringUtils.join(CALL_KEYS, ','));
         cacheFilter.setConnectionScopeKeys(StringUtils.join(CONNECTION_KEYS, ','));
         cacheFilter.setSessionScopeKeys(StringUtils.join(SESSION_KEYS, ','));
@@ -91,7 +91,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
      */
     
     /**
-     * Tests the {@link IpcCacheFilter} with same arguments.
+     * Tests the {@link CacheFilter} with same arguments.
      */
     @Test
     public void sameArguments() {
@@ -100,7 +100,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
     }
     
     /**
-     * Tests the {@link IpcCacheFilter} with different arguments.
+     * Tests the {@link CacheFilter} with different arguments.
      */
     @Test
     public void differentArguments() {
@@ -109,7 +109,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
     }
     
     /**
-     * Tests the {@link IpcCacheFilter} with no arguments.
+     * Tests the {@link CacheFilter} with no arguments.
      */
     @Test
     public void noArguments() {
@@ -123,7 +123,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
      */
     
     /**
-     * Tests the {@link IpcCacheFilter} with the same arguments
+     * Tests the {@link CacheFilter} with the same arguments
      * and the same call scope parameters.
      */
     @Test
@@ -134,7 +134,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
     }
 
     /**
-     * Tests the {@link IpcCacheFilter} with the same arguments
+     * Tests the {@link CacheFilter} with the same arguments
      * but different call scope parameters.
      */
     @Test
@@ -145,7 +145,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
     }
     
     /**
-     * Tests the {@link IpcCacheFilter} with the same call scope parameters
+     * Tests the {@link CacheFilter} with the same call scope parameters
      * but different arguments.
      */
     @Test
@@ -156,7 +156,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
     }
     
     /**
-     * Tests the {@link IpcCacheFilter} with different call scope parameters
+     * Tests the {@link CacheFilter} with different call scope parameters
      * and different arguments.
      */
     @Test
@@ -167,7 +167,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
     }
     
     /**
-     * Tests the {@link IpcCacheFilter} with the same call scope parameters
+     * Tests the {@link CacheFilter} with the same call scope parameters
      * and no arguments.
      */
     @Test
@@ -178,7 +178,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
     }
     
     /**
-     * Tests the {@link IpcCacheFilter} with different scope context parameters
+     * Tests the {@link CacheFilter} with different scope context parameters
      * and no arguments.
      */
     @Test
@@ -194,7 +194,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
      */
     
     /**
-     * Tests the {@link IpcCacheFilter} with the same arguments
+     * Tests the {@link CacheFilter} with the same arguments
      * and the same connection scope parameters.
      */
     @Test
@@ -205,7 +205,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
     }
 
     /**
-     * Tests the {@link IpcCacheFilter} with the same arguments
+     * Tests the {@link CacheFilter} with the same arguments
      * but different connection scope parameters.
      */
     @Test
@@ -216,7 +216,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
     }
     
     /**
-     * Tests the {@link IpcCacheFilter} with the same connection scope parameters
+     * Tests the {@link CacheFilter} with the same connection scope parameters
      * but different arguments.
      */
     @Test
@@ -227,7 +227,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
     }
     
     /**
-     * Tests the {@link IpcCacheFilter} with different connection scope parameters
+     * Tests the {@link CacheFilter} with different connection scope parameters
      * and different arguments.
      */
     @Test
@@ -238,7 +238,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
     }
     
     /**
-     * Tests the {@link IpcCacheFilter} with the same connection scope parameters
+     * Tests the {@link CacheFilter} with the same connection scope parameters
      * and no arguments.
      */
     @Test
@@ -249,7 +249,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
     }
     
     /**
-     * Tests the {@link IpcCacheFilter} with different connection scope context parameters
+     * Tests the {@link CacheFilter} with different connection scope context parameters
      * and no arguments.
      */
     @Test
@@ -265,7 +265,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
      */
     
     /**
-     * Tests the {@link IpcCacheFilter} with the same arguments
+     * Tests the {@link CacheFilter} with the same arguments
      * and the same session scope parameters.
      */
     @Test
@@ -276,7 +276,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
     }
 
     /**
-     * Tests the {@link IpcCacheFilter}
+     * Tests the {@link CacheFilter}
      * with the same arguments but different session scope parameters.
      */
     @Test
@@ -287,7 +287,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
     }
     
     /**
-     * Tests the {@link IpcCacheFilter}
+     * Tests the {@link CacheFilter}
      * with the same session scope parameters but different arguments.
      */
     @Test
@@ -298,7 +298,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
     }
     
     /**
-     * Tests the {@link IpcCacheFilter}
+     * Tests the {@link CacheFilter}
      * with different session scope parameters and different arguments.
      */
     @Test
@@ -309,7 +309,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
     }
     
     /**
-     * Tests the {@link IpcCacheFilter}
+     * Tests the {@link CacheFilter}
      * with the same session scope parameters and no arguments.
      */
     @Test
@@ -320,7 +320,7 @@ public final class IpcCacheSmartTest extends AbstractIpcCacheTest {
     }
     
     /**
-     * Tests the {@link IpcCacheFilter}
+     * Tests the {@link CacheFilter}
      * with different session scope context parameters and no arguments.
      */
     @Test
