@@ -108,6 +108,11 @@ final class SimpleCall implements IpcCall {
         return Iterators.unmodifiableIterator(context.entrySet().iterator());
     }
     
+    @Override
+    public void clear() {
+        context.clear();
+    }
+    
     /**
      * The backing Arguments class for the SimpleCall.
      * 
