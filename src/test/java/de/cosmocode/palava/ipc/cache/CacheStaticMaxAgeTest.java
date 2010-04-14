@@ -90,15 +90,15 @@ public final class CacheStaticMaxAgeTest extends AbstractCacheTest {
     
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
     @Cache(policy = CachePolicy.STATIC, maxAge = MAX_AGE, maxAgeUnit = TimeUnit.SECONDS)
-    protected class StaticCacheCommand extends DummyCommand implements IpcCommand { }
+    private class StaticCacheCommand extends DummyCommand implements IpcCommand { }
 
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
     @Cache(policy = CachePolicy.STATIC, maxAge = MAX_AGE, maxAgeUnit = TimeUnit.SECONDS)
-    protected class NamedCommand1 extends DummyCommand implements IpcCommand { }
+    private class NamedCommand1 extends DummyCommand implements IpcCommand { }
 
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
     @Cache(policy = CachePolicy.STATIC, maxAge = MAX_AGE, maxAgeUnit = TimeUnit.SECONDS)
-    protected class NamedCommand2 extends DummyCommand implements IpcCommand { }
+    private class NamedCommand2 extends DummyCommand implements IpcCommand { }
 
     
     /*
