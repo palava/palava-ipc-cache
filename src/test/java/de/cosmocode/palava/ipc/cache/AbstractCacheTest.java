@@ -49,6 +49,8 @@ import de.cosmocode.palava.ipc.IpcSession;
  * <p> This class tests only the cases with different IpcCommands, which should never be cached.
  * </p>
  * 
+ * TODO add missing {@link EasyMock#verify(Object...)}
+ * 
  * @author Oliver Lorenz
  */
 public abstract class AbstractCacheTest {
