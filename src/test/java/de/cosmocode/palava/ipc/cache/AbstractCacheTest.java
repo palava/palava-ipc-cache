@@ -49,8 +49,6 @@ import de.cosmocode.palava.ipc.IpcSession;
  * <p> This class tests only the cases with different IpcCommands, which should never be cached.
  * </p>
  * 
- * TODO add missing {@link EasyMock#verify(Object...)}
- * 
  * @author Oliver Lorenz
  */
 public abstract class AbstractCacheTest {
@@ -126,18 +124,65 @@ public abstract class AbstractCacheTest {
     }
     
     
+    protected final IpcCall getCall1() {
+        return call1;
+    }
+    
+    protected final IpcCall getCall2() {
+        return call2;
+    }
+    
+    protected final IpcCommand getCommand1() {
+        return command1;
+    }
+    
+    protected final IpcCommand getCommand2() {
+        return command2;
+    }
+    
+    protected final IpcConnection getConnection1() {
+        return connection1;
+    }
+    
+    protected final IpcConnection getConnection2() {
+        return connection2;
+    }
+    
+    protected final IpcSession getSession1() {
+        return session1;
+    }
+    
+    protected final IpcSession getSession2() {
+        return session2;
+    }
+    
+    
     /**
      * Executes the calls and asserts that second call returned the same result as the first,
      * which means that the first call was cached.
      */
     protected void assertCached() {
+        this.assertCached(0);
+    }
+    
+    /**
+     * Executes the calls and asserts that second call returned the same result as the first,
+     * which means that the first call was cached.
+     * @param timeout the time (in milliseconds) to wait between the two executions
+     */
+    protected void assertCached(final long timeout) {
         try {
             final Map<String, Object> content1 = filterAndExecute(call1, command1);
+            Thread.sleep(timeout);
             final Map<String, Object> content2 = filterAndExecute(call2, command2);
 
+            EasyMock.verify(session1, session2, connection1, connection2);
+            
             Assert.assertSame(EXPECT_CACHED, content1, content2);
         } catch (IpcCommandExecutionException e) {
             throw new IllegalStateException(e);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException("Timeout was illegally interrupted", e);
         }
     }
     
@@ -146,13 +191,27 @@ public abstract class AbstractCacheTest {
      * which means that the first call was cached.
      */
     protected void assertNotCached() {
+        this.assertNotCached(0);
+    }
+    
+    /**
+     * Executes the calls and asserts that the second call returned a different result as the first,
+     * which means that the first call was not cached.
+     * @param timeout the time (in milliseconds) to wait between the two executions
+     */
+    protected void assertNotCached(final long timeout) {
         try {
             final Map<String, Object> content1 = filterAndExecute(call1, command1);
+            Thread.sleep(timeout);
             final Map<String, Object> content2 = filterAndExecute(call2, command2);
+
+            EasyMock.verify(session1, session2, connection1, connection2);
 
             Assert.assertNotSame(EXPECT_NOT_CACHED, content1, content2);
         } catch (IpcCommandExecutionException e) {
             throw new IllegalStateException(e);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException("Timeout was illegally interrupted", e);
         }
     }
     
@@ -177,7 +236,7 @@ public abstract class AbstractCacheTest {
         throws IpcCommandExecutionException {
         
         final IpcCallFilterChain chain = EasyMock.createMock(IpcCallFilterChain.class);
-        EasyMock.expect(chain.filter(call, command)).andReturn(randomContent());
+        EasyMock.expect(chain.filter(call, command)).andStubReturn(randomContent());
         EasyMock.replay(chain);
         return getFilter().filter(call, command, chain);
     }

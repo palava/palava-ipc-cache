@@ -39,5 +39,18 @@
       <artifactId>easymock</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+    	<groupId>de.cosmocode.palava</groupId>
+    	<artifactId>palava-cache</artifactId>
+    	<version>2.1-SNAPSHOT</version>
+    	<type>test-jar</type>
+    	<scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>de.cosmocode</groupId>
+    	<artifactId>cosmocode-junit</artifactId>
+    	<version>1.2</version>
+    	<scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

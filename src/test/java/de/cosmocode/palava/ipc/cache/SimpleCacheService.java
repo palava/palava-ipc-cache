@@ -23,6 +23,10 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import de.cosmocode.palava.cache.CacheService;
@@ -31,11 +35,14 @@ import de.cosmocode.palava.cache.CacheService;
  * A simple {@link CacheService} that delegates its methods to a map.
  * 
  * @author Oliver Lorenz
- *
  */
 final class SimpleCacheService implements CacheService {
     
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleCacheService.class);
+    
     private final Map<Serializable, Object> cache;
+    private long maxAge = DEFAULT_MAX_AGE;
+    private TimeUnit maxAgeUnit = DEFAULT_MAX_AGE_TIMEUNIT;
     
     public SimpleCacheService() {
         this.cache = Maps.newHashMap();
@@ -49,44 +56,73 @@ final class SimpleCacheService implements CacheService {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T read(Serializable key) {
+        Preconditions.checkNotNull(key, "Key");
         return (T) cache.get(key);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> T remove(Serializable key) {
+        Preconditions.checkNotNull(key, "Key");
         return (T) cache.remove(key);
     }
 
     @Override
     public void store(Serializable key, Object value) {
-        cache.put(key, value);
+        this.store(key, value, maxAge, maxAgeUnit);
     }
     
-    
+
     @Override
     public long getMaxAge() {
-        throw new UnsupportedOperationException();
+        return getMaxAge(TimeUnit.SECONDS);
     }
     
     @Override
     public long getMaxAge(TimeUnit unit) {
-        throw new UnsupportedOperationException();
-    }
-    
-    @Override
-    public void setMaxAge(long maxAge, TimeUnit maxAgeUnit) {
-        throw new UnsupportedOperationException();
+        return unit.convert(maxAge, maxAgeUnit);
     }
     
     @Override
     public void setMaxAge(long maxAgeSeconds) {
-        throw new UnsupportedOperationException();
+        this.setMaxAge(maxAgeSeconds, TimeUnit.SECONDS);
     }
     
     @Override
-    public void store(Serializable key, Object value, long maxAge, TimeUnit maxAgeUnit) {
-        throw new UnsupportedOperationException();
+    public void setMaxAge(long newMaxAge, TimeUnit newMaxAgeUnit) {
+        Preconditions.checkArgument(newMaxAge >= 0, MAX_AGE_NEGATIVE);
+        Preconditions.checkNotNull(newMaxAgeUnit, "MaxAge TimeUnit");
+        
+        this.maxAge = newMaxAge;
+        this.maxAgeUnit = newMaxAgeUnit;
+    }
+    
+    @Override
+    public void store(final Serializable key, final Object value, final long sMaxAge, final TimeUnit sMaxAgeUnit) {
+        Preconditions.checkNotNull(key, "Key");
+        Preconditions.checkArgument(sMaxAge >= 0, MAX_AGE_NEGATIVE);
+        Preconditions.checkNotNull(sMaxAgeUnit, "MaxAge TimeUnit");
+        
+        cache.put(key, value);
+        
+        if (sMaxAge != DEFAULT_MAX_AGE && sMaxAgeUnit != DEFAULT_MAX_AGE_TIMEUNIT) {
+            final Thread deleteThread = new Thread(new Runnable() {
+                
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(TimeUnit.MILLISECONDS.convert(sMaxAge, sMaxAgeUnit));
+                    } catch (InterruptedException e) {
+                        LOG.warn("sleep was interrupted");
+                    }
+                    cache.remove(key);
+                    LOG.debug("Item {} removed from cache after {} second(s)", 
+                        key, TimeUnit.SECONDS.convert(sMaxAge, sMaxAgeUnit));
+                };
+                
+            });
+            deleteThread.start();
+        }
     }
 
 }
