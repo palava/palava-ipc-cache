@@ -19,8 +19,11 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import de.cosmocode.palava.ipc.IpcCall;
+import de.cosmocode.palava.ipc.IpcCommand;
+
 /**
- * A CachePolicy decides how to cache a {@link Command}.
+ * A CachePolicy decides how to cache an {@link IpcCommand}.
  * 
  * @author Willi Schoenborn
  * @author Oliver Lorenz
@@ -28,6 +31,8 @@ package de.cosmocode.palava.ipc.cache;
 public enum CachePolicy {
 
     /**
+     * TODO update
+     * 
      * <p> A CachePolicy where the fully qualified name of the command-class,
      * the {@linkplain IpcCall#getArguments() Arguments} of a Call
      * and the {@linkplain HttpSession#getLocale() Locale} of the Session of a Call
@@ -45,6 +50,7 @@ public enum CachePolicy {
     /**
      * <p> A CachePolicy where only the fully qualified name of the command-class
      * is used for caching.
+     * TODO + arguments
      * </p>
      * <p> This means that the Command annotated with this CachePolicy
      * always returns the same Content, independent of the call.
