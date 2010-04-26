@@ -87,7 +87,7 @@ final class SimpleCacheService implements CacheService {
     
     @Override
     public void setMaxAge(long newMaxAge, TimeUnit newMaxAgeUnit) {
-        Preconditions.checkArgument(newMaxAge >= 0, MAX_AGE_NEGATIVE);
+        Preconditions.checkArgument(newMaxAge >= 0, "max age must not be negative");
         Preconditions.checkNotNull(newMaxAgeUnit, "MaxAge TimeUnit");
         
         this.maxAge = newMaxAge;
@@ -97,7 +97,7 @@ final class SimpleCacheService implements CacheService {
     @Override
     public void store(final Serializable key, final Object value, final long sMaxAge, final TimeUnit sMaxAgeUnit) {
         Preconditions.checkNotNull(key, "Key");
-        Preconditions.checkArgument(sMaxAge >= 0, MAX_AGE_NEGATIVE);
+        Preconditions.checkArgument(sMaxAge >= 0, "max age must not be negative");
         Preconditions.checkNotNull(sMaxAgeUnit, "MaxAge TimeUnit");
         
         cache.put(key, value);
