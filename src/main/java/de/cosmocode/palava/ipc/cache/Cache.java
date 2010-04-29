@@ -38,7 +38,7 @@ public @interface Cache {
      * The time unit is given by {@link #maxAgeUnit()}.
      * </p>
      * <p> A non-positive value (i.e. <= 0) means that every command is cached eternally.
-     * The default is 0, which means that every command lives eternally by default.
+     * The default is 0, which means that every command is cached eternally by default.
      * </p>
      * @return the maximum age of every command in {@link #maxAgeUnit()}
      */

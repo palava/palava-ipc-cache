@@ -19,8 +19,10 @@ package de.cosmocode.palava.ipc.cache;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.After;
 import org.junit.Test;
 
+import de.cosmocode.palava.cache.CacheService;
 import de.cosmocode.palava.ipc.IpcCallFilter;
 import de.cosmocode.palava.ipc.IpcCommand;
 
@@ -45,22 +47,19 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
     /** maximum age to cache command, in seconds. */
     private static final long MAX_AGE = 2;
     
-    private final IpcCallFilter filter;
-    
+    private final CacheFilter filter;
+    private final CacheService service;
     private final IpcCommand command;
     private final IpcCommand namedCommand1;
     private final IpcCommand namedCommand2;
     
     
     public CacheSmartMaxAgeTest() {
-        final CacheFilter cacheFilter = new CacheFilter(new SimpleCacheService());
-        cacheFilter.setCallScopeKeys(StringUtils.join(CALL_KEYS, ','));
-        cacheFilter.setConnectionScopeKeys(StringUtils.join(CONNECTION_KEYS, ','));
-        cacheFilter.setSessionScopeKeys(StringUtils.join(SESSION_KEYS, ','));
-        this.filter = cacheFilter;
+        this.service = new SimpleCacheService();
         this.command = new SmartCacheCommand();
         this.namedCommand1 = new NamedCommand1();
         this.namedCommand2 = new NamedCommand2();
+        this.filter = new CacheFilter(this.service);
     }
 
     
@@ -96,6 +95,22 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
     @Cache(policy = CachePolicy.SMART, maxAge = MAX_AGE, maxAgeUnit = TimeUnit.SECONDS)
     private class NamedCommand2 extends DummyCommand implements IpcCommand { }
+    
+    
+    private void initScopes() {
+        this.filter.setCallScopeKeys(StringUtils.join(CALL_KEYS, ','));
+        this.filter.setConnectionScopeKeys(StringUtils.join(CONNECTION_KEYS, ','));
+        this.filter.setSessionScopeKeys(StringUtils.join(SESSION_KEYS, ','));
+    }
+    
+    
+    /**
+     * Cleares the cache service.
+     */
+    @After
+    public void clearCacheService() {
+        this.service.clear();
+    }
     
     
     /*
@@ -140,6 +155,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void sameArgumentsSameCallScope() {
+        initScopes();
         setupSameArguments();
         setupSameCallScope();
         assertCached(WAIT_TIME);
@@ -151,6 +167,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void sameArgumentsDifferentCallScope() {
+        initScopes();
         setupSameArguments();
         setupDifferentCallScope();
         assertNotCached();
@@ -162,6 +179,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void differentArgumentsSameCallScope() {
+        initScopes();
         setupDifferentArguments();
         setupSameCallScope();
         assertNotCached();
@@ -173,6 +191,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void differentArgumentsDifferentCallScope() {
+        initScopes();
         setupDifferentArguments();
         setupDifferentCallScope();
         assertNotCached();
@@ -184,6 +203,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void noArgumentsSameCallScope() {
+        initScopes();
         setupNoArguments();
         setupSameCallScope();
         assertCached(WAIT_TIME);
@@ -195,6 +215,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void noArgumentsDifferentCallScope() {
+        initScopes();
         setupNoArguments();
         setupDifferentCallScope();
         assertNotCached();
@@ -211,6 +232,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void sameArgumentsSameConnectionScope() {
+        initScopes();
         setupSameConnectionScope();
         setupSameArguments();
         assertCached(WAIT_TIME);
@@ -222,6 +244,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void sameArgumentsDifferentConnectionScope() {
+        initScopes();
         setupDifferentConnectionScope();
         setupSameArguments();
         assertNotCached();
@@ -233,6 +256,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void differentArgumentsSameConnectionScope() {
+        initScopes();
         setupSameConnectionScope();
         setupDifferentArguments();
         assertNotCached();
@@ -244,6 +268,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void differentArgumentsDifferentConnectionScope() {
+        initScopes();
         setupDifferentConnectionScope();
         setupDifferentArguments();
         assertNotCached();
@@ -255,6 +280,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void noArgumentsSameConnectionScope() {
+        initScopes();
         setupSameConnectionScope();
         setupNoArguments();
         assertCached(WAIT_TIME);
@@ -266,6 +292,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void noArgumentsDifferentConnectionScope() {
+        initScopes();
         setupDifferentConnectionScope();
         setupNoArguments();
         assertNotCached();
@@ -282,6 +309,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void sameArgumentsSameSessionScope() {
+        initScopes();
         setupSameSessionScope();
         setupSameArguments();
         assertCached(WAIT_TIME);
@@ -293,6 +321,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void sameArgumentsDifferentSessionScope() {
+        initScopes();
         setupDifferentSessionScope();
         setupSameArguments();
         assertNotCached();
@@ -304,6 +333,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void differentArgumentsSameSessionScope() {
+        initScopes();
         setupSameSessionScope();
         setupDifferentArguments();
         assertNotCached();
@@ -315,6 +345,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void differentArgumentsDifferentSessionScope() {
+        initScopes();
         setupDifferentSessionScope();
         setupDifferentArguments();
         assertNotCached();
@@ -326,6 +357,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void noArgumentsSameSessionScope() {
+        initScopes();
         setupSameSessionScope();
         setupNoArguments();
         assertCached(WAIT_TIME);
@@ -337,6 +369,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void noArgumentsDifferentSessionScope() {
+        initScopes();
         setupDifferentSessionScope();
         setupNoArguments();
         assertNotCached();
@@ -371,6 +404,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void sameArgumentsSameCallScopeTimeout() {
+        initScopes();
         setupSameArguments();
         setupSameCallScope();
         assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
@@ -382,6 +416,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void noArgumentsSameCallScopeTimeout() {
+        initScopes();
         setupNoArguments();
         setupSameCallScope();
         assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
@@ -393,6 +428,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void sameArgumentsSameConnectionScopeTimeout() {
+        initScopes();
         setupSameConnectionScope();
         setupSameArguments();
         assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
@@ -404,6 +440,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void noArgumentsSameConnectionScopeTimeout() {
+        initScopes();
         setupSameConnectionScope();
         setupNoArguments();
         assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
@@ -415,6 +452,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void sameArgumentsSameSessionScopeTimeout() {
+        initScopes();
         setupSameSessionScope();
         setupSameArguments();
         assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
@@ -426,6 +464,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void noArgumentsSameSessionScopeTimeout() {
+        initScopes();
         setupSameSessionScope();
         setupNoArguments();
         assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));

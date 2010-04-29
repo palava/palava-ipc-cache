@@ -19,8 +19,10 @@ package de.cosmocode.palava.ipc.cache;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.After;
 import org.junit.Test;
 
+import de.cosmocode.palava.cache.CacheService;
 import de.cosmocode.palava.ipc.IpcCallFilter;
 import de.cosmocode.palava.ipc.IpcCommand;
 
@@ -45,22 +47,23 @@ public final class CacheStaticMaxAgeTest extends AbstractCacheTest {
     /** maximum age to cache command, in seconds. */
     private static final long MAX_AGE = 2;
     
-    private final IpcCallFilter filter;
-    
+    private final CacheFilter filter;
+    private final CacheService service;
     private final IpcCommand command;
     private final IpcCommand namedCommand1;
     private final IpcCommand namedCommand2;
     
     
     public CacheStaticMaxAgeTest() {
-        final CacheFilter cacheFilter = new CacheFilter(new SimpleCacheService());
-        cacheFilter.setCallScopeKeys(StringUtils.join(CALL_KEYS, ','));
-        cacheFilter.setConnectionScopeKeys(StringUtils.join(CONNECTION_KEYS, ','));
-        cacheFilter.setSessionScopeKeys(StringUtils.join(SESSION_KEYS, ','));
-        this.filter = cacheFilter;
+        this.service = new SimpleCacheService();
         this.command = new StaticCacheCommand();
         this.namedCommand1 = new NamedCommand1();
         this.namedCommand2 = new NamedCommand2();
+        
+        this.filter = new CacheFilter(this.service);
+        this.filter.setCallScopeKeys(StringUtils.join(CALL_KEYS, ','));
+        this.filter.setConnectionScopeKeys(StringUtils.join(CONNECTION_KEYS, ','));
+        this.filter.setSessionScopeKeys(StringUtils.join(SESSION_KEYS, ','));
     }
 
     
@@ -96,29 +99,20 @@ public final class CacheStaticMaxAgeTest extends AbstractCacheTest {
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
     @Cache(policy = CachePolicy.STATIC, maxAge = MAX_AGE, maxAgeUnit = TimeUnit.SECONDS)
     private class NamedCommand2 extends DummyCommand implements IpcCommand { }
+    
+    
+    /**
+     * Cleares the cache service.
+     */
+    @After
+    public void clearCacheService() {
+        this.service.clear();
+    }
 
     
     /*
      * Same command name, no scope
      */
-    
-    /**
-     * Tests the {@link CacheFilter} with same arguments.
-     */
-    @Test
-    public void sameArguments() {
-        setupSameArguments();
-        assertCached(WAIT_TIME);
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} with different arguments.
-     */
-    @Test
-    public void differentArguments() {
-        setupDifferentArguments();
-        assertCached(WAIT_TIME);
-    }
     
     /**
      * Tests the {@link CacheFilter} with no arguments.
@@ -129,24 +123,6 @@ public final class CacheStaticMaxAgeTest extends AbstractCacheTest {
         assertCached(WAIT_TIME);
     }
     
-
-    /**
-     * Tests the {@link CacheFilter} with same arguments and sleeps until the max age has passed.
-     */
-    @Test
-    public void sameArgumentsTimeout() {
-        setupSameArguments();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} with different arguments and sleeps until the max age has passed.
-     */
-    @Test
-    public void differentArgumentsTimeout() {
-        setupDifferentArguments();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
     
     /**
      * Tests the {@link CacheFilter} with no arguments and sleeps until the max age has passed.
@@ -161,50 +137,6 @@ public final class CacheStaticMaxAgeTest extends AbstractCacheTest {
     /*
      * Call Scope
      */
-    
-    /**
-     * Tests the {@link CacheFilter} with the same arguments
-     * and the same call scope parameters.
-     */
-    @Test
-    public void sameArgumentsSameCallScope() {
-        setupSameArguments();
-        setupSameCallScope();
-        assertCached(WAIT_TIME);
-    }
-
-    /**
-     * Tests the {@link CacheFilter} with the same arguments
-     * but different call scope parameters.
-     */
-    @Test
-    public void sameArgumentsDifferentCallScope() {
-        setupSameArguments();
-        setupDifferentCallScope();
-        assertCached(WAIT_TIME);
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} with the same call scope parameters
-     * but different arguments.
-     */
-    @Test
-    public void differentArgumentsSameCallScope() {
-        setupDifferentArguments();
-        setupSameCallScope();
-        assertCached(WAIT_TIME);
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} with different call scope parameters
-     * and different arguments.
-     */
-    @Test
-    public void differentArgumentsDifferentCallScope() {
-        setupDifferentArguments();
-        setupDifferentCallScope();
-        assertCached(WAIT_TIME);
-    }
     
     /**
      * Tests the {@link CacheFilter} with the same call scope parameters
@@ -228,50 +160,6 @@ public final class CacheStaticMaxAgeTest extends AbstractCacheTest {
         assertCached(WAIT_TIME);
     }
     
-    
-    /**
-     * Tests the {@link CacheFilter} with the same arguments
-     * and the same call scope parameters and sleeps until the max age has passed.
-     */
-    @Test
-    public void sameArgumentsSameCallScopeTimeout() {
-        setupSameArguments();
-        setupSameCallScope();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
-
-    /**
-     * Tests the {@link CacheFilter} with the same arguments
-     * but different call scope parameters and sleeps until the max age has passed.
-     */
-    @Test
-    public void sameArgumentsDifferentCallScopeTimeout() {
-        setupSameArguments();
-        setupDifferentCallScope();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} with the same call scope parameters
-     * but different arguments and sleeps until the max age has passed.
-     */
-    @Test
-    public void differentArgumentsSameCallScopeTimeout() {
-        setupDifferentArguments();
-        setupSameCallScope();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} with different call scope parameters
-     * and different arguments and sleeps until the max age has passed.
-     */
-    @Test
-    public void differentArgumentsDifferentCallScopeTimeout() {
-        setupDifferentArguments();
-        setupDifferentCallScope();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
     
     /**
      * Tests the {@link CacheFilter} with the same call scope parameters
@@ -301,50 +189,6 @@ public final class CacheStaticMaxAgeTest extends AbstractCacheTest {
      */
     
     /**
-     * Tests the {@link CacheFilter} with the same arguments
-     * and the same connection scope parameters.
-     */
-    @Test
-    public void sameArgumentsSameConnectionScope() {
-        setupSameConnectionScope();
-        setupSameArguments();
-        assertCached(WAIT_TIME);
-    }
-
-    /**
-     * Tests the {@link CacheFilter} with the same arguments
-     * but different connection scope parameters.
-     */
-    @Test
-    public void sameArgumentsDifferentConnectionScope() {
-        setupDifferentConnectionScope();
-        setupSameArguments();
-        assertCached(WAIT_TIME);
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} with the same connection scope parameters
-     * but different arguments.
-     */
-    @Test
-    public void differentArgumentsSameConnectionScope() {
-        setupSameConnectionScope();
-        setupDifferentArguments();
-        assertCached(WAIT_TIME);
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} with different connection scope parameters
-     * and different arguments.
-     */
-    @Test
-    public void differentArgumentsDifferentConnectionScope() {
-        setupDifferentConnectionScope();
-        setupDifferentArguments();
-        assertCached(WAIT_TIME);
-    }
-    
-    /**
      * Tests the {@link CacheFilter} with the same connection scope parameters
      * and no arguments.
      */
@@ -366,51 +210,6 @@ public final class CacheStaticMaxAgeTest extends AbstractCacheTest {
         assertCached(WAIT_TIME);
     }
     
-    
-    
-    /**
-     * Tests the {@link CacheFilter} with the same arguments
-     * and the same connection scope parameters and sleeps until the max age has passed.
-     */
-    @Test
-    public void sameArgumentsSameConnectionScopeTimeout() {
-        setupSameConnectionScope();
-        setupSameArguments();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
-
-    /**
-     * Tests the {@link CacheFilter} with the same arguments
-     * but different connection scope parameters and sleeps until the max age has passed.
-     */
-    @Test
-    public void sameArgumentsDifferentConnectionScopeTimeout() {
-        setupDifferentConnectionScope();
-        setupSameArguments();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} with the same connection scope parameters
-     * but different arguments and sleeps until the max age has passed.
-     */
-    @Test
-    public void differentArgumentsSameConnectionScopeTimeout() {
-        setupSameConnectionScope();
-        setupDifferentArguments();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} with different connection scope parameters
-     * and different arguments and sleeps until the max age has passed.
-     */
-    @Test
-    public void differentArgumentsDifferentConnectionScopeTimeout() {
-        setupDifferentConnectionScope();
-        setupDifferentArguments();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
     
     /**
      * Tests the {@link CacheFilter} with the same connection scope parameters
@@ -440,50 +239,6 @@ public final class CacheStaticMaxAgeTest extends AbstractCacheTest {
      */
     
     /**
-     * Tests the {@link CacheFilter} with the same arguments
-     * and the same session scope parameters.
-     */
-    @Test
-    public void sameArgumentsSameSessionScope() {
-        setupSameSessionScope();
-        setupSameArguments();
-        assertCached(WAIT_TIME);
-    }
-
-    /**
-     * Tests the {@link CacheFilter}
-     * with the same arguments but different session scope parameters.
-     */
-    @Test
-    public void sameArgumentsDifferentSessionScope() {
-        setupDifferentSessionScope();
-        setupSameArguments();
-        assertCached(WAIT_TIME);
-    }
-    
-    /**
-     * Tests the {@link CacheFilter}
-     * with the same session scope parameters but different arguments.
-     */
-    @Test
-    public void differentArgumentsSameSessionScope() {
-        setupSameSessionScope();
-        setupDifferentArguments();
-        assertCached(WAIT_TIME);
-    }
-    
-    /**
-     * Tests the {@link CacheFilter}
-     * with different session scope parameters and different arguments.
-     */
-    @Test
-    public void differentArgumentsDifferentSessionScope() {
-        setupDifferentSessionScope();
-        setupDifferentArguments();
-        assertCached(WAIT_TIME);
-    }
-    
-    /**
      * Tests the {@link CacheFilter}
      * with the same session scope parameters and no arguments.
      */
@@ -505,54 +260,6 @@ public final class CacheStaticMaxAgeTest extends AbstractCacheTest {
         assertCached(WAIT_TIME);
     }
     
-
-    
-    /**
-     * Tests the {@link CacheFilter} with the same arguments
-     * and the same session scope parameters and sleeps until the max age has passed.
-     */
-    @Test
-    public void sameArgumentsSameSessionScopeTimeout() {
-        setupSameSessionScope();
-        setupSameArguments();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
-
-    /**
-     * Tests the {@link CacheFilter}
-     * with the same arguments but different session scope parameters
-     * and sleeps until the max age has passed.
-     */
-    @Test
-    public void sameArgumentsDifferentSessionScopeTimeout() {
-        setupDifferentSessionScope();
-        setupSameArguments();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
-    
-    /**
-     * Tests the {@link CacheFilter}
-     * with the same session scope parameters but different arguments
-     * and sleeps until the max age has passed.
-     */
-    @Test
-    public void differentArgumentsSameSessionScopeTimeout() {
-        setupSameSessionScope();
-        setupDifferentArguments();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
-    
-    /**
-     * Tests the {@link CacheFilter}
-     * with different session scope parameters and different arguments
-     * and sleeps until the max age has passed.
-     */
-    @Test
-    public void differentArgumentsDifferentSessionScopeTimeout() {
-        setupDifferentSessionScope();
-        setupDifferentArguments();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
     
     /**
      * Tests the {@link CacheFilter}

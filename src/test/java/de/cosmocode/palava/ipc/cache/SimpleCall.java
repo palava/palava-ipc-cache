@@ -35,7 +35,7 @@ import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcConnection;
 
 /**
- * A simple {@link Call} that saves the given command, request
+ * A simple {@link IpcCall} that saves the given command, request
  * and the Strings as arguments,
  * taking every other argument as the value to the previous argument.
  * 
@@ -59,7 +59,7 @@ final class SimpleCall implements IpcCall {
         if (arguments.length > 0) {
             this.arguments = new SimpleArguments(arguments);
         } else {
-            this.arguments = null;
+            this.arguments = new SimpleArguments();
         }
     }
 

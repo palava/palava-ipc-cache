@@ -18,6 +18,8 @@ package de.cosmocode.palava.ipc.cache;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -41,13 +43,17 @@ final class SimpleCacheService implements CacheService {
     private long maxAge = DEFAULT_MAX_AGE;
     private TimeUnit maxAgeUnit = DEFAULT_MAX_AGE_TIMEUNIT;
     
+    private final ExecutorService executor;
+    
     public SimpleCacheService() {
         this.cache = Maps.newHashMap();
+        this.executor = Executors.newCachedThreadPool();
     }
 
     @Override
     public void clear() {
         this.cache.clear();
+        this.executor.shutdownNow();
     }
 
     @Override
@@ -103,14 +109,14 @@ final class SimpleCacheService implements CacheService {
         cache.put(key, value);
         
         if (sMaxAge != DEFAULT_MAX_AGE && sMaxAgeUnit != DEFAULT_MAX_AGE_TIMEUNIT) {
-            final Thread deleteThread = new Thread(new Runnable() {
+            this.executor.execute(new Runnable() {
                 
                 @Override
                 public void run() {
                     try {
                         Thread.sleep(TimeUnit.MILLISECONDS.convert(sMaxAge, sMaxAgeUnit));
                     } catch (InterruptedException e) {
-                        LOG.warn("sleep was interrupted");
+                        return;
                     }
                     cache.remove(key);
                     LOG.debug("Item {} removed from cache after {} second(s)", 
@@ -118,7 +124,6 @@ final class SimpleCacheService implements CacheService {
                 };
                 
             });
-            deleteThread.start();
         }
     }
 

@@ -25,7 +25,6 @@ import junit.framework.Assert;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
-import org.junit.Test;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -413,74 +412,6 @@ public abstract class AbstractCacheTest {
             result.putAll(randomContent());
         }
         
-    }
-    
-    
-    /*
-     * Different name tests;
-     * should never be cached;
-     * tests only the extreme cases
-     */
-    
-    /**
-     * Tests the {@link CacheFilter} on a request with different command names but the same arguments.
-     */
-    @Test
-    public void differentNameSameArguments() {
-        setupDifferentCommands();
-        setupSameArguments();
-        
-        assertNotCached();
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} on a request with different command names and no arguments.
-     */
-    @Test
-    public void differentNameNoArguments() {
-        setupDifferentCommands();
-        setupNoArguments();
-        
-        assertNotCached();
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} on two commands with different command names
-     * with the same call scope parameters and same arguments.
-     */
-    @Test
-    public void differentNameSameCallScope() {
-        setupDifferentCommands();
-        setupSameArguments();
-        setupSameCallScope();
-        
-        assertNotCached();
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} on two commands with different command names
-     * with the same arguments and the same connection scope parameters.
-     */
-    @Test
-    public void differentNameSameConnectionScope() {
-        setupDifferentCommands();
-        setupSameConnectionScope();
-        setupSameArguments();
-        
-        assertNotCached();
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} on two commands with different command names
-     * with the same arguments and the same session scope parameters.
-     */
-    @Test
-    public void differentNameSameSessionScope() {
-        setupDifferentCommands();
-        setupSameSessionScope();
-        setupSameArguments();
-        
-        assertNotCached();
     }
 
 }

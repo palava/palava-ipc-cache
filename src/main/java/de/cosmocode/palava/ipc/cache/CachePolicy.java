@@ -18,6 +18,8 @@ package de.cosmocode.palava.ipc.cache;
 
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
+import de.cosmocode.palava.ipc.IpcConnection;
+import de.cosmocode.palava.ipc.IpcSession;
 
 /**
  * A CachePolicy decides how to cache an {@link IpcCommand}.
@@ -28,29 +30,58 @@ import de.cosmocode.palava.ipc.IpcCommand;
 public enum CachePolicy {
 
     /**
-     * TODO update
-     * 
-     * <p> A CachePolicy where the fully qualified name of the command-class,
-     * the {@linkplain IpcCall#getArguments() Arguments} of a Call
-     * and the {@linkplain HttpSession#getLocale() Locale} of the Session of a Call
-     * are taken into consideration for caching.
+     * <p> A CachePolicy where several things are considered for caching.
+     * These are:
      * </p>
-     * <h4>This policy behaves differently if nulls occur: </h4>
      * <ul>
-     *   <li> If the locale is null, then no caching occurs. </li> 
-     *   <li> If the arguments are null, then they are ignored 
-     *        and only the locale and the fully qualified name are taken for caching </li>
+     *   <li> the {@link Class#getName()} of the command-class, </li>
+     *   <li> the {@linkplain IpcCall#getArguments() Arguments} of the {@link IpcCall} </li>
+     *   <li> scope variables, as follows:
+     *     <dl>
+     *       <dt> in call scope
+     *       <dd> if the property command.cache.keys.call=... is set and
+     *            {@link IpcCall#get(Object)} returns a non-null value for at least one of the keys
+     *       <dt> in connection scope
+     *       <dd> if the property command.cache.keys.connection=... is set and
+     *            {@link IpcConnection#get(Object)} returns a non-null value for at least one of the keys
+     *       <dt> in session scope
+     *       <dd> if the property command.cache.keys.session=... is set and
+     *            {@link IpcSession#get(Object)} returns a non-null value for at least one of the keys
+     *     </dl>
+     *   </li>
      * </ul>
+     * <p> If no arguments are provided then they are not considered for caching.
+     * </p>
+     * <p> If none of the scope properties are set or none of the scopes
+     * has a value for the given scope keys then no scope is considered for caching.
+     * </p>
+     * <p> If neither arguments are provided nor any scope keys set
+     * or present (see above paragraph) then only the name of the command class
+     * is considered for caching. In this case CachePolicy.SMART behaves equivalent
+     * to CachePolicy.STATIC.
+     * </p>
      */
     SMART,
     
     /**
      * <p> A CachePolicy where only the fully qualified name of the command-class
      * is used for caching.
-     * TODO + arguments
      * </p>
      * <p> This means that the Command annotated with this CachePolicy
-     * always returns the same Content, independent of the call.
+     * always returns the same result after the first call.
+     * It can only return a different result if a maxAge was set on
+     * the {@code @Cache} annotation and that maxAge has passed since
+     * the first call.
+     * </p>
+     * <p> <strong> Important: </strong>
+     * If a command annotated with {@code @Cache} and the cache policy set to STATIC
+     * is called with 1 or more arguments, then an IllegalStateException is thrown
+     * by the cache filter. This implies that all commands that are annotated with
+     * this CachePolicy <strong>must</strong> be called without any arguments.
+     * </p>
+     * <p> This CachePolicy is useful if a job does not require any arguments
+     * and always returns the same result, for example a list of all
+     * java enums (and their values) that the system knows about.
      * </p>
      */
     STATIC;

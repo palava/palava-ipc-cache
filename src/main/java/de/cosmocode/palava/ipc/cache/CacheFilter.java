@@ -17,7 +17,6 @@
 package de.cosmocode.palava.ipc.cache;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,6 +46,11 @@ import de.cosmocode.palava.ipc.IpcCommandExecutionException;
  * @author Oliver Lorenz
  */
 final class CacheFilter implements IpcCallFilter {
+    
+    
+    public static final String ERR_STATIC_ARGUMENTS =
+        "Illegally provided arguments for static cached command";
+    
 
     private static final Logger LOG = LoggerFactory.getLogger(IpcCallFilter.class);
 
@@ -57,6 +61,22 @@ final class CacheFilter implements IpcCallFilter {
     private final Set<String> connectionScopeKeys = Sets.newHashSet();
     
     private final Set<String> sessionScopeKeys = Sets.newHashSet();
+    
+    /**
+     * <p> This boolean only exists to increase performance.
+     * If no scope keys have been set, then this is false,
+     * otherwise (if any scope keys have been set) this is true.
+     * </p>
+     * <p> The following methods are scope methods.
+     * Their successful invocation (either through injection or a direct method call)
+     * changes this boolean to true: </p>
+     * <ul>
+     *   <li> {@link #setCallScopeKeys(String)} </li>
+     *   <li> {@link #setConnectionScopeKeys(String)} </li>
+     *   <li> {@link #setSessionScopeKeys(String)} </li>
+     * </ul>
+     */
+    private boolean isScopeAware;
     
     
     @Inject
@@ -76,7 +96,7 @@ final class CacheFilter implements IpcCallFilter {
      * @param context the context to put the new keys into
      * @param keys the new context keys, as String, separated by ","
      */
-    private void splitString(final Set<String> context, final String keys) {
+    private static void splitString(final Set<String> context, final String keys) {
         context.clear();
         final String[] tmpVars = Preconditions.checkNotNull(keys, "Keys").split(",");
         for (final String scopeVar : tmpVars) {
@@ -93,6 +113,7 @@ final class CacheFilter implements IpcCallFilter {
     @Inject(optional = true)
     public void setCallScopeKeys(@Named("command.cache.keys.call") final String keys) {
         splitString(callScopeKeys, keys);
+        if (callScopeKeys.size() > 0) isScopeAware = true;
     }
     
     /**
@@ -103,6 +124,7 @@ final class CacheFilter implements IpcCallFilter {
     @Inject(optional = true)
     public void setConnectionScopeKeys(@Named("command.cache.keys.connection") final String keys) {
         splitString(connectionScopeKeys, keys);
+        if (connectionScopeKeys.size() > 0) isScopeAware = true;
     }
     
     /**
@@ -113,6 +135,7 @@ final class CacheFilter implements IpcCallFilter {
     @Inject(optional = true)
     public void setSessionScopeKeys(@Named("command.cache.keys.session") final String keys) {
         splitString(sessionScopeKeys, keys);
+        if (sessionScopeKeys.size() > 0) isScopeAware = true;
     }
     
 
@@ -140,20 +163,21 @@ final class CacheFilter implements IpcCallFilter {
         final IpcCall call, final IpcCommand command, final IpcCallFilterChain chain,
         final Cache annotation) throws IpcCommandExecutionException {
         
+        Preconditions.checkState(call.getArguments().isEmpty(), ERR_STATIC_ARGUMENTS);
+        
         final Class<?> type = command.getClass();
         final Map<String, Object> cached = service.read(type);
         if (cached == null) {
-            final Map<String, Object> content = chain.filter(call, command);
             LOG.debug("Caching content from {} statically", type);
-            final long maxAge = annotation.maxAge();
-            if (maxAge > 0) {
-                service.store(type, content, maxAge, annotation.maxAgeUnit());
+            final Map<String, Object> content = chain.filter(call, command);
+            if (annotation.maxAge() > 0) {
+                service.store(type, content, annotation.maxAge(), annotation.maxAgeUnit());
             } else {
                 service.store(type, content);
             }
             return content;
         } else {
-            LOG.debug("Found statically cached content for {}", type);
+            LOG.trace("Found statically cached content for {}", type);
             return cached;
         }
     }
@@ -164,13 +188,19 @@ final class CacheFilter implements IpcCallFilter {
         
         final Class<?> commandClass = command.getClass();
         final IpcArguments arguments = call.getArguments();
-        final Set<Object> scopeRelevant = getScopeRelevant(call);
+        final Set<Object> scopeRelevant;
+        
+        if (isScopeAware) {
+            scopeRelevant = getScopeRelevant(call);
+        } else {
+            scopeRelevant = ImmutableSet.of();
+        }
         
         final Serializable cacheItem;
         final Map<String, Object> cached;
         
         // determine the cache item, based on arguments
-        if (arguments == null) {
+        if (arguments.isEmpty()) {
             cacheItem = ImmutableSet.of(commandClass, scopeRelevant);
         } else {
             cacheItem = ImmutableSet.of(commandClass, arguments, scopeRelevant);
@@ -179,23 +209,22 @@ final class CacheFilter implements IpcCallFilter {
         cached = service.read(cacheItem);
 
         if (cached == null) {
+            LOG.trace("Caching content from {} smart with CacheItem {}", commandClass, cacheItem);
             final Map<String, Object> content = chain.filter(call, command);
-            LOG.debug("Caching content from {} smart with CacheItem {}", commandClass, cacheItem);
-            final long maxAge = annotation.maxAge();
-            if (maxAge > 0) {
-                service.store(cacheItem, content, maxAge, annotation.maxAgeUnit());
+            if (annotation.maxAge() > 0) {
+                service.store(cacheItem, content, annotation.maxAge(), annotation.maxAgeUnit());
             } else {
                 service.store(cacheItem, content);
             }
             return content;
         } else {
-            LOG.debug("Found cached content for {} (CacheItem: {})", commandClass, cacheItem);
+            LOG.trace("Found cached content for {} (CacheItem: {})", commandClass, cacheItem);
             return cached;
         }
     }
     
     private Set<Object> getScopeRelevant(final IpcCall call) {
-        final Set<Object> scopeRelevant = new HashSet<Object>();
+        final Set<Object> scopeRelevant = Sets.newHashSet();
 
         // look in call scope
         for (final String contextKey : callScopeKeys) {

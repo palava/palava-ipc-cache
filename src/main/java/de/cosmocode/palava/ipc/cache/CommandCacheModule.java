@@ -18,7 +18,10 @@ package de.cosmocode.palava.ipc.cache;
 
 import de.cosmocode.palava.ipc.Commands;
 import de.cosmocode.palava.ipc.FilterModule;
+import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
+import de.cosmocode.palava.ipc.IpcConnection;
+import de.cosmocode.palava.ipc.IpcSession;
 
 /**
  * <p> Module that enables caching for {@link IpcCommand}s.
@@ -26,6 +29,23 @@ import de.cosmocode.palava.ipc.IpcCommand;
  * </p>
  * <p> Caching can either be done {@linkplain CachePolicy#STATIC static}
  * or {@linkplain CachePolicy#SMART smart}.
+ * </p>
+ * <p> Optional configuration properties for the command cache are:
+ * </p>
+ * <dl>
+ *   <dt> command.cache.keys.call
+ *   <dd> a comma separated list of Strings,
+ *        that correspond to the keys in the call scope
+ *        ({@link IpcCall#get(Object)})
+ *   <dt> command.cache.keys.connection
+ *   <dd> a comma separated list of Strings,
+ *        that correspond to the keys in the connection scope
+ *        ({@link IpcConnection#get(Object)})
+ *   <dt> command.cache.keys.session
+ *   <dd> a comma separated list of Strings,
+ *        that correspond to the keys in the call scope
+ *        ({@link IpcSession#get(Object)})
+ * </dl>
  * 
  * @author Willi Schoenborn
  * @author Oliver Lorenz

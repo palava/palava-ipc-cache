@@ -17,8 +17,10 @@
 package de.cosmocode.palava.ipc.cache;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.After;
 import org.junit.Test;
 
+import de.cosmocode.palava.cache.CacheService;
 import de.cosmocode.palava.ipc.IpcCallFilter;
 import de.cosmocode.palava.ipc.IpcCommand;
 
@@ -30,22 +32,19 @@ import de.cosmocode.palava.ipc.IpcCommand;
  */
 public final class CacheSmartTest extends AbstractCacheTest {
     
-    private final IpcCallFilter filter;
+    private final CacheFilter filter;
+    private final CacheService service;
     private final IpcCommand command;
-    
     private final IpcCommand namedCommand1;
     private final IpcCommand namedCommand2;
     
     
     public CacheSmartTest() {
-        final CacheFilter cacheFilter = new CacheFilter(new SimpleCacheService());
-        cacheFilter.setCallScopeKeys(StringUtils.join(CALL_KEYS, ','));
-        cacheFilter.setConnectionScopeKeys(StringUtils.join(CONNECTION_KEYS, ','));
-        cacheFilter.setSessionScopeKeys(StringUtils.join(SESSION_KEYS, ','));
-        this.filter = cacheFilter;
+        this.service = new SimpleCacheService();
         this.command = new SmartCacheCommand();
         this.namedCommand1 = new NamedCommand1();
         this.namedCommand2 = new NamedCommand2();
+        this.filter = new CacheFilter(this.service);
     }
 
     
@@ -81,6 +80,22 @@ public final class CacheSmartTest extends AbstractCacheTest {
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
     @Cache(policy = CachePolicy.SMART)
     private class NamedCommand2 extends DummyCommand implements IpcCommand { }
+    
+    
+    private void initScopes() {
+        this.filter.setCallScopeKeys(StringUtils.join(CALL_KEYS, ','));
+        this.filter.setConnectionScopeKeys(StringUtils.join(CONNECTION_KEYS, ','));
+        this.filter.setSessionScopeKeys(StringUtils.join(SESSION_KEYS, ','));
+    }
+    
+    
+    /**
+     * Cleares the cache service.
+     */
+    @After
+    public void clearCacheService() {
+        this.service.clear();
+    }
     
     
     /*
@@ -125,6 +140,7 @@ public final class CacheSmartTest extends AbstractCacheTest {
      */
     @Test
     public void sameArgumentsSameCallScope() {
+        initScopes();
         setupSameArguments();
         setupSameCallScope();
         assertCached();
@@ -136,6 +152,7 @@ public final class CacheSmartTest extends AbstractCacheTest {
      */
     @Test
     public void sameArgumentsDifferentCallScope() {
+        initScopes();
         setupSameArguments();
         setupDifferentCallScope();
         assertNotCached();
@@ -147,6 +164,7 @@ public final class CacheSmartTest extends AbstractCacheTest {
      */
     @Test
     public void differentArgumentsSameCallScope() {
+        initScopes();
         setupDifferentArguments();
         setupSameCallScope();
         assertNotCached();
@@ -158,6 +176,7 @@ public final class CacheSmartTest extends AbstractCacheTest {
      */
     @Test
     public void differentArgumentsDifferentCallScope() {
+        initScopes();
         setupDifferentArguments();
         setupDifferentCallScope();
         assertNotCached();
@@ -169,6 +188,7 @@ public final class CacheSmartTest extends AbstractCacheTest {
      */
     @Test
     public void noArgumentsSameCallScope() {
+        initScopes();
         setupNoArguments();
         setupSameCallScope();
         assertCached();
@@ -180,6 +200,7 @@ public final class CacheSmartTest extends AbstractCacheTest {
      */
     @Test
     public void noArgumentsDifferentCallScope() {
+        initScopes();
         setupNoArguments();
         setupDifferentCallScope();
         assertNotCached();
@@ -196,6 +217,7 @@ public final class CacheSmartTest extends AbstractCacheTest {
      */
     @Test
     public void sameArgumentsSameConnectionScope() {
+        initScopes();
         setupSameConnectionScope();
         setupSameArguments();
         assertCached();
@@ -207,6 +229,7 @@ public final class CacheSmartTest extends AbstractCacheTest {
      */
     @Test
     public void sameArgumentsDifferentConnectionScope() {
+        initScopes();
         setupDifferentConnectionScope();
         setupSameArguments();
         assertNotCached();
@@ -218,6 +241,7 @@ public final class CacheSmartTest extends AbstractCacheTest {
      */
     @Test
     public void differentArgumentsSameConnectionScope() {
+        initScopes();
         setupSameConnectionScope();
         setupDifferentArguments();
         assertNotCached();
@@ -229,6 +253,7 @@ public final class CacheSmartTest extends AbstractCacheTest {
      */
     @Test
     public void differentArgumentsDifferentConnectionScope() {
+        initScopes();
         setupDifferentConnectionScope();
         setupDifferentArguments();
         assertNotCached();
@@ -240,6 +265,7 @@ public final class CacheSmartTest extends AbstractCacheTest {
      */
     @Test
     public void noArgumentsSameConnectionScope() {
+        initScopes();
         setupSameConnectionScope();
         setupNoArguments();
         assertCached();
@@ -251,6 +277,7 @@ public final class CacheSmartTest extends AbstractCacheTest {
      */
     @Test
     public void noArgumentsDifferentConnectionScope() {
+        initScopes();
         setupDifferentConnectionScope();
         setupNoArguments();
         assertNotCached();
@@ -267,6 +294,7 @@ public final class CacheSmartTest extends AbstractCacheTest {
      */
     @Test
     public void sameArgumentsSameSessionScope() {
+        initScopes();
         setupSameSessionScope();
         setupSameArguments();
         assertCached();
@@ -278,6 +306,7 @@ public final class CacheSmartTest extends AbstractCacheTest {
      */
     @Test
     public void sameArgumentsDifferentSessionScope() {
+        initScopes();
         setupDifferentSessionScope();
         setupSameArguments();
         assertNotCached();
@@ -289,6 +318,7 @@ public final class CacheSmartTest extends AbstractCacheTest {
      */
     @Test
     public void differentArgumentsSameSessionScope() {
+        initScopes();
         setupSameSessionScope();
         setupDifferentArguments();
         assertNotCached();
@@ -300,6 +330,7 @@ public final class CacheSmartTest extends AbstractCacheTest {
      */
     @Test
     public void differentArgumentsDifferentSessionScope() {
+        initScopes();
         setupDifferentSessionScope();
         setupDifferentArguments();
         assertNotCached();
@@ -311,6 +342,7 @@ public final class CacheSmartTest extends AbstractCacheTest {
      */
     @Test
     public void noArgumentsSameSessionScope() {
+        initScopes();
         setupSameSessionScope();
         setupNoArguments();
         assertCached();
@@ -322,8 +354,80 @@ public final class CacheSmartTest extends AbstractCacheTest {
      */
     @Test
     public void noArgumentsDifferentSessionScope() {
+        initScopes();
         setupDifferentSessionScope();
         setupNoArguments();
+        assertNotCached();
+    }
+    
+    
+    /*
+     * Different name tests;
+     * should never be cached;
+     * tests only the extreme cases
+     */
+    
+    /**
+     * Tests the {@link CacheFilter} on a request with different command names but the same arguments.
+     */
+    @Test
+    public void differentNameSameArguments() {
+        setupDifferentCommands();
+        setupSameArguments();
+        
+        assertNotCached();
+    }
+    
+    /**
+     * Tests the {@link CacheFilter} on a request with different command names and no arguments.
+     */
+    @Test
+    public void differentNameNoArguments() {
+        setupDifferentCommands();
+        setupNoArguments();
+        
+        assertNotCached();
+    }
+    
+    /**
+     * Tests the {@link CacheFilter} on two commands with different command names
+     * with the same call scope parameters and same arguments.
+     */
+    @Test
+    public void differentNameSameCallScope() {
+        initScopes();
+        setupDifferentCommands();
+        setupSameArguments();
+        setupSameCallScope();
+        
+        assertNotCached();
+    }
+    
+    /**
+     * Tests the {@link CacheFilter} on two commands with different command names
+     * with the same arguments and the same connection scope parameters.
+     */
+    @Test
+    public void differentNameSameConnectionScope() {
+        initScopes();
+        setupDifferentCommands();
+        setupSameConnectionScope();
+        setupSameArguments();
+        
+        assertNotCached();
+    }
+    
+    /**
+     * Tests the {@link CacheFilter} on two commands with different command names
+     * with the same arguments and the same session scope parameters.
+     */
+    @Test
+    public void differentNameSameSessionScope() {
+        initScopes();
+        setupDifferentCommands();
+        setupSameSessionScope();
+        setupSameArguments();
+        
         assertNotCached();
     }
 
