@@ -54,7 +54,7 @@ final class CacheFilter implements IpcCallFilter {
 
     private static final Logger LOG = LoggerFactory.getLogger(IpcCallFilter.class);
     
-    private static final Splitter SPLITTER = Splitter.on(",").omitEmptyStrings().trimResults();
+    private static final Splitter SPLITTER = Splitter.on(",").trimResults().omitEmptyStrings();
 
     private final CacheService service;
     
