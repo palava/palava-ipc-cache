@@ -20,11 +20,11 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -43,16 +43,18 @@ import de.cosmocode.palava.ipc.IpcCommandExecutionException;
  * to provide caching. This reduces repeated re-execution of the given IpcCommand.
  * </p>
  * 
+ * FIXME scope keys can only be configured as strings, but can be objects 
+ * 
  * @author Oliver Lorenz
  */
 final class CacheFilter implements IpcCallFilter {
     
-    
     public static final String ERR_STATIC_ARGUMENTS =
         "Illegally provided arguments for static cached command";
-    
 
     private static final Logger LOG = LoggerFactory.getLogger(IpcCallFilter.class);
+    
+    private static final Splitter SPLITTER = Splitter.on(",").omitEmptyStrings().trimResults();
 
     private final CacheService service;
     
@@ -98,10 +100,8 @@ final class CacheFilter implements IpcCallFilter {
      */
     private static void splitString(final Set<String> context, final String keys) {
         context.clear();
-        final String[] tmpVars = Preconditions.checkNotNull(keys, "Keys").split(",");
-        for (final String scopeVar : tmpVars) {
-            if (StringUtils.isBlank(scopeVar)) continue;
-            context.add(scopeVar.trim());
+        for (String key : SPLITTER.split(keys)) {
+            context.add(key);
         }
     }
     
