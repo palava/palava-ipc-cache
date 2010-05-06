@@ -31,6 +31,12 @@ import java.util.concurrent.TimeUnit;
 @Target(ElementType.TYPE)
 public @interface Cache {
 
+    /**
+     * TODO javadoc
+     * 
+     * @since 
+     * @return
+     */
     CachePolicy policy() default CachePolicy.SMART;
     
     /**
