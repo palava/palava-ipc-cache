@@ -53,5 +53,10 @@
       <version>1.2</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+        <groupId>com.google.gag</groupId>
+        <artifactId>gag</artifactId>
+        <version>1.0.1</version>
+    </dependency>
   </dependencies>
 </project>

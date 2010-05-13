@@ -16,6 +16,7 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -28,6 +29,7 @@ import org.junit.Before;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
 import de.cosmocode.palava.ipc.IpcCall;
@@ -59,6 +61,37 @@ public abstract class AbstractCacheTest {
     public static final List<String> CONNECTION_KEYS = ImmutableList.of("connection", "lang");
     /** "session", "lang". */
     public static final List<String> SESSION_KEYS = ImmutableList.of("session", "lang");
+    
+    
+    public static final CacheKeyFactory SCOPE_KEY_FACTORY = new CacheKeyFactory() {
+        
+        @Override
+        public Serializable create(IpcCall call, IpcCommand command) {
+            final ImmutableSet.Builder<Object> setBuilder = ImmutableSet.builder();
+            
+            // command name and arguments
+            setBuilder.add(command.getClass());
+            setBuilder.add(call.getArguments());
+            
+            // scopes
+            final IpcConnection connection = call.getConnection();
+            final IpcSession session = call.getConnection().getSession();
+            for (final String key : CALL_KEYS) {
+                final Object obj = call.get(key);
+                if (obj != null) setBuilder.add(obj);
+            }
+            for (final String key : CONNECTION_KEYS) {
+                final Object obj = connection.get(key);
+                if (obj != null) setBuilder.add(obj);
+            }
+            for (final String key : SESSION_KEYS) {
+                final Object obj = session.get(key);
+                if (obj != null) setBuilder.add(obj);
+            }
+            
+            return setBuilder.build();
+        }
+    };
     
     
     private IpcSession session1;
@@ -117,39 +150,6 @@ public abstract class AbstractCacheTest {
     public final void setCommands() {
         this.command1 = getCommand();
         this.command2 = getCommand();
-    }
-    
-    
-    protected final IpcCall getCall1() {
-        return call1;
-    }
-    
-    protected final IpcCall getCall2() {
-        return call2;
-    }
-    
-    protected final IpcCommand getCommand1() {
-        return command1;
-    }
-    
-    protected final IpcCommand getCommand2() {
-        return command2;
-    }
-    
-    protected final IpcConnection getConnection1() {
-        return connection1;
-    }
-    
-    protected final IpcConnection getConnection2() {
-        return connection2;
-    }
-    
-    protected final IpcSession getSession1() {
-        return session1;
-    }
-    
-    protected final IpcSession getSession2() {
-        return session2;
     }
     
     

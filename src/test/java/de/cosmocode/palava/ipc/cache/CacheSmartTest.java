@@ -16,7 +16,6 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Test;
 
@@ -83,9 +82,7 @@ public final class CacheSmartTest extends AbstractCacheTest {
     
     
     private void initScopes() {
-        this.filter.setCallScopeKeys(StringUtils.join(CALL_KEYS, ','));
-        this.filter.setConnectionScopeKeys(StringUtils.join(CONNECTION_KEYS, ','));
-        this.filter.setSessionScopeKeys(StringUtils.join(SESSION_KEYS, ','));
+        this.filter.setKeyFactory(SCOPE_KEY_FACTORY);
     }
     
     

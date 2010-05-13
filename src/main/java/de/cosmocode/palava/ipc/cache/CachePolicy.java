@@ -16,6 +16,9 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import com.google.common.annotations.Beta;
+import com.google.gag.annotation.remark.LOL;
+
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcConnection;
@@ -62,6 +65,14 @@ public enum CachePolicy {
      * </p>
      */
     SMART,
+    
+    /**
+     * TODO JavaDoc
+     * static + arguments.
+     */
+    @Beta
+    @LOL
+    PINKY,
     
     /**
      * <p> A CachePolicy where only the fully qualified name of the command-class

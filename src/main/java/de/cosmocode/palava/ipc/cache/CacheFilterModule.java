@@ -30,27 +30,23 @@ import de.cosmocode.palava.ipc.IpcSession;
  * <p> Caching can either be done {@linkplain CachePolicy#STATIC static}
  * or {@linkplain CachePolicy#SMART smart}.
  * </p>
- * <p> Optional configuration properties for the command cache are:
- * </p>
- * <dl>
- *   <dt> command.cache.keys.call
- *   <dd> a comma separated list of Strings,
- *        that correspond to the keys in the call scope
- *        ({@link IpcCall#get(Object)})
- *   <dt> command.cache.keys.connection
- *   <dd> a comma separated list of Strings,
- *        that correspond to the keys in the connection scope
- *        ({@link IpcConnection#get(Object)})
- *   <dt> command.cache.keys.session
- *   <dd> a comma separated list of Strings,
- *        that correspond to the keys in the call scope
- *        ({@link IpcSession#get(Object)})
- * </dl>
  * 
  * @author Willi Schoenborn
  * @author Oliver Lorenz
  */
-public class CommandCacheModule extends FilterModule {
+public final class CacheFilterModule extends FilterModule {
+    
+    /**
+     * <p> Module that enables caching for {@link IpcCommand}s.
+     * Cached commands are identified by an {@code @Cache} annotation.
+     * </p>
+     * <p> Caching can either be done {@linkplain CachePolicy#STATIC static}
+     * or {@linkplain CachePolicy#SMART smart}.
+     * </p>
+     */
+    public CacheFilterModule() {
+        
+    }
 
     @Override
     protected void configure() {

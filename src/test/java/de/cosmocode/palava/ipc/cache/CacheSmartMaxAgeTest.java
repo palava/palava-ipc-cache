@@ -18,7 +18,6 @@ package de.cosmocode.palava.ipc.cache;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Test;
 
@@ -98,9 +97,7 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
     
     
     private void initScopes() {
-        this.filter.setCallScopeKeys(StringUtils.join(CALL_KEYS, ','));
-        this.filter.setConnectionScopeKeys(StringUtils.join(CONNECTION_KEYS, ','));
-        this.filter.setSessionScopeKeys(StringUtils.join(SESSION_KEYS, ','));
+        this.filter.setKeyFactory(SCOPE_KEY_FACTORY);
     }
     
     
@@ -394,78 +391,6 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
      */
     @Test
     public void noArgumentsTimeout() {
-        setupNoArguments();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} with the same arguments
-     * and the same call scope parameters and sleeps until the max age has passed.
-     */
-    @Test
-    public void sameArgumentsSameCallScopeTimeout() {
-        initScopes();
-        setupSameArguments();
-        setupSameCallScope();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} with the same call scope parameters
-     * and no arguments and sleeps until the max age has passed.
-     */
-    @Test
-    public void noArgumentsSameCallScopeTimeout() {
-        initScopes();
-        setupNoArguments();
-        setupSameCallScope();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} with the same arguments
-     * and the same connection scope parameters and sleeps until the max age has passed.
-     */
-    @Test
-    public void sameArgumentsSameConnectionScopeTimeout() {
-        initScopes();
-        setupSameConnectionScope();
-        setupSameArguments();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} with the same connection scope parameters
-     * and no arguments and sleeps until the max age has passed.
-     */
-    @Test
-    public void noArgumentsSameConnectionScopeTimeout() {
-        initScopes();
-        setupSameConnectionScope();
-        setupNoArguments();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
-    
-    /**
-     * Tests the {@link CacheFilter} with the same arguments
-     * and the same session scope parameters and sleeps until the max age has passed.
-     */
-    @Test
-    public void sameArgumentsSameSessionScopeTimeout() {
-        initScopes();
-        setupSameSessionScope();
-        setupSameArguments();
-        assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
-    }
-    
-    /**
-     * Tests the {@link CacheFilter}
-     * with the same session scope parameters and no arguments and sleeps until the max age has passed.
-     */
-    @Test
-    public void noArgumentsSameSessionScopeTimeout() {
-        initScopes();
-        setupSameSessionScope();
         setupNoArguments();
         assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
     }
