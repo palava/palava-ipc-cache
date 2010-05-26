@@ -27,6 +27,7 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
 import de.cosmocode.palava.cache.CacheService;
+import de.cosmocode.palava.ipc.Ipc;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCallFilterChain;
 import de.cosmocode.palava.ipc.IpcCommand;
@@ -47,7 +48,7 @@ final class DefaultCommandCacheService implements CommandCacheService {
     private CacheKeyFactory factory;
     
     @Inject
-    public DefaultCommandCacheService(@CommandCache CacheService service) {
+    public DefaultCommandCacheService(@Ipc CacheService service) {
         this.service = Preconditions.checkNotNull(service, "Service");
     }
     

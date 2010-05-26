@@ -23,6 +23,7 @@ import de.cosmocode.palava.cache.EhCacheServiceModule;
 import de.cosmocode.palava.core.DefaultRegistryModule;
 import de.cosmocode.palava.core.inject.TypeConverterModule;
 import de.cosmocode.palava.core.lifecycle.LifecycleModule;
+import de.cosmocode.palava.ipc.Ipc;
 
 /**
  * Test module.
@@ -37,7 +38,7 @@ public class CommandCacheTestModule implements Module {
         binder.install(new TypeConverterModule());
         binder.install(new LifecycleModule());
         binder.install(new DefaultRegistryModule());
-        binder.install(EhCacheServiceModule.annotatedWith(CommandCache.class, "ipc.cache"));
+        binder.install(EhCacheServiceModule.annotatedWith(Ipc.class, "ipc"));
         binder.install(new CacheFilterModule());
     }
 
