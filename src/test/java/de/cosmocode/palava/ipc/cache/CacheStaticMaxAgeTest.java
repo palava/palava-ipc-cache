@@ -27,7 +27,7 @@ import de.cosmocode.palava.ipc.IpcCommand;
 /**
  * Tests {@link CacheFilter} on some IpcCommands with the {@code @Cache} annotation 
  * and the cachePolicy set to {@link CachePolicy#SMART}.
- * It also has a maxAge ({@link Cache#maxAge()}) set, and it tests that the cached command
+ * It also has a maxAge ({@link Cached#maxAge()}) set, and it tests that the cached command
  * expires from the cache after the given amount of time.
  * 
  * @author Oliver Lorenz
@@ -89,15 +89,15 @@ public final class CacheStaticMaxAgeTest extends AbstractCacheTest {
     }
     
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
-    @Cache(policy = CachePolicy.STATIC, maxAge = MAX_AGE, maxAgeUnit = TimeUnit.SECONDS)
+    @Cached(policy = CachePolicy.STATIC, maxAge = MAX_AGE, maxAgeUnit = TimeUnit.SECONDS)
     private class StaticCacheCommand extends DummyCommand implements IpcCommand { }
 
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
-    @Cache(policy = CachePolicy.STATIC, maxAge = MAX_AGE, maxAgeUnit = TimeUnit.SECONDS)
+    @Cached(policy = CachePolicy.STATIC, maxAge = MAX_AGE, maxAgeUnit = TimeUnit.SECONDS)
     private class NamedCommand1 extends DummyCommand implements IpcCommand { }
 
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
-    @Cache(policy = CachePolicy.STATIC, maxAge = MAX_AGE, maxAgeUnit = TimeUnit.SECONDS)
+    @Cached(policy = CachePolicy.STATIC, maxAge = MAX_AGE, maxAgeUnit = TimeUnit.SECONDS)
     private class NamedCommand2 extends DummyCommand implements IpcCommand { }
     
     /*

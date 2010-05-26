@@ -49,7 +49,7 @@ public final class CacheFilterModule extends FilterModule {
 
     @Override
     protected void configure() {
-        filter(Commands.annotatedWith(Cache.class)).through(CacheFilter.class);
+        filter(Commands.annotatedWith(Cached.class)).through(CacheFilter.class);
         bind(CommandCacheService.class).to(DefaultCommandCacheService.class).in(Singleton.class);
     }
     

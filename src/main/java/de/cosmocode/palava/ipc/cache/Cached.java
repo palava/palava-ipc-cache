@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Cache {
+public @interface Cached {
 
     /**
      * Instance of {@link CachePolicy} defining the caching algorithm.

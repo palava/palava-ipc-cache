@@ -30,7 +30,7 @@ import de.cosmocode.palava.ipc.IpcCommandExecutionException;
 
 /**
  * A filter which allows custom caching for legacy commands
- * or commands which can't be annotated with {@link Cache}.
+ * or commands which can't be annotated with {@link Cached}.
  *
  * @author Oliver Lorenz
  */
