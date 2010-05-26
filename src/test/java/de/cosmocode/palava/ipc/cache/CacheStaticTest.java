@@ -16,10 +16,9 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import de.cosmocode.palava.cache.CacheService;
 import de.cosmocode.palava.ipc.IpcCallFilter;
 import de.cosmocode.palava.ipc.IpcCommand;
 
@@ -31,21 +30,26 @@ import de.cosmocode.palava.ipc.IpcCommand;
  */
 public final class CacheStaticTest extends AbstractCacheTest {
     
-    private final CacheFilter filter;
-    private final CacheService service;
+    private CacheFilter filter;
+    private CommandCacheService service;
     private final IpcCommand command;
     private final IpcCommand namedCommand1;
     private final IpcCommand namedCommand2;
     
-    
     public CacheStaticTest() {
-        this.service = new SimpleCacheService();
         this.command = new StaticCacheCommand();
         this.namedCommand1 = new NamedCommand1();
         this.namedCommand2 = new NamedCommand2();
-        this.filter = new CacheFilter(this.service);
     }
-
+    
+    /**
+     * Runs before each test.
+     */
+    @Before
+    public void initialize() {
+        this.filter = getFramework().getInstance(CacheFilter.class);
+        this.service = getFramework().getInstance(CommandCacheService.class);
+    }
     
     @Override
     protected IpcCallFilter getFilter() {
@@ -66,8 +70,7 @@ public final class CacheStaticTest extends AbstractCacheTest {
     protected IpcCommand getNamedCommand2() {
         return namedCommand2;
     }
-    
-    
+
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.STATIC)}. */
     @Cache(policy = CachePolicy.STATIC)
     private class StaticCacheCommand extends DummyCommand implements IpcCommand { }
@@ -80,20 +83,9 @@ public final class CacheStaticTest extends AbstractCacheTest {
     @Cache(policy = CachePolicy.STATIC)
     private class NamedCommand2 extends DummyCommand implements IpcCommand { }
     
-    
     private void initScopes() {
-        this.filter.setKeyFactory(SCOPE_KEY_FACTORY);
+        this.service.setFactory(SCOPE_KEY_FACTORY);
     }
-    
-    
-    /**
-     * Cleares the cache service.
-     */
-    @After
-    public void clearCacheService() {
-        this.service.clear();
-    }
-    
     
     /*
      * Same command name, no scope
@@ -101,9 +93,8 @@ public final class CacheStaticTest extends AbstractCacheTest {
     
     /**
      * Tests the {@link CacheFilter} with same arguments.
-     * Expects an IllegalStateException because arguments are set.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void sameArguments() {
         setupSameArguments();
         assertCached();
@@ -111,12 +102,11 @@ public final class CacheStaticTest extends AbstractCacheTest {
     
     /**
      * Tests the {@link CacheFilter} with different arguments.
-     * Expects an IllegalStateException because arguments are set.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void differentArguments() {
         setupDifferentArguments();
-        assertCached();
+        assertNotCached();
     }
     
     /**
@@ -128,7 +118,6 @@ public final class CacheStaticTest extends AbstractCacheTest {
         assertCached();
     }
     
-    
     /*
      * Call Scope
      */
@@ -136,9 +125,8 @@ public final class CacheStaticTest extends AbstractCacheTest {
     /**
      * Tests the {@link CacheFilter} with the same arguments
      * and the same call scope parameters.
-     * Expects an IllegalStateException because arguments are set.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void sameArgumentsSameCallScope() {
         initScopes();
         setupSameArguments();
@@ -150,9 +138,8 @@ public final class CacheStaticTest extends AbstractCacheTest {
     /**
      * Tests the {@link CacheFilter} with the same arguments
      * but different call scope parameters.
-     * Expects an IllegalStateException because arguments are set.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void sameArgumentsDifferentCallScope() {
         initScopes();
         setupSameArguments();
@@ -164,29 +151,27 @@ public final class CacheStaticTest extends AbstractCacheTest {
     /**
      * Tests the {@link CacheFilter} with the same call scope parameters
      * but different arguments.
-     * Expects an IllegalStateException because arguments are set.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void differentArgumentsSameCallScope() {
         initScopes();
         setupDifferentArguments();
         setupSameCallScope();
         
-        assertCached();
+        assertNotCached();
     }
     
     /**
      * Tests the {@link CacheFilter} with different call scope parameters
      * and different arguments.
-     * Expects an IllegalStateException because arguments are set.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void differentArgumentsDifferentCallScope() {
         initScopes();
         setupDifferentArguments();
         setupDifferentCallScope();
         
-        assertCached();
+        assertNotCached();
     }
     
     /**
@@ -214,7 +199,6 @@ public final class CacheStaticTest extends AbstractCacheTest {
         
         assertCached();
     }
-    
 
     /*
      * Connection Scope
@@ -223,9 +207,8 @@ public final class CacheStaticTest extends AbstractCacheTest {
     /**
      * Tests the {@link CacheFilter} with the same arguments
      * and the same connection scope parameters.
-     * Expects an IllegalStateException because arguments are set.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void sameArgumentsSameConnectionScope() {
         initScopes();
         setupSameConnectionScope();
@@ -237,9 +220,8 @@ public final class CacheStaticTest extends AbstractCacheTest {
     /**
      * Tests the {@link CacheFilter} with the same arguments
      * but different connection scope parameters.
-     * Expects an IllegalStateException because arguments are set.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void sameArgumentsDifferentConnectionScope() {
         initScopes();
         setupDifferentConnectionScope();
@@ -251,29 +233,27 @@ public final class CacheStaticTest extends AbstractCacheTest {
     /**
      * Tests the {@link CacheFilter} with the same connection scope parameters
      * but different arguments.
-     * Expects an IllegalStateException because arguments are set.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void differentArgumentsSameConnectionScope() {
         initScopes();
         setupSameConnectionScope();
         setupDifferentArguments();
         
-        assertCached();
+        assertNotCached();
     }
     
     /**
      * Tests the {@link CacheFilter} with different connection scope parameters
      * and different arguments.
-     * Expects an IllegalStateException because arguments are set.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void differentArgumentsDifferentConnectionScope() {
         initScopes();
         setupDifferentConnectionScope();
         setupDifferentArguments();
         
-        assertCached();
+        assertNotCached();
     }
     
     /**
@@ -301,7 +281,6 @@ public final class CacheStaticTest extends AbstractCacheTest {
         
         assertCached();
     }
-    
 
     /*
      * Session Scope
@@ -310,9 +289,8 @@ public final class CacheStaticTest extends AbstractCacheTest {
     /**
      * Tests the {@link CacheFilter} with the same arguments
      * and the same session scope parameters.
-     * Expects an IllegalStateException because arguments are set.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void sameArgumentsSameSessionScope() {
         initScopes();
         setupSameSessionScope();
@@ -324,9 +302,8 @@ public final class CacheStaticTest extends AbstractCacheTest {
     /**
      * Tests the {@link CacheFilter}
      * with the same arguments but different session scope parameters.
-     * Expects an IllegalStateException because arguments are set.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void sameArgumentsDifferentSessionScope() {
         initScopes();
         setupDifferentSessionScope();
@@ -338,29 +315,27 @@ public final class CacheStaticTest extends AbstractCacheTest {
     /**
      * Tests the {@link CacheFilter}
      * with the same session scope parameters but different arguments.
-     * Expects an IllegalStateException because arguments are set.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void differentArgumentsSameSessionScope() {
         initScopes();
         setupSameSessionScope();
         setupDifferentArguments();
         
-        assertCached();
+        assertNotCached();
     }
     
     /**
      * Tests the {@link CacheFilter}
      * with different session scope parameters and different arguments.
-     * Expects an IllegalStateException because arguments are set.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void differentArgumentsDifferentSessionScope() {
         initScopes();
         setupDifferentSessionScope();
         setupDifferentArguments();
         
-        assertCached();
+        assertNotCached();
     }
     
     /**
@@ -389,7 +364,6 @@ public final class CacheStaticTest extends AbstractCacheTest {
         assertCached();
     }
     
-    
     /*
      * Different name tests;
      * should never be cached;
@@ -398,9 +372,8 @@ public final class CacheStaticTest extends AbstractCacheTest {
     
     /**
      * Tests the {@link CacheFilter} on a request with different command names but the same arguments.
-     * Expects an IllegalStateException because arguments are set.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void differentNameSameArguments() {
         setupDifferentCommands();
         setupSameArguments();
@@ -422,9 +395,8 @@ public final class CacheStaticTest extends AbstractCacheTest {
     /**
      * Tests the {@link CacheFilter} on two commands with different command names
      * with the same call scope parameters and same arguments.
-     * Expects an IllegalStateException because arguments are set.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void differentNameSameCallScope() {
         initScopes();
         setupDifferentCommands();
@@ -437,9 +409,8 @@ public final class CacheStaticTest extends AbstractCacheTest {
     /**
      * Tests the {@link CacheFilter} on two commands with different command names
      * with the same arguments and the same connection scope parameters.
-     * Expects an IllegalStateException because arguments are set.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void differentNameSameConnectionScope() {
         initScopes();
         setupDifferentCommands();
@@ -452,9 +423,8 @@ public final class CacheStaticTest extends AbstractCacheTest {
     /**
      * Tests the {@link CacheFilter} on two commands with different command names
      * with the same arguments and the same session scope parameters.
-     * Expects an IllegalStateException because arguments are set.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void differentNameSameSessionScope() {
         initScopes();
         setupDifferentCommands();

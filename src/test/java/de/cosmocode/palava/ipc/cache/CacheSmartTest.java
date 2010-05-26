@@ -16,10 +16,9 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import de.cosmocode.palava.cache.CacheService;
 import de.cosmocode.palava.ipc.IpcCallFilter;
 import de.cosmocode.palava.ipc.IpcCommand;
 
@@ -31,21 +30,26 @@ import de.cosmocode.palava.ipc.IpcCommand;
  */
 public final class CacheSmartTest extends AbstractCacheTest {
     
-    private final CacheFilter filter;
-    private final CacheService service;
+    private CacheFilter filter;
+    private CommandCacheService service;
     private final IpcCommand command;
     private final IpcCommand namedCommand1;
     private final IpcCommand namedCommand2;
     
-    
     public CacheSmartTest() {
-        this.service = new SimpleCacheService();
         this.command = new SmartCacheCommand();
         this.namedCommand1 = new NamedCommand1();
         this.namedCommand2 = new NamedCommand2();
-        this.filter = new CacheFilter(this.service);
     }
-
+    
+    /**
+     * Runs before each test.
+     */
+    @Before
+    public void initialize() {
+        this.filter = getFramework().getInstance(CacheFilter.class);
+        this.service = getFramework().getInstance(CommandCacheService.class);
+    }
     
     @Override
     protected IpcCallFilter getFilter() {
@@ -67,7 +71,6 @@ public final class CacheSmartTest extends AbstractCacheTest {
         return namedCommand2;
     }
     
-    
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
     @Cache(policy = CachePolicy.SMART)
     private class SmartCacheCommand extends DummyCommand implements IpcCommand { }
@@ -80,20 +83,9 @@ public final class CacheSmartTest extends AbstractCacheTest {
     @Cache(policy = CachePolicy.SMART)
     private class NamedCommand2 extends DummyCommand implements IpcCommand { }
     
-    
     private void initScopes() {
-        this.filter.setKeyFactory(SCOPE_KEY_FACTORY);
+        this.service.setFactory(SCOPE_KEY_FACTORY);
     }
-    
-    
-    /**
-     * Cleares the cache service.
-     */
-    @After
-    public void clearCacheService() {
-        this.service.clear();
-    }
-    
     
     /*
      * Same command name, no scope
@@ -125,7 +117,6 @@ public final class CacheSmartTest extends AbstractCacheTest {
         setupNoArguments();
         assertCached();
     }
-    
     
     /*
      * Call Scope
@@ -202,7 +193,6 @@ public final class CacheSmartTest extends AbstractCacheTest {
         setupDifferentCallScope();
         assertNotCached();
     }
-    
 
     /*
      * Connection Scope
@@ -279,7 +269,6 @@ public final class CacheSmartTest extends AbstractCacheTest {
         setupNoArguments();
         assertNotCached();
     }
-    
 
     /*
      * Session Scope
@@ -356,7 +345,6 @@ public final class CacheSmartTest extends AbstractCacheTest {
         setupNoArguments();
         assertNotCached();
     }
-    
     
     /*
      * Different name tests;

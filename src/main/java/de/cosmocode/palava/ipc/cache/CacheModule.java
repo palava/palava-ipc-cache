@@ -21,16 +21,22 @@ import java.util.concurrent.TimeUnit;
 import de.cosmocode.palava.ipc.FilterModule;
 import de.cosmocode.palava.ipc.IpcCallFilter;
 
+/**
+ * 
+ *
+ * @since 
+ * @author Willi Schoenborn
+ */
 public abstract class CacheModule extends FilterModule {
 
     protected IpcCallFilter custom(CachePolicy policy) {
-        final CustomCacheFilter filter = new CustomCacheFilter(getProvider(CacheFilter.class));
+        final CustomCacheFilter filter = new CustomCacheFilter(getProvider(CommandCacheService.class));
         filter.setPolicy(policy);
         return filter;
     }
     
     protected IpcCallFilter custom(CachePolicy policy, long maxAge, TimeUnit maxAgeUnit) {
-        final CustomCacheFilter filter = new CustomCacheFilter(getProvider(CacheFilter.class));
+        final CustomCacheFilter filter = new CustomCacheFilter(getProvider(CommandCacheService.class));
         filter.setPolicy(policy);
         filter.setMaxAge(maxAge);
         filter.setMaxAgeUnit(maxAgeUnit);

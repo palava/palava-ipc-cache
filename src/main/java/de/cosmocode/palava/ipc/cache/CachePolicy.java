@@ -16,9 +16,12 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import com.google.common.annotations.Beta;
-import com.google.gag.annotation.remark.LOL;
+import java.io.Serializable;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+
+import de.cosmocode.palava.ipc.IpcArguments;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcConnection;
@@ -30,7 +33,7 @@ import de.cosmocode.palava.ipc.IpcSession;
  * @author Willi Schoenborn
  * @author Oliver Lorenz
  */
-public enum CachePolicy {
+public enum CachePolicy implements CacheKeyFactory {
 
     /**
      * <p> A CachePolicy where several things are considered for caching.
@@ -64,15 +67,16 @@ public enum CachePolicy {
      * to CachePolicy.STATIC.
      * </p>
      */
-    SMART,
-    
-    /**
-     * TODO JavaDoc
-     * static + arguments.
-     */
-    @Beta
-    @LOL
-    PINKY,
+    SMART {
+        
+        @Override
+        public Serializable create(IpcCall call, IpcCommand command) {
+            Preconditions.checkNotNull(call, "Call");
+            Preconditions.checkNotNull(command, "Command");
+            return STATIC.create(call, command);
+        }
+        
+    },
     
     /**
      * <p> A CachePolicy where only the fully qualified name of the command-class
@@ -95,6 +99,23 @@ public enum CachePolicy {
      * java enums (and their values) that the system knows about.
      * </p>
      */
-    STATIC;
+    STATIC {
+
+        @Override
+        public Serializable create(IpcCall call, IpcCommand command) {
+            Preconditions.checkNotNull(call, "Call");
+            Preconditions.checkNotNull(command, "Command");
+            final IpcArguments arguments = call.getArguments();
+            if (arguments.isEmpty()) {
+                return command.getClass();
+            } else {
+                return ImmutableSet.of(command.getClass(), call.getArguments());
+            }
+        }
+        
+    };
+    
+    @Override
+    public abstract Serializable create(IpcCall call, IpcCommand command);
     
 }

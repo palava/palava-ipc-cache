@@ -16,14 +16,11 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Preconditions;
-import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.Singleton;
 
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCallFilter;
@@ -32,13 +29,14 @@ import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcCommandExecutionException;
 
 /**
- * 
+ * A filter which allows custom caching for legacy commands
+ * or commands which can't be annotated with {@link Cache}.
  *
  * @author Oliver Lorenz
  */
 final class CustomCacheFilter implements IpcCallFilter {
     
-    private final Provider<CacheFilter> filter;
+    private final Provider<CommandCacheService> service;
     
     private CachePolicy policy = CachePolicy.SMART;
     
@@ -46,33 +44,8 @@ final class CustomCacheFilter implements IpcCallFilter {
     
     private TimeUnit maxAgeUnit = TimeUnit.MINUTES;
     
-    private final Cache cache = new Cache() {
-        
-        @Override
-        public Class<? extends Annotation> annotationType() {
-            return Cache.class;
-        }
-        
-        @Override
-        public CachePolicy policy() {
-            return policy;
-        }
-        
-        @Override
-        public long maxAge() {
-            return maxAge;
-        }
-        
-        @Override
-        public TimeUnit maxAgeUnit() {
-            return maxAgeUnit;
-        }
-        
-    };
-    
-    @Inject
-    public CustomCacheFilter(Provider<CacheFilter> filter) {
-        this.filter = Preconditions.checkNotNull(filter, "Filter");
+    public CustomCacheFilter(Provider<CommandCacheService> service) {
+        this.service = Preconditions.checkNotNull(service, "Service");
     }
 
     void setPolicy(CachePolicy policy) {
@@ -89,8 +62,8 @@ final class CustomCacheFilter implements IpcCallFilter {
     
     @Override
     public Map<String, Object> filter(IpcCall call, IpcCommand command,
-            IpcCallFilterChain chain) throws IpcCommandExecutionException {
-        return filter.get().cache(call, command, chain, cache);
+        IpcCallFilterChain chain) throws IpcCommandExecutionException {
+        return service.get().cache(call, command, chain, policy, maxAge, maxAgeUnit);
     }
 
 }

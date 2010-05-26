@@ -25,6 +25,7 @@ import java.util.UUID;
 import junit.framework.Assert;
 
 import org.easymock.EasyMock;
+import org.junit.After;
 import org.junit.Before;
 
 import com.google.common.base.Preconditions;
@@ -32,6 +33,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
+import de.cosmocode.palava.core.Framework;
+import de.cosmocode.palava.core.Palava;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCallFilter;
 import de.cosmocode.palava.ipc.IpcCallFilterChain;
@@ -53,7 +56,6 @@ public abstract class AbstractCacheTest {
 
     public static final String EXPECT_CACHED = "should have been cached, but was not.";
     public static final String EXPECT_NOT_CACHED = "was illegally cached.";
-    
 
     /** "call", "lang". */
     public static final List<String> CALL_KEYS = ImmutableList.of("call", "lang");
@@ -61,7 +63,6 @@ public abstract class AbstractCacheTest {
     public static final List<String> CONNECTION_KEYS = ImmutableList.of("connection", "lang");
     /** "session", "lang". */
     public static final List<String> SESSION_KEYS = ImmutableList.of("session", "lang");
-    
     
     public static final CacheKeyFactory SCOPE_KEY_FACTORY = new CacheKeyFactory() {
         
@@ -93,6 +94,7 @@ public abstract class AbstractCacheTest {
         }
     };
     
+    private final Framework framework = Palava.newFramework();
     
     private IpcSession session1;
     private IpcSession session2;
@@ -106,7 +108,6 @@ public abstract class AbstractCacheTest {
     private IpcCommand command1;
     private IpcCommand command2;
     
-    
     public AbstractCacheTest() {
         session1 = mockSession();
         session2 = mockSession();
@@ -117,6 +118,25 @@ public abstract class AbstractCacheTest {
         // commands are left for @Before
     }
 
+    /**
+     * Runs before each test.
+     */
+    @Before
+    public final void start() {
+        framework.start();
+    }
+
+    protected final Framework getFramework() {
+        return framework;
+    }
+    
+    /**
+     * Runs after each test.
+     */
+    @After
+    public final void stop() {
+        framework.stop();
+    }
     
     /**
      * Get the {@link IpcCallFilter} implementation to call on {@link #filterAndExecute(Call)}.
@@ -151,7 +171,6 @@ public abstract class AbstractCacheTest {
         this.command1 = getCommand();
         this.command2 = getCommand();
     }
-    
     
     /**
      * Executes the calls and asserts that second call returned the same result as the first,
@@ -395,7 +414,6 @@ public abstract class AbstractCacheTest {
         this.command1 = getNamedCommand1();
         this.command2 = getNamedCommand2();
     }
-    
     
     /**
      * A dummy {@link IpcCommand} that returns an

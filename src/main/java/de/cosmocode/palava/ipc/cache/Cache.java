@@ -32,10 +32,10 @@ import java.util.concurrent.TimeUnit;
 public @interface Cache {
 
     /**
-     * TODO javadoc
+     * Instance of {@link CachePolicy} defining the caching algorithm.
      * 
-     * @since 
-     * @return
+     * @since 2.0
+     * @return the policy
      */
     CachePolicy policy() default CachePolicy.SMART;
     

@@ -18,10 +18,9 @@ package de.cosmocode.palava.ipc.cache;
 
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import de.cosmocode.palava.cache.CacheService;
 import de.cosmocode.palava.ipc.IpcCallFilter;
 import de.cosmocode.palava.ipc.IpcCommand;
 
@@ -46,23 +45,28 @@ public final class CacheStaticMaxAgeTest extends AbstractCacheTest {
     /** maximum age to cache command, in seconds. */
     private static final long MAX_AGE = 2;
     
-    private final CacheFilter filter;
-    private final CacheService service;
+    private CacheFilter filter;
+    private CommandCacheService service;
     private final IpcCommand command;
     private final IpcCommand namedCommand1;
     private final IpcCommand namedCommand2;
     
     
     public CacheStaticMaxAgeTest() {
-        this.service = new SimpleCacheService();
         this.command = new StaticCacheCommand();
         this.namedCommand1 = new NamedCommand1();
         this.namedCommand2 = new NamedCommand2();
-        
-        this.filter = new CacheFilter(this.service);
-        this.filter.setKeyFactory(SCOPE_KEY_FACTORY);
     }
-
+    
+    /**
+     * Runs before each test.
+     */
+    @Before
+    public void initialize() {
+        this.filter = getFramework().getInstance(CacheFilter.class);
+        this.service = getFramework().getInstance(CommandCacheService.class);
+        this.service.setFactory(SCOPE_KEY_FACTORY);
+    }
     
     @Override
     protected IpcCallFilter getFilter() {
@@ -84,7 +88,6 @@ public final class CacheStaticMaxAgeTest extends AbstractCacheTest {
         return namedCommand2;
     }
     
-    
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
     @Cache(policy = CachePolicy.STATIC, maxAge = MAX_AGE, maxAgeUnit = TimeUnit.SECONDS)
     private class StaticCacheCommand extends DummyCommand implements IpcCommand { }
@@ -96,16 +99,6 @@ public final class CacheStaticMaxAgeTest extends AbstractCacheTest {
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
     @Cache(policy = CachePolicy.STATIC, maxAge = MAX_AGE, maxAgeUnit = TimeUnit.SECONDS)
     private class NamedCommand2 extends DummyCommand implements IpcCommand { }
-    
-    
-    /**
-     * Cleares the cache service.
-     */
-    @After
-    public void clearCacheService() {
-        this.service.clear();
-    }
-
     
     /*
      * Same command name, no scope
@@ -120,7 +113,6 @@ public final class CacheStaticMaxAgeTest extends AbstractCacheTest {
         assertCached(WAIT_TIME);
     }
     
-    
     /**
      * Tests the {@link CacheFilter} with no arguments and sleeps until the max age has passed.
      */
@@ -129,7 +121,6 @@ public final class CacheStaticMaxAgeTest extends AbstractCacheTest {
         setupNoArguments();
         assertNotCached(TimeUnit.MILLISECONDS.convert(MAX_AGE + 1, TimeUnit.SECONDS));
     }
-    
     
     /*
      * Call Scope
@@ -156,7 +147,6 @@ public final class CacheStaticMaxAgeTest extends AbstractCacheTest {
         setupDifferentCallScope();
         assertCached(WAIT_TIME);
     }
-    
 
     /*
      * Connection Scope
@@ -184,7 +174,6 @@ public final class CacheStaticMaxAgeTest extends AbstractCacheTest {
         assertCached(WAIT_TIME);
     }
 
-    
     /*
      * Session Scope
      */

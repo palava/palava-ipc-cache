@@ -16,21 +16,29 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import java.util.concurrent.TimeUnit;
+import com.google.inject.Binder;
+import com.google.inject.Module;
 
-import de.cosmocode.palava.ipc.Commands;
+import de.cosmocode.palava.cache.EhCacheServiceModule;
+import de.cosmocode.palava.core.DefaultRegistryModule;
+import de.cosmocode.palava.core.inject.TypeConverterModule;
+import de.cosmocode.palava.core.lifecycle.LifecycleModule;
 
 /**
- * Sample {@link CacheModule}.
+ * Test module.
  *
  * @since 2.0
  * @author Willi Schoenborn
  */
-public final class SampleCacheModule extends CacheModule {
+public class CommandCacheTestModule implements Module {
 
     @Override
-    protected void configure() {
-        filter(Commands.any()).through(custom(CachePolicy.SMART, 20, TimeUnit.MINUTES));
+    public void configure(Binder binder) {
+        binder.install(new TypeConverterModule());
+        binder.install(new LifecycleModule());
+        binder.install(new DefaultRegistryModule());
+        binder.install(EhCacheServiceModule.annotatedWith(CommandCache.class, "ipc.cache"));
+        binder.install(new CacheFilterModule());
     }
 
 }

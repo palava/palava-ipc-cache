@@ -16,12 +16,11 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import com.google.inject.Singleton;
+
 import de.cosmocode.palava.ipc.Commands;
 import de.cosmocode.palava.ipc.FilterModule;
-import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
-import de.cosmocode.palava.ipc.IpcConnection;
-import de.cosmocode.palava.ipc.IpcSession;
 
 /**
  * <p> Module that enables caching for {@link IpcCommand}s.
@@ -51,6 +50,7 @@ public final class CacheFilterModule extends FilterModule {
     @Override
     protected void configure() {
         filter(Commands.annotatedWith(Cache.class)).through(CacheFilter.class);
+        bind(CommandCacheService.class).to(DefaultCommandCacheService.class).in(Singleton.class);
     }
     
 }

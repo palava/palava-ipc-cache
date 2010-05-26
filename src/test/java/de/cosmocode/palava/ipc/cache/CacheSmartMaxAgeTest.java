@@ -18,10 +18,9 @@ package de.cosmocode.palava.ipc.cache;
 
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import de.cosmocode.palava.cache.CacheService;
 import de.cosmocode.palava.ipc.IpcCallFilter;
 import de.cosmocode.palava.ipc.IpcCommand;
 
@@ -46,21 +45,26 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
     /** maximum age to cache command, in seconds. */
     private static final long MAX_AGE = 2;
     
-    private final CacheFilter filter;
-    private final CacheService service;
+    private CacheFilter filter;
+    private CommandCacheService service;
     private final IpcCommand command;
     private final IpcCommand namedCommand1;
     private final IpcCommand namedCommand2;
     
-    
     public CacheSmartMaxAgeTest() {
-        this.service = new SimpleCacheService();
         this.command = new SmartCacheCommand();
         this.namedCommand1 = new NamedCommand1();
         this.namedCommand2 = new NamedCommand2();
-        this.filter = new CacheFilter(this.service);
     }
-
+    
+    /**
+     * Runs before each test.
+     */
+    @Before
+    public void initialize() {
+        this.filter = getFramework().getInstance(CacheFilter.class);
+        this.service = getFramework().getInstance(CommandCacheService.class);
+    }
     
     @Override
     protected IpcCallFilter getFilter() {
@@ -82,7 +86,6 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
         return namedCommand2;
     }
     
-    
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
     @Cache(policy = CachePolicy.SMART, maxAge = MAX_AGE, maxAgeUnit = TimeUnit.SECONDS)
     private class SmartCacheCommand extends DummyCommand implements IpcCommand { }
@@ -97,18 +100,8 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
     
     
     private void initScopes() {
-        this.filter.setKeyFactory(SCOPE_KEY_FACTORY);
+        this.service.setFactory(SCOPE_KEY_FACTORY);
     }
-    
-    
-    /**
-     * Cleares the cache service.
-     */
-    @After
-    public void clearCacheService() {
-        this.service.clear();
-    }
-    
     
     /*
      * Same command name, no scope
