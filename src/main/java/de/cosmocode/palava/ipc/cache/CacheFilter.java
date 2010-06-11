@@ -51,7 +51,7 @@ final class CacheFilter implements IpcCallFilter {
         
         final Cached annotation = command.getClass().getAnnotation(Cached.class);
         assert annotation != null : String.format("Expected @%s to be present on %s", 
-            Cached.class.getName(), command.getClass());
+            Cached.class.getSimpleName(), command.getClass());
         
         return service.cache(call, command, chain, annotation.policy(), annotation.maxAge(), annotation.maxAgeUnit());
     }

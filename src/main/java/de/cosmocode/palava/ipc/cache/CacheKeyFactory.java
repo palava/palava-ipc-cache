@@ -22,22 +22,17 @@ import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
- * <p> Creates the cache keys for the {@link CacheFilter}
+ * Creates the cache keys for the {@link CacheFilter}
  * for all commands annotated with {@code @Cache}
  * and the policy set to {@link CachePolicy#SMART}.
- * </p>
- * <p> The default implementation takes the class name of the command
- * and the arguments of the call.
- * </p>
  *
  * @author Oliver Lorenz
  */
 public interface CacheKeyFactory {
     
     /**
-     * <p> Creates the cache key for the {@link CacheFilter}.
+     * Creates the cache key for the {@link CacheFilter}.
      * Must not return null.
-     * </p>
      * 
      * @param call the current call
      * @param command the current command
