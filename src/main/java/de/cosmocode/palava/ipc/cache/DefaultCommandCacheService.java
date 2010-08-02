@@ -16,22 +16,18 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import java.io.Serializable;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
+import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.inject.Inject;
+import de.cosmocode.palava.cache.CacheService;
+import de.cosmocode.palava.ipc.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
-import com.google.inject.Inject;
-
-import de.cosmocode.palava.cache.CacheService;
-import de.cosmocode.palava.ipc.Ipc;
-import de.cosmocode.palava.ipc.IpcCall;
-import de.cosmocode.palava.ipc.IpcCallFilterChain;
-import de.cosmocode.palava.ipc.IpcCommand;
-import de.cosmocode.palava.ipc.IpcCommandExecutionException;
+import javax.annotation.Nullable;
+import java.io.Serializable;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Default {@link CommandCacheService} implementation.
@@ -66,13 +62,14 @@ final class DefaultCommandCacheService implements CommandCacheService {
         Preconditions.checkNotNull(chain, "Chain");
         Preconditions.checkNotNull(policy, "Policy");
         
-        final Serializable key = create(call, command, policy);
+        final CacheKey key = create(call, command, policy);
         final Map<String, Object> cached = service.read(key);
         
         if (cached == null) {
             final Map<String, Object> content = chain.filter(call, command);
             LOG.trace("Caching content for {} using policy {}", command, policy);
             service.store(key, content);
+            indexCachedCommand(command.getClass(), key);
             return content;
         } else {
             return cached;
@@ -92,25 +89,76 @@ final class DefaultCommandCacheService implements CommandCacheService {
         if (maxAge == 0) {
             return cache(call, command, chain, policy);
         } else {
-            final Serializable key = create(call, command, policy);
+            final CacheKey key = create(call, command, policy);
             final Map<String, Object> cached = service.read(key);
             
             if (cached == null) {
                 final Map<String, Object> content = chain.filter(call, command);
                 LOG.trace("Caching content for {} using policy {}", command, policy);
                 service.store(key, content, maxAge, maxAgeUnit);
+                indexCachedCommand(command.getClass(), key);
                 return content;
             } else {
                 return cached;
             }
         }
     }
-    
-    private Serializable create(IpcCall call, IpcCommand command, CachePolicy policy) {
+
+    private CacheKey create(IpcCall call, IpcCommand command, CachePolicy policy) {
         if (policy == CachePolicy.SMART && factory != null) {
             return factory.create(call, command);
         } else {
             return policy.create(call, command);
+        }
+    }
+
+    private void indexCachedCommand(Class<? extends IpcCommand> command, CacheKey cacheKey) {
+        IndexKey indexKey = IndexKey.create(command);
+        IndexList indexList = service.read(indexKey);
+
+        if (indexList == null) {
+            indexList = new IndexList();
+        }
+
+        indexList.add(cacheKey);
+        service.store(indexKey, indexList);
+    }
+
+    /**
+     * @param command the IpcCommand definition to invalidate
+     */
+    @Override
+    public void invalidate(Class<? extends IpcCommand> command) {
+        invalidate(command, new Predicate<CacheKey>() {
+            @Override
+            public boolean apply(@Nullable CacheKey input) {
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public void invalidate(Class<? extends IpcCommand> command, Predicate<CacheKey> predicate) {
+        Serializable indexKey = IndexKey.create(command);
+
+        IndexList indexList = service.read(indexKey);
+        service.remove(indexKey);
+
+        if (indexList != null) {
+            LOG.trace("Trying to invalidate {} cached versions of {}...", indexList.size(), command.getClass());
+
+            for (CacheKey cacheKey: indexList) {
+
+                if (predicate.apply(cacheKey)) {
+                    LOG.trace("{} matches predicate; invalidating");
+                    service.remove(cacheKey);
+                } else {
+                    LOG.trace("{} does not match predicate");
+                }
+
+            }
+        } else {
+            LOG.trace("No cached versions of {} found.", command.getClass());
         }
     }
 

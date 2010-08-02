@@ -16,12 +16,7 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import java.io.Serializable;
-
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
-
-import de.cosmocode.palava.ipc.IpcArguments;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcConnection;
@@ -29,9 +24,13 @@ import de.cosmocode.palava.ipc.IpcSession;
 
 /**
  * A CachePolicy decides how to cache an {@link IpcCommand}.
+ *
+ * Since v2.1 {@link CacheKey} keys are required to reflect the
+ * stored commands.
  * 
  * @author Willi Schoenborn
  * @author Oliver Lorenz
+ * @author Tobias Sarnowski
  */
 public enum CachePolicy implements CacheKeyFactory {
 
@@ -70,10 +69,10 @@ public enum CachePolicy implements CacheKeyFactory {
     SMART {
         
         @Override
-        public Serializable create(IpcCall call, IpcCommand command) {
+        public CacheKey create(IpcCall call, IpcCommand command) {
             Preconditions.checkNotNull(call, "Call");
             Preconditions.checkNotNull(command, "Command");
-            return STATIC.create(call, command);
+            return new DefaultCacheKey(command.getClass(), call.getArguments());
         }
         
     },
@@ -102,20 +101,17 @@ public enum CachePolicy implements CacheKeyFactory {
     STATIC {
 
         @Override
-        public Serializable create(IpcCall call, IpcCommand command) {
+        public CacheKey create(IpcCall call, IpcCommand command) {
             Preconditions.checkNotNull(call, "Call");
             Preconditions.checkNotNull(command, "Command");
-            final IpcArguments arguments = call.getArguments();
-            if (arguments.isEmpty()) {
-                return command.getClass();
-            } else {
-                return ImmutableSet.of(command.getClass(), call.getArguments());
-            }
+            Preconditions.checkState(call.getArguments().isEmpty(),
+                    "arguments not allowed for static-cached commands");
+            return new DefaultCacheKey(command.getClass(), call.getArguments());
         }
         
     };
     
     @Override
-    public abstract Serializable create(IpcCall call, IpcCommand command);
+    public abstract CacheKey create(IpcCall call, IpcCommand command);
     
 }

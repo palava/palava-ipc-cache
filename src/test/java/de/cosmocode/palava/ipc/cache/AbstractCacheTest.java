@@ -16,32 +16,19 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
-
-import junit.framework.Assert;
-
-import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.Before;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-
 import de.cosmocode.palava.core.Framework;
 import de.cosmocode.palava.core.Palava;
-import de.cosmocode.palava.ipc.IpcCall;
-import de.cosmocode.palava.ipc.IpcCallFilter;
-import de.cosmocode.palava.ipc.IpcCallFilterChain;
-import de.cosmocode.palava.ipc.IpcCommand;
-import de.cosmocode.palava.ipc.IpcCommandExecutionException;
-import de.cosmocode.palava.ipc.IpcConnection;
-import de.cosmocode.palava.ipc.IpcSession;
+import de.cosmocode.palava.ipc.*;
+import junit.framework.Assert;
+import org.easymock.EasyMock;
+import org.junit.After;
+import org.junit.Before;
+
+import java.util.*;
 
 /**
  * <p> An abstract test that provides some helper methods to call IpcCommands
@@ -67,7 +54,7 @@ public abstract class AbstractCacheTest {
     public static final CacheKeyFactory SCOPE_KEY_FACTORY = new CacheKeyFactory() {
         
         @Override
-        public Serializable create(IpcCall call, IpcCommand command) {
+        public CacheKey create(IpcCall call, IpcCommand command) {
             final ImmutableSet.Builder<Object> setBuilder = ImmutableSet.builder();
             
             // command name and arguments
@@ -90,7 +77,7 @@ public abstract class AbstractCacheTest {
                 if (obj != null) setBuilder.add(obj);
             }
             
-            return setBuilder.build();
+            return new TestCacheKey(command.getClass(), call.getArguments(), setBuilder.build());
         }
     };
     
@@ -430,6 +417,58 @@ public abstract class AbstractCacheTest {
             result.putAll(randomContent());
         }
         
+    }
+
+    private static final class TestCacheKey implements CacheKey {
+
+        private Class<? extends IpcCommand> ipcCommand;
+        private IpcArguments ipcArguments;
+        private Set<Object> objectSet;
+
+        private TestCacheKey(Class<? extends IpcCommand> ipcCommand, IpcArguments ipcArguments, Set<Object> objectSet) {
+            this.ipcCommand = ipcCommand;
+            this.ipcArguments = ipcArguments;
+            this.objectSet = objectSet;
+        }
+
+        @Override
+        public Class<? extends IpcCommand> getIpcCommand() {
+            return ipcCommand;
+        }
+
+        @Override
+        public IpcArguments getIpcArguments() {
+            return ipcArguments;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            final TestCacheKey that = (TestCacheKey) o;
+
+            if (!ipcArguments.equals(that.ipcArguments)) return false;
+            if (!ipcCommand.equals(that.ipcCommand)) return false;
+            if (!objectSet.equals(that.objectSet)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = ipcCommand.hashCode();
+            result = 31 * result + ipcArguments.hashCode();
+            result = 31 * result + objectSet.hashCode();
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "TestCacheKey{" +
+                    "objectSet=" + objectSet +
+                    '}';
+        }
     }
 
 }

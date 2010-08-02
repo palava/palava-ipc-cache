@@ -16,13 +16,14 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
+import com.google.common.base.Predicate;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCallFilterChain;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcCommandExecutionException;
+
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A service which encapsulates caching {@link IpcCommand} results
@@ -31,7 +32,7 @@ import de.cosmocode.palava.ipc.IpcCommandExecutionException;
  * @since 2.0
  * @author Willi Schoenborn
  */
-interface CommandCacheService {
+public interface CommandCacheService {
 
     /**
      * Sets the {@link CacheKeyFactory} of this service.
@@ -73,5 +74,22 @@ interface CommandCacheService {
      */
     Map<String, Object> cache(IpcCall call, IpcCommand command, IpcCallFilterChain chain,
         CachePolicy policy, long maxAge, TimeUnit maxAgeUnit) throws IpcCommandExecutionException;
+
+    /**
+     * Invalidates all cached versions of an {@link IpcCommand}.
+     *
+     * @since 2.1
+     * @param command the IpcCommand definition to invalidate
+     */
+    void invalidate(Class<? extends IpcCommand> command);
+
+    /**
+     * Invalidates cached versions of an {@link IpcCommand} matching a predicate.
+     *
+     * @since 2.1
+     * @param command the IpcCommand definition to invalidate
+     * @param predicate a predicate to only invalidate self-filtered entries
+     */
+    void invalidate(Class<? extends IpcCommand> command, Predicate<CacheKey> predicate);
     
 }

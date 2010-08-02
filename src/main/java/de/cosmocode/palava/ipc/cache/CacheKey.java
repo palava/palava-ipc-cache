@@ -16,28 +16,27 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import de.cosmocode.palava.ipc.IpcCall;
+import de.cosmocode.palava.ipc.IpcArguments;
 import de.cosmocode.palava.ipc.IpcCommand;
 
+import java.io.Serializable;
+
 /**
- * Creates the cache keys for the {@link CacheFilter}
- * for all commands annotated with {@code @Cache}
- * and the policy set to {@link CachePolicy#SMART}.
+ * Represents a cache key.
  *
- * @since 2.1 uses CacheKey instead of Serializable
- * @author Oliver Lorenz
  * @author Tobias Sarnowski
  */
-public interface CacheKeyFactory {
-    
-    /**
-     * Creates the cache key for the {@link CacheFilter}.
-     * Must not return null.
-     * 
-     * @param call the current call
-     * @param command the current command
-     * @return a {@link CacheKey} that uniquely identifies the cache key
-     */
-    CacheKey create(IpcCall call, IpcCommand command);
+public interface CacheKey extends Serializable {
 
+    /**
+     *
+     * @return the cached command type
+     */
+    Class<? extends IpcCommand> getIpcCommand();
+
+    /**
+     *
+     * @return used arguments
+     */
+    IpcArguments getIpcArguments();
 }
