@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @since 1.0
  * @author Willi Schoenborn
+ * @author Tobias Sarnowski
  */
 final class DefaultCommandCacheService implements CommandCacheService {
 
@@ -145,20 +146,20 @@ final class DefaultCommandCacheService implements CommandCacheService {
         service.remove(indexKey);
 
         if (indexList != null) {
-            LOG.trace("Trying to invalidate {} cached versions of {}...", indexList.size(), command.getClass());
+            LOG.trace("Trying to invalidate {} cached versions of {}...", indexList.size(), command);
 
             for (CacheKey cacheKey: indexList) {
 
                 if (predicate.apply(cacheKey)) {
-                    LOG.trace("{} matches predicate; invalidating");
+                    LOG.trace("{} matches predicate; invalidating", cacheKey);
                     service.remove(cacheKey);
                 } else {
-                    LOG.trace("{} does not match predicate");
+                    LOG.trace("{} does not match predicate", cacheKey);
                 }
 
             }
         } else {
-            LOG.trace("No cached versions of {} found.", command.getClass());
+            LOG.trace("No cached versions of {} found.", command);
         }
     }
 
