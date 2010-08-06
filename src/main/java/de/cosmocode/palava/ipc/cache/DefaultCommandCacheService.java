@@ -16,17 +16,18 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import java.io.Serializable;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import de.cosmocode.palava.cache.CacheService;
@@ -56,8 +57,8 @@ final class DefaultCommandCacheService implements CommandCacheService {
         this.service = Preconditions.checkNotNull(service, "Service");
     }
     
-    @Inject(optional = true)
     @Override
+    @Inject(optional = true)
     public void setFactory(CacheKeyFactory factory) {
         this.factory = Preconditions.checkNotNull(factory, "Factory");
     }
@@ -65,6 +66,7 @@ final class DefaultCommandCacheService implements CommandCacheService {
     @Override
     public Map<String, Object> cache(IpcCall call, IpcCommand command, IpcCallFilterChain chain, CachePolicy policy)
         throws IpcCommandExecutionException {
+        
         Preconditions.checkNotNull(call, "Call");
         Preconditions.checkNotNull(command, "Command");
         Preconditions.checkNotNull(chain, "Chain");
@@ -77,7 +79,7 @@ final class DefaultCommandCacheService implements CommandCacheService {
             final Map<String, Object> content = chain.filter(call, command);
             LOG.trace("Caching content for {} using policy {}", command, policy);
             service.store(key, content);
-            indexCachedCommand(command.getClass(), key);
+            updateIndex(command, key);
             return content;
         } else {
             return cached;
@@ -87,6 +89,7 @@ final class DefaultCommandCacheService implements CommandCacheService {
     @Override
     public Map<String, Object> cache(IpcCall call, IpcCommand command, IpcCallFilterChain chain, CachePolicy policy,
         long maxAge, TimeUnit maxAgeUnit) throws IpcCommandExecutionException {
+        
         Preconditions.checkNotNull(call, "Call");
         Preconditions.checkNotNull(command, "Command");
         Preconditions.checkNotNull(chain, "Chain");
@@ -104,7 +107,7 @@ final class DefaultCommandCacheService implements CommandCacheService {
                 final Map<String, Object> content = chain.filter(call, command);
                 LOG.trace("Caching content for {} using policy {}", command, policy);
                 service.store(key, content, maxAge, maxAgeUnit);
-                indexCachedCommand(command.getClass(), key);
+                updateIndex(command, key);
                 return content;
             } else {
                 return cached;
@@ -120,53 +123,57 @@ final class DefaultCommandCacheService implements CommandCacheService {
         }
     }
 
-    private void indexCachedCommand(Class<? extends IpcCommand> command, CacheKey cacheKey) {
-        IndexKey indexKey = IndexKey.create(command);
-        IndexList indexList = service.read(indexKey);
+    private void updateIndex(IpcCommand command, CacheKey cacheKey) {
+        final Class<? extends IpcCommand> type = command.getClass();
+        final IndexKey indexKey = IndexKey.create(type);
+        Set<CacheKey> index = service.read(indexKey);
 
-        if (indexList == null) {
-            indexList = new IndexList();
+        if (index == null) {
+            index = Sets.newHashSet();
         }
 
-        indexList.add(cacheKey);
-        service.store(indexKey, indexList);
+        index.add(cacheKey);
+        service.store(indexKey, index);
     }
 
-    /**
-     * @param command the IpcCommand definition to invalidate
-     */
     @Override
     public void invalidate(Class<? extends IpcCommand> command) {
-        invalidate(command, new Predicate<CacheKey>() {
-            @Override
-            public boolean apply(@Nullable CacheKey input) {
-                return true;
-            }
-        });
+        invalidate(command, Predicates.alwaysTrue());
     }
 
     @Override
-    public void invalidate(Class<? extends IpcCommand> command, Predicate<CacheKey> predicate) {
-        Serializable indexKey = IndexKey.create(command);
+    public void invalidate(Class<? extends IpcCommand> command, Predicate<? super CacheKey> predicate) {
+        Preconditions.checkNotNull(command, "Command");
+        Preconditions.checkNotNull(predicate, "Predicate");
 
-        IndexList indexList = service.read(indexKey);
-        service.remove(indexKey);
-
-        if (indexList != null) {
-            LOG.trace("Trying to invalidate {} cached versions of {}...", indexList.size(), command);
-
-            for (CacheKey cacheKey: indexList) {
-
-                if (predicate.apply(cacheKey)) {
-                    LOG.trace("{} matches predicate; invalidating", cacheKey);
-                    service.remove(cacheKey);
-                } else {
-                    LOG.trace("{} does not match predicate", cacheKey);
-                }
-
-            }
-        } else {
+        final IndexKey indexKey = IndexKey.create(command);
+        final Set<CacheKey> index = service.read(indexKey);
+        
+        if (index == null) {
             LOG.trace("No cached versions of {} found.", command);
+        } else {
+            LOG.trace("Trying to invalidate {} cached versions of {}...", index.size(), command);
+            
+            final Iterator<CacheKey> iterator = index.iterator();
+            
+            while (iterator.hasNext()) {
+                final CacheKey cacheKey = iterator.next();
+                if (predicate.apply(cacheKey)) {
+                    LOG.trace("{} matches {}, invalidating...", cacheKey, predicate);
+                    service.remove(cacheKey);
+                    iterator.remove();
+                } else {
+                    LOG.trace("{} does not match {}", cacheKey, predicate);
+                }
+            }
+            
+            if (index.isEmpty()) {
+                LOG.trace("Removing empty index for {}", command);
+                service.remove(indexKey);
+            } else {
+                LOG.trace("Updating index for {}", command);
+                service.store(indexKey, index);
+            }
         }
     }
 

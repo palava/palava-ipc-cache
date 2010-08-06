@@ -433,8 +433,15 @@ public abstract class AbstractCacheTest {
         
     }
 
+    /**
+     * Test {@link CacheKey} implementation.
+     *
+     * @author Oliver Lorenz
+     */
     private static final class TestCacheKey implements CacheKey {
 
+        private static final long serialVersionUID = -1045402666657209602L;
+        
         private Class<? extends IpcCommand> ipcCommand;
         private IpcArguments ipcArguments;
         private Set<Object> objectSet;
@@ -446,12 +453,12 @@ public abstract class AbstractCacheTest {
         }
 
         @Override
-        public Class<? extends IpcCommand> getIpcCommand() {
+        public Class<? extends IpcCommand> getCommand() {
             return ipcCommand;
         }
 
         @Override
-        public IpcArguments getIpcArguments() {
+        public IpcArguments getArguments() {
             return ipcArguments;
         }
 

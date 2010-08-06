@@ -16,60 +16,59 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import de.cosmocode.palava.ipc.IpcArguments;
 import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
+ * Default {@link CacheKey} implementation.
+ * 
  * @author Tobias Sarnowski
  */
-public final class DefaultCacheKey implements CacheKey {
+final class DefaultCacheKey implements CacheKey {
 
-    private Class<? extends IpcCommand> ipcCommand;
-    private IpcArguments ipcArguments;
+    private static final long serialVersionUID = -4241838764946165645L;
+    
+    private final Class<? extends IpcCommand> command;
+    private final IpcArguments arguments;
 
-    public DefaultCacheKey(Class<? extends IpcCommand> ipcCommand, IpcArguments ipcArguments) {
-        this.ipcCommand = Preconditions.checkNotNull(ipcCommand, "Command");
-        this.ipcArguments = Preconditions.checkNotNull(ipcArguments, "IpcArguments");
+    public DefaultCacheKey(Class<? extends IpcCommand> command, IpcArguments arguments) {
+        this.command = Preconditions.checkNotNull(command, "Command");
+        this.arguments = Preconditions.checkNotNull(arguments, "IpcArguments");
     }
 
     @Override
-    public Class<? extends IpcCommand> getIpcCommand() {
-        return ipcCommand;
+    public Class<? extends IpcCommand> getCommand() {
+        return command;
     }
 
     @Override
-    public IpcArguments getIpcArguments() {
-        return ipcArguments;
+    public IpcArguments getArguments() {
+        return arguments;
     }
 
-
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        final DefaultCacheKey cacheKey = (DefaultCacheKey) o;
-
-        if (!ipcCommand.equals(cacheKey.ipcCommand)) return false;
-        if (!ipcArguments.equals(cacheKey.ipcArguments)) return false;
-
-        return true;
+    public boolean equals(Object that) {
+        if (this == that) {
+            return true;
+        } else if (that instanceof DefaultCacheKey) {
+            final DefaultCacheKey other = DefaultCacheKey.class.cast(that);
+            return Objects.equal(command, other.command) && Objects.equal(arguments, other.arguments);
+        } else {
+            return false;
+        }
     }
 
     @Override
     public int hashCode() {
-        int result = ipcCommand.hashCode();
-        result = 31 * result + ipcArguments.hashCode();
-        return result;
+        return Objects.hashCode(command, arguments);
     }
 
     @Override
     public String toString() {
-        return "DefaultCacheKey{" +
-                "ipcCommand=" + ipcCommand +
-                ", ipcArguments=" + ipcArguments +
-                '}';
+        return "DefaultCacheKey{" + "command=" + command + ", arguments=" + arguments + "}";
     }
+    
 }

@@ -17,46 +17,62 @@
 package de.cosmocode.palava.ipc.cache;
 
 import java.io.Serializable;
+import java.util.Set;
+
+import com.google.common.base.Preconditions;
+import com.google.inject.internal.Objects;
 
 import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
+ * A "unique" key indentifying a {@link Set} of {@link CacheKey}s.
+ * 
  * @author Tobias Sarnowski
  */
 final class IndexKey implements Serializable {
 
+    private static final long serialVersionUID = 4387242225231963138L;
+
     // magic key to differentiate our key from static keys
-    private String KEY = "INDEX_KEY";
+    private static final String KEY = "INDEX_KEY";
 
-    private Class<? extends IpcCommand> command;
-
+    private final Class<? extends IpcCommand> command;
 
     private IndexKey(Class<? extends IpcCommand> command) {
-        this.command = command;
+        this.command = Preconditions.checkNotNull(command, "Command");
     }
-
-    public static IndexKey create(Class<? extends IpcCommand> command) {
-        return new IndexKey(command);
-    }
-
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        final IndexKey indexKey = (IndexKey) o;
-
-        if (KEY != null ? !KEY.equals(indexKey.KEY) : indexKey.KEY != null) return false;
-        if (command != null ? !command.equals(indexKey.command) : indexKey.command != null) return false;
-
-        return true;
+    public boolean equals(Object that) {
+        if (this == that) {
+            return true;
+        } else if (that instanceof IndexKey) {
+            final IndexKey other = IndexKey.class.cast(that);
+            return Objects.equal(command, other.command);
+        } else {
+            return false;
+        }
     }
 
     @Override
     public int hashCode() {
-        int result = KEY != null ? KEY.hashCode() : 0;
-        result = 31 * result + (command != null ? command.hashCode() : 0);
-        return result;
+        return Objects.hashCode(command, KEY);
     }
+
+    /**
+     * Static factory method for {@link IndexKey}s.
+     * 
+     * @since 2.1
+     * @param command the command type
+     * @return a new key
+     */
+    public static IndexKey create(Class<? extends IpcCommand> command) {
+        return new IndexKey(command);
+    }
+    
+    @Override
+    public String toString() {
+        return "IndexKey[" + command.getName() + "]";
+    }
+    
 }

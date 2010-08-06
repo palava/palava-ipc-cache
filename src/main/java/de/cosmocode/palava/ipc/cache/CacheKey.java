@@ -29,14 +29,16 @@ import de.cosmocode.palava.ipc.IpcCommand;
 public interface CacheKey extends Serializable {
 
     /**
+     * Provides the command class used by this cache key.
      *
      * @return the cached command type
      */
-    Class<? extends IpcCommand> getIpcCommand();
+    Class<? extends IpcCommand> getCommand();
 
     /**
+     * Provides the arguments used by this cache key.
      *
      * @return used arguments
      */
-    IpcArguments getIpcArguments();
+    IpcArguments getArguments();
 }

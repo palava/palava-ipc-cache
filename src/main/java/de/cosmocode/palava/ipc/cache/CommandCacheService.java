@@ -81,6 +81,7 @@ public interface CommandCacheService {
      *
      * @since 2.1
      * @param command the IpcCommand definition to invalidate
+     * @throws NullPointerException if command is null
      */
     void invalidate(Class<? extends IpcCommand> command);
 
@@ -90,7 +91,8 @@ public interface CommandCacheService {
      * @since 2.1
      * @param command the IpcCommand definition to invalidate
      * @param predicate a predicate to only invalidate self-filtered entries
+     * @throws NullPointerException if command is null or predicate is null
      */
-    void invalidate(Class<? extends IpcCommand> command, Predicate<CacheKey> predicate);
+    void invalidate(Class<? extends IpcCommand> command, Predicate<? super CacheKey> predicate);
     
 }
