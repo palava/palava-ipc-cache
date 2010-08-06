@@ -16,14 +16,15 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import com.google.common.base.Predicate;
+
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCallFilterChain;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcCommandExecutionException;
-
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A service which encapsulates caching {@link IpcCommand} results

@@ -17,6 +17,7 @@
 package de.cosmocode.palava.ipc.cache;
 
 import com.google.common.base.Preconditions;
+
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcConnection;

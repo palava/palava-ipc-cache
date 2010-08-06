@@ -17,12 +17,12 @@
 package de.cosmocode.palava.ipc.cache;
 
 
-import com.google.common.collect.Sets;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 /**
  * @author Tobias Sarnowski

@@ -16,9 +16,9 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import de.cosmocode.palava.ipc.IpcCommand;
-
 import java.io.Serializable;
+
+import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
  * @author Tobias Sarnowski
