@@ -16,10 +16,9 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import com.google.inject.Binder;
+import com.google.inject.Module;
 import com.google.inject.Singleton;
-
-import de.cosmocode.palava.ipc.Commands;
-import de.cosmocode.palava.ipc.FilterModule;
 import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
@@ -32,25 +31,13 @@ import de.cosmocode.palava.ipc.IpcCommand;
  * 
  * @author Willi Schoenborn
  * @author Oliver Lorenz
+ * @author Tobias Sarnowski
  */
-public final class CacheFilterModule extends FilterModule {
-    
-    /**
-     * <p> Module that enables caching for {@link IpcCommand}s.
-     * Cached commands are identified by an {@code @Cache} annotation.
-     * </p>
-     * <p> Caching can either be done {@linkplain CachePolicy#STATIC static}
-     * or {@linkplain CachePolicy#SMART smart}.
-     * </p>
-     */
-    public CacheFilterModule() {
-        
-    }
+public final class CacheFilterModule implements Module {
 
     @Override
-    protected void configure() {
-        filter(Commands.annotatedWith(Cached.class)).through(CacheFilter.class);
-        bind(CommandCacheService.class).to(DefaultCommandCacheService.class).in(Singleton.class);
+    public void configure(Binder binder) {
+        binder.install(new CacheFilterOnlyModule());
+        binder.bind(CommandCacheService.class).to(DefaultCommandCacheService.class).in(Singleton.class);
     }
-    
 }
