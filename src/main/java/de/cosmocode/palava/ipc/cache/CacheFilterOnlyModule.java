@@ -16,10 +16,11 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import de.cosmocode.palava.ipc.Commands;
-import de.cosmocode.palava.ipc.FilterModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.cosmocode.palava.ipc.Commands;
+import de.cosmocode.palava.ipc.FilterModule;
 
 /**
  * @since 2.2
