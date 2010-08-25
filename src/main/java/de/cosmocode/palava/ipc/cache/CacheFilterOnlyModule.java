@@ -16,21 +16,21 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.cosmocode.palava.ipc.Commands;
 import de.cosmocode.palava.ipc.FilterModule;
 
 /**
+ * Binds {@link CacheFilter} to run before every command annotated
+ * with {@link Cached}.
+ * 
  * @since 2.2
  * @author Tobias Sarnowski
  */
 public final class CacheFilterOnlyModule extends FilterModule {
-    private static final Logger LOG = LoggerFactory.getLogger(CacheFilterOnlyModule.class);
 
     @Override
     protected void configure() {
         filter(Commands.annotatedWith(Cached.class)).through(CacheFilter.class);
     }
+    
 }

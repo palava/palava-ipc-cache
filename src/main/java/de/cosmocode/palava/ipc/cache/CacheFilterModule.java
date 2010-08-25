@@ -23,11 +23,11 @@ import com.google.inject.Singleton;
 import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
- * <p> Module that enables caching for {@link IpcCommand}s.
+ * Module that enables caching for {@link IpcCommand}s.
  * Cached commands are identified by an {@code @Cache} annotation.
- * </p>
- * <p> Caching can either be done {@linkplain CachePolicy#STATIC static}
- * or {@linkplain CachePolicy#SMART smart}.
+ * 
+ * <p>
+ *  Caching can either be done {@linkplain CachePolicy#STATIC static} or {@linkplain CachePolicy#SMART smart}.
  * </p>
  * 
  * @author Willi Schoenborn
