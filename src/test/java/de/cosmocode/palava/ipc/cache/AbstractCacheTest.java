@@ -43,7 +43,6 @@ import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcCommandExecutionException;
 import de.cosmocode.palava.ipc.IpcConnection;
 import de.cosmocode.palava.ipc.IpcSession;
-import edu.umd.cs.findbugs.ba.ca.Call;
 
 /**
  * <p> An abstract test that provides some helper methods to call IpcCommands
