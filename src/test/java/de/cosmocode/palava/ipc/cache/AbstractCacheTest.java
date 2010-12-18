@@ -259,7 +259,7 @@ public abstract class AbstractCacheTest {
     
     /**
      * Mocks up an {@link IpcSession}. It has the given key value pairs set.
-     * @param values a list of values, in the same order as in {@value #SESSION_KEYS}
+     * @param values a list of values, in the same order as in {@link #SESSION_KEYS}
      * @return a mocked up {@link IpcSession}
      */
     protected IpcSession mockSession(final Object... values) {
@@ -280,7 +280,7 @@ public abstract class AbstractCacheTest {
     /**
      * Mocks up an {@link IpcConnection}. It has the given key value pairs set.
      * @param session the session of the connection
-     * @param values a list of values, in the same order as in {@value #CONNECTION_KEYS}
+     * @param values a list of values, in the same order as in {@link #CONNECTION_KEYS}
      * @return a mocked up {@link IpcConnection}
      */
     protected IpcConnection mockConnection(final IpcSession session, final Object... values) {

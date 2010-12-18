@@ -16,6 +16,9 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import com.google.common.base.Predicate;
+import de.cosmocode.palava.ipc.IpcCall;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -26,6 +29,7 @@ import java.util.concurrent.TimeUnit;
  * Annotation to declare a cachable state.
  *
  * @author Willi Schoenborn
+ * @author Oliver Lorenz
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -38,6 +42,34 @@ public @interface Cached {
      * @return the policy
      */
     CachePolicy policy() default CachePolicy.SMART;
+
+    /**
+     * <p>
+     * List of predicate classes that are instantiated by guice.
+     * Each time a call comes in that should be cached it is run through the predicates.
+     * Depending on the filter mode either all, at least one or none of the predicates must apply
+     * to continue caching, otherwise the call is not cached.
+     * </p>
+     * <p>
+     * <strong>Important:</strong> If no filters are specified then no filtering happens
+     * and all calls are cached.
+     * </p>
+     *
+     * @return a list of predicate filter classes, default is an empty list
+     */
+    Class<Predicate<IpcCall>>[] filters() default { };
+
+    /**
+     * The filter mode that determines how many filters must match to continue caching.
+     * Default is {@link FilterMode#ANY}.
+     * <ul>
+     *   <li> ALL: all predicates must apply (i.e. return true on apply(call)) </li>
+     *   <li> ANY: at least one of the predicates must apply (i.e. return true on apply(call) </li>
+     *   <li> NONE: none of the predicates must apply, or: all predicates must return true on apply(call) </li>
+     * </ul>
+     * @return the filter mode in which to apply the filters on the call
+     */
+    FilterMode filterMode() default FilterMode.ANY;
     
     /**
      * <p> The maximum age of a cached command.

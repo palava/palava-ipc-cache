@@ -16,15 +16,16 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
+import com.google.common.annotations.Beta;
 import com.google.common.base.Predicate;
-
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCallFilterChain;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcCommandExecutionException;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A service which encapsulates caching {@link IpcCommand} results
@@ -75,6 +76,33 @@ public interface CommandCacheService {
      */
     Map<String, Object> cache(IpcCall call, IpcCommand command, IpcCallFilterChain chain,
         CachePolicy policy, long maxAge, TimeUnit maxAgeUnit) throws IpcCommandExecutionException;
+
+    /**
+     * Eventually caches the content produced by the given chain or returns an already
+     * cached version.
+     *
+     * @since 2.0
+     * @param call the incoming call
+     * @param command the command being used to execute
+     * @param chain the filter chain
+     * @param policy the cache policy
+     * @param maxAge the max age of the content's cache period
+     * @param maxAgeUnit the unit of maxAge
+     * @param filters the filters that are applied to the call before caching
+     * @param filterMode the filter mode in which the filters are applied
+     * @return the cached content
+     * @throws IpcCommandExecutionException if chain execution failed
+     */
+    @Beta
+    Map<String, Object> cache(
+        IpcCall call,
+        IpcCommand command,
+        IpcCallFilterChain chain,
+        CachePolicy policy,
+        long maxAge,
+        TimeUnit maxAgeUnit,
+        Collection<Predicate<IpcCall>> filters,
+        FilterMode filterMode) throws IpcCommandExecutionException;
 
     /**
      * Invalidates all cached versions of an {@link IpcCommand}.

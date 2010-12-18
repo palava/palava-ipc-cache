@@ -16,10 +16,14 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 import de.cosmocode.palava.ipc.IpcCall;
@@ -38,10 +42,12 @@ import de.cosmocode.palava.ipc.IpcCommandExecutionException;
 final class CacheFilter implements IpcCallFilter {
     
     private final CommandCacheService service;
+    private Injector injector;
     
     @Inject
-    public CacheFilter(CommandCacheService service) {
+    public CacheFilter(CommandCacheService service, Injector injector) {
         this.service = Preconditions.checkNotNull(service, "Service");
+        this.injector = Preconditions.checkNotNull(injector, "Injector");
     }
 
     @Override
@@ -52,8 +58,25 @@ final class CacheFilter implements IpcCallFilter {
         final Cached annotation = command.getClass().getAnnotation(Cached.class);
         assert annotation != null : String.format("Expected @%s to be present on %s", 
             Cached.class.getSimpleName(), command.getClass());
-        
-        return service.cache(call, command, chain, annotation.policy(), annotation.maxAge(), annotation.maxAgeUnit());
+
+        if (annotation.filters().length == 0) {
+            // no filters: just cache it
+            return service.cache(
+                call, command, chain, annotation.policy(),
+                annotation.maxAge(), annotation.maxAgeUnit());
+        } else {
+            // we have filters specified: create them via injector
+            final List<Predicate<IpcCall>> filters = Lists.newArrayListWithCapacity(annotation.filters().length);
+
+            for (final Class<Predicate<IpcCall>> predicateClass : annotation.filters()) {
+                filters.add(injector.getInstance(predicateClass));
+            }
+
+            return service.cache(
+                call, command, chain, annotation.policy(),
+                annotation.maxAge(), annotation.maxAgeUnit(),
+                filters, annotation.filterMode());
+        }
     }
 
 }
