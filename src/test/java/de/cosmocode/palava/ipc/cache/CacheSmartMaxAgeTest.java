@@ -88,15 +88,15 @@ public final class CacheSmartMaxAgeTest extends AbstractCacheTest {
     
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
     @Cached(policy = CachePolicy.SMART, maxAge = MAX_AGE, maxAgeUnit = TimeUnit.SECONDS)
-    private class SmartCacheCommand extends DummyCommand implements IpcCommand { }
+    private class SmartCacheCommand extends DummyCommand { }
 
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
     @Cached(policy = CachePolicy.SMART, maxAge = MAX_AGE, maxAgeUnit = TimeUnit.SECONDS)
-    private class NamedCommand1 extends DummyCommand implements IpcCommand { }
+    private class NamedCommand1 extends DummyCommand { }
 
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
     @Cached(policy = CachePolicy.SMART, maxAge = MAX_AGE, maxAgeUnit = TimeUnit.SECONDS)
-    private class NamedCommand2 extends DummyCommand implements IpcCommand { }
+    private class NamedCommand2 extends DummyCommand { }
     
     
     private void initScopes() {

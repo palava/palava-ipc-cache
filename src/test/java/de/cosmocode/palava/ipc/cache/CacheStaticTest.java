@@ -73,15 +73,15 @@ public final class CacheStaticTest extends AbstractCacheTest {
 
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.STATIC)}. */
     @Cached(policy = CachePolicy.STATIC)
-    private class StaticCacheCommand extends DummyCommand implements IpcCommand { }
+    private class StaticCacheCommand extends DummyCommand { }
 
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.STATIC)}. */
     @Cached(policy = CachePolicy.STATIC)
-    private class NamedCommand1 extends DummyCommand implements IpcCommand { }
+    private class NamedCommand1 extends DummyCommand { }
 
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.STATIC)}. */
     @Cached(policy = CachePolicy.STATIC)
-    private class NamedCommand2 extends DummyCommand implements IpcCommand { }
+    private class NamedCommand2 extends DummyCommand { }
     
     private void initScopes() {
         this.service.setFactory(SCOPE_KEY_FACTORY);

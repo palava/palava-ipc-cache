@@ -73,15 +73,15 @@ public final class CacheSmartTest extends AbstractCacheTest {
     
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
     @Cached(policy = CachePolicy.SMART)
-    private class SmartCacheCommand extends DummyCommand implements IpcCommand { }
+    private class SmartCacheCommand extends DummyCommand { }
 
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
     @Cached(policy = CachePolicy.SMART)
-    private class NamedCommand1 extends DummyCommand implements IpcCommand { }
+    private class NamedCommand1 extends DummyCommand { }
 
     /** A dummy command with the annotation {@code @Cache(cachePolicy = CachePolicy.SMART)}. */
     @Cached(policy = CachePolicy.SMART)
-    private class NamedCommand2 extends DummyCommand implements IpcCommand { }
+    private class NamedCommand2 extends DummyCommand { }
     
     private void initScopes() {
         this.service.setFactory(SCOPE_KEY_FACTORY);
