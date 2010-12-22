@@ -44,7 +44,7 @@ import java.util.concurrent.TimeUnit;
  * @author Tobias Sarnowski
  * @author Oliver Lorenz
  */
-final class DefaultCommandCacheService implements CommandCacheService {
+final class DefaultCommandCacheService extends AbstractCommandCacheService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCommandCacheService.class);
 
@@ -111,34 +111,6 @@ final class DefaultCommandCacheService implements CommandCacheService {
                 return content;
             } else {
                 return cached;
-            }
-        }
-    }
-
-    @Override
-    public Map<String, Object> cache(
-            IpcCall call, IpcCommand command, IpcCallFilterChain chain,
-            CachePolicy policy,
-            long maxAge, TimeUnit maxAgeUnit,
-            Collection<Predicate<IpcCall>> filters, FilterMode filterMode) throws IpcCommandExecutionException {
-
-        Preconditions.checkNotNull(call, "Call");
-        Preconditions.checkNotNull(filters, "Filters");
-        Preconditions.checkNotNull(filterMode, "FilterMode");
-
-        // check if we have filters defined, otherwise fall back on normal behaviour
-        if (filters.isEmpty()) {
-            // no filters specified: don't check them, fallback to old behaviour
-            return cache(call, command, chain, policy, maxAge, maxAgeUnit);
-        } else {
-            if (filterMode.apply(call, filters)) {
-                // filters apply: normal caching
-                return cache(call, command, chain, policy, maxAge, maxAgeUnit);
-            } else {
-                // filters don't apply: normally proceed in call chain
-                Preconditions.checkNotNull(command, "Command");
-                Preconditions.checkNotNull(chain, "Chain");
-                return chain.filter(call, command);
             }
         }
     }
