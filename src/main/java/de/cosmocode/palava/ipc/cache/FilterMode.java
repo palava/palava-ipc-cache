@@ -35,7 +35,7 @@ public enum FilterMode {
         
         @Override
         public boolean apply(IpcCall call, Iterable<Predicate<IpcCall>> filters) {
-            for (final Predicate<IpcCall> filter : filters) {
+            for (Predicate<IpcCall> filter : filters) {
                 if (filter.apply(call)) {
                     continue;
                 } else {
@@ -54,7 +54,7 @@ public enum FilterMode {
         
         @Override
         public boolean apply(IpcCall call, Iterable<Predicate<IpcCall>> filters) {
-            for (final Predicate<IpcCall> filter : filters) {
+            for (Predicate<IpcCall> filter : filters) {
                 if (filter.apply(call)) {
                     return true;
                 }
@@ -71,7 +71,7 @@ public enum FilterMode {
         
         @Override
         public boolean apply(IpcCall call, Iterable<Predicate<IpcCall>> filters) {
-            for (final Predicate<IpcCall> filter : filters) {
+            for (Predicate<IpcCall> filter : filters) {
                 if (filter.apply(call)) {
                     return false;
                 }
