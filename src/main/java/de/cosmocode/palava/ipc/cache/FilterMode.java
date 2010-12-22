@@ -32,23 +32,26 @@ public enum FilterMode {
      * All filters must apply, i.e. every filter must return true on its apply(call) method.
      */
     ALL {
+        
         @Override
         public boolean apply(IpcCall call, Iterable<Predicate<IpcCall>> filters) {
             for (final Predicate<IpcCall> filter : filters) {
-                final boolean filterDoesntApply = !filter.apply(call);
-                if (filterDoesntApply) {
+                if (filter.apply(call)) {
+                    continue;
+                } else {
                     return false;
                 }
             }
-            // no filter did not apply, that means every filter applied: return true
             return true;
         }
+        
     },
 
     /**
      * Any filter must apply, i.e. at least one filter must return true on its apply(call) method.
      */
     ANY {
+        
         @Override
         public boolean apply(IpcCall call, Iterable<Predicate<IpcCall>> filters) {
             for (final Predicate<IpcCall> filter : filters) {
@@ -58,12 +61,14 @@ public enum FilterMode {
             }
             return false;
         }
+        
     },
 
     /**
      * None of the filters must apply, i.e. every filter must return false on its apply(call) method.
      */
     NONE {
+        
         @Override
         public boolean apply(IpcCall call, Iterable<Predicate<IpcCall>> filters) {
             for (final Predicate<IpcCall> filter : filters) {
@@ -73,6 +78,7 @@ public enum FilterMode {
             }
             return true;
         }
+        
     };
 
     /**

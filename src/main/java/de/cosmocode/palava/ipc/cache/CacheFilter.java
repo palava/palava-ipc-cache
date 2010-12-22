@@ -42,7 +42,7 @@ import de.cosmocode.palava.ipc.IpcCommandExecutionException;
 final class CacheFilter implements IpcCallFilter {
     
     private final CommandCacheService service;
-    private Injector injector;
+    private final Injector injector;
     
     @Inject
     public CacheFilter(CommandCacheService service, Injector injector) {

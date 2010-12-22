@@ -117,21 +117,20 @@ final class DefaultCommandCacheService implements CommandCacheService {
 
     @Override
     public Map<String, Object> cache(
-            IpcCall call,
-            IpcCommand command,
-            IpcCallFilterChain chain,
+            IpcCall call, IpcCommand command, IpcCallFilterChain chain,
             CachePolicy policy,
-            long maxAge,
-            TimeUnit maxAgeUnit,
-            Collection<Predicate<IpcCall>> filters,
-            FilterMode filterMode) throws IpcCommandExecutionException {
+            long maxAge, TimeUnit maxAgeUnit,
+            Collection<Predicate<IpcCall>> filters, FilterMode filterMode) throws IpcCommandExecutionException {
 
         Preconditions.checkNotNull(call, "Call");
         Preconditions.checkNotNull(filters, "Filters");
         Preconditions.checkNotNull(filterMode, "FilterMode");
 
         // check if we have filters defined, otherwise fall back on normal behaviour
-        if (filters.size() > 0) {
+        if (filters.isEmpty()) {
+            // no filters specified: don't check them, fallback to old behaviour
+            return cache(call, command, chain, policy, maxAge, maxAgeUnit);
+        } else {
             if (filterMode.apply(call, filters)) {
                 // filters apply: normal caching
                 return cache(call, command, chain, policy, maxAge, maxAgeUnit);
@@ -141,9 +140,6 @@ final class DefaultCommandCacheService implements CommandCacheService {
                 Preconditions.checkNotNull(chain, "Chain");
                 return chain.filter(call, command);
             }
-        } else {
-            // no filters specified: don't check them, fallback to old behaviour
-            return cache(call, command, chain, policy, maxAge, maxAgeUnit);
         }
     }
 
