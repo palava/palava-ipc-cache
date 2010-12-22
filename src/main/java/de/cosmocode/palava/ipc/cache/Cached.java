@@ -16,14 +16,15 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import com.google.common.base.Predicate;
-import de.cosmocode.palava.ipc.IpcCall;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
+
+import com.google.common.base.Predicate;
+
+import de.cosmocode.palava.ipc.IpcCall;
 
 /**
  * Annotation to declare a cachable state.
