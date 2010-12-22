@@ -80,9 +80,8 @@ final class CacheFilter implements IpcCallFilter {
                 }
             }
 
-            return service.cache(
-                call, command, chain, annotation.policy(),
-                annotation.maxAge(), annotation.maxAgeUnit(),
+            return service.cache(call, command, chain, 
+                annotation.policy(), annotation.maxAge(), annotation.maxAgeUnit(),
                 filters, annotation.filterMode());
         }
     }

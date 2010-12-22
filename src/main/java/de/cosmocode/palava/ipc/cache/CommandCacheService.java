@@ -94,15 +94,9 @@ public interface CommandCacheService {
      * @throws IpcCommandExecutionException if chain execution failed
      */
     @Beta
-    Map<String, Object> cache(
-        IpcCall call,
-        IpcCommand command,
-        IpcCallFilterChain chain,
-        CachePolicy policy,
-        long maxAge,
-        TimeUnit maxAgeUnit,
-        Collection<Predicate<IpcCall>> filters,
-        FilterMode filterMode) throws IpcCommandExecutionException;
+    Map<String, Object> cache(IpcCall call, IpcCommand command, IpcCallFilterChain chain,
+        CachePolicy policy, long maxAge, TimeUnit maxAgeUnit,
+        Collection<Predicate<IpcCall>> filters, FilterMode filterMode) throws IpcCommandExecutionException;
 
     /**
      * Invalidates all cached versions of an {@link IpcCommand}.
