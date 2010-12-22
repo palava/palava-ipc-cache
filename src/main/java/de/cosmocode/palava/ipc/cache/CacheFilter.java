@@ -16,6 +16,8 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -66,10 +68,16 @@ final class CacheFilter implements IpcCallFilter {
                 annotation.maxAge(), annotation.maxAgeUnit());
         } else {
             // we have filters specified: create them via injector
-            final List<Predicate<IpcCall>> filters = Lists.newArrayListWithCapacity(annotation.filters().length);
-
-            for (final Class<Predicate<IpcCall>> predicateClass : annotation.filters()) {
-                filters.add(injector.getInstance(predicateClass));
+            final List<Predicate<IpcCall>> filters;
+            
+            if (annotation.filters().length == 0) {
+                filters = Collections.emptyList();
+            } else {
+                filters = Lists.newArrayListWithCapacity(annotation.filters().length);
+                
+                for (Class<Predicate<IpcCall>> predicateClass : annotation.filters()) {
+                    filters.add(injector.getInstance(predicateClass));
+                }
             }
 
             return service.cache(
