@@ -24,6 +24,7 @@ import de.cosmocode.palava.ipc.IpcCall;
 /**
  * FilterMode used by {@link Cached}.
  *
+ * @since 2.3
  * @author Oliver Lorenz
  */
 @Beta
