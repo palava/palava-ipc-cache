@@ -31,7 +31,7 @@ import de.cosmocode.palava.ipc.IpcCommandExecutionException;
 /**
  * Abstract skeleton {@link CommandCacheService} implementation.
  *
- * @since 2.21
+ * @since 2.3
  * @author Willi Schoenborn
  */
 public abstract class AbstractCommandCacheService implements CommandCacheService {
