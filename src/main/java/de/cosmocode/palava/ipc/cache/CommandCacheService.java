@@ -82,7 +82,7 @@ public interface CommandCacheService {
      * Eventually caches the content produced by the given chain or returns an already
      * cached version.
      *
-     * @since 2.0
+     * @since 2.3
      * @param call the incoming call
      * @param command the command being used to execute
      * @param chain the filter chain

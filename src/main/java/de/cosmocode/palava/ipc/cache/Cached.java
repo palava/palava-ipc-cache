@@ -56,6 +56,7 @@ public @interface Cached {
      * and all calls are cached.
      * </p>
      *
+     * @since 2.3
      * @return a list of predicate filter classes, default is an empty list
      */
     Class<Predicate<IpcCall>>[] filters() default { };
@@ -68,6 +69,8 @@ public @interface Cached {
      *   <li> ANY: at least one of the predicates must apply (i.e. return true on apply(call) </li>
      *   <li> NONE: none of the predicates must apply, or: all predicates must return true on apply(call) </li>
      * </ul>
+     *
+     * @since 2.3
      * @return the filter mode in which to apply the filters on the call
      */
     FilterMode filterMode() default FilterMode.ANY;
