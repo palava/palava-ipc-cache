@@ -48,7 +48,7 @@ import de.cosmocode.palava.ipc.IpcSession;
  * <p> An abstract test that provides some helper methods to call IpcCommands
  * and a method that returns random content.
  * </p>
- * <p> This class tests only the cases with different IpcCommands, which should never be cached.
+ * <p> This class tests nothing and provides only helper methods.
  * </p>
  * 
  * @author Oliver Lorenz
@@ -162,7 +162,15 @@ public abstract class AbstractCacheTest {
      * @return a named IpcCommand
      */
     protected abstract IpcCommand getNamedCommand2();
-    
+
+    protected IpcCall getCall1() {
+        return call1;
+    }
+
+    protected IpcCall getCall2() {
+        return call2;
+    }
+
     /**
      * Sets default values for command1 and command2.
      * Sets both of them to {@link #getCommand()}.

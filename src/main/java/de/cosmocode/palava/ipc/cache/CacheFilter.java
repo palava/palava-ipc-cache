@@ -74,7 +74,7 @@ final class CacheFilter implements IpcCallFilter {
             } else {
                 filters = Lists.newArrayListWithCapacity(annotation.filters().length);
                 
-                for (Class<Predicate<IpcCall>> predicateClass : annotation.filters()) {
+                for (Class<? extends Predicate<IpcCall>> predicateClass : annotation.filters()) {
                     filters.add(injector.getInstance(predicateClass));
                 }
             }

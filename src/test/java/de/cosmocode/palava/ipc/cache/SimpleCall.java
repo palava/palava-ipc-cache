@@ -20,11 +20,8 @@
 package de.cosmocode.palava.ipc.cache;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
-import com.google.common.collect.UnmodifiableIterator;
 
 import de.cosmocode.collections.utility.Utility;
 import de.cosmocode.collections.utility.UtilityMap;
@@ -33,6 +30,7 @@ import de.cosmocode.palava.ipc.AbstractIpcArguments;
 import de.cosmocode.palava.ipc.IpcArguments;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcConnection;
+import de.cosmocode.palava.scope.AbstractScopeContext;
 
 /**
  * A simple {@link IpcCall} that saves the given command, request
@@ -41,7 +39,7 @@ import de.cosmocode.palava.ipc.IpcConnection;
  * 
  * @author Oliver Lorenz
  */
-final class SimpleCall implements IpcCall {
+final class SimpleCall extends AbstractScopeContext implements IpcCall {
     
     private final IpcArguments arguments;
     private final IpcConnection request;
@@ -51,8 +49,8 @@ final class SimpleCall implements IpcCall {
      * Saves the given connection as HttpRequest.
      * The Strings are taken as arguments,
      * treating every other argument as the value to the previous argument.
-     * @param request
-     * @param arguments
+     * @param connection the connection this call lives in
+     * @param arguments the ipc arguments for this call, given as: key, value, key, value, ...
      */
     public SimpleCall(final IpcConnection connection, final String... arguments) {
         this.request = connection;
@@ -72,42 +70,10 @@ final class SimpleCall implements IpcCall {
     public IpcConnection getConnection() {
         return request;
     }
-    
-    @Override
-    public <K> boolean contains(K key) {
-        return context.containsKey(key);
-    }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <K, V> V get(K key) {
-        return (V) context.get(key);
-    }
-
-    @Override
-    public <K, V> void putAll(Map<? extends K, ? extends V> map) {
-        context.putAll(map);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <K, V> V remove(K key) {
-        return (V) context.remove(key);
-    }
-
-    @Override
-    public <K, V> void set(K key, V value) {
-        context.put(key, value);
-    }
-
-    @Override
-    public UnmodifiableIterator<Entry<Object, Object>> iterator() {
-        return Iterators.unmodifiableIterator(context.entrySet().iterator());
-    }
-    
-    @Override
-    public void clear() {
-        context.clear();
+    protected Map<Object, Object> context() {
+        return context;
     }
     
     /**

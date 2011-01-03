@@ -59,7 +59,7 @@ public @interface Cached {
      * @since 2.3
      * @return a list of predicate filter classes, default is an empty list
      */
-    Class<Predicate<IpcCall>>[] filters() default { };
+    Class<? extends Predicate<IpcCall>>[] filters() default { };
 
     /**
      * The filter mode that determines how many filters must match to continue caching.
