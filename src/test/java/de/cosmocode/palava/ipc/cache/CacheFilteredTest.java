@@ -66,19 +66,25 @@ public final class CacheFilteredTest extends AbstractCacheTest {
     }
 
     /** A dummy command with a defined filter. */
-    @Cached(filters = {EnglishLocaleCacheFilter.class})
+    @Cached(filters = EnglishLocaleCacheFilter.class)
     private class FilteredCacheCommand extends DummyCommand { }
 
     private void initScopes() {
         this.service.setFactory(SCOPE_KEY_FACTORY);
     }
 
+    /**
+     * Verifies that command gets filtered out if no scope variables are set.
+     */
     @Test
     public void filteredOutNoScope() {
         setupSameArguments();
         assertNotCached();
     }
 
+    /**
+     * Verifies that the command gets filtered out with the wrong language set in call context.
+     */
     @Test
     public void filteredOut() {
         initScopes();
@@ -89,6 +95,9 @@ public final class CacheFilteredTest extends AbstractCacheTest {
         assertNotCached();
     }
 
+    /**
+     * Verifies that the command is normally cached if the right language is set in call context.
+     */
     @Test
     public void passedFilter() {
         initScopes();
