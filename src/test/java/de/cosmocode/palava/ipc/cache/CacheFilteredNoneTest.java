@@ -30,7 +30,6 @@ import java.util.Locale;
 public final class CacheFilteredNoneTest extends AbstractCacheTest {
 
     private CacheFilter filter;
-    private CommandCacheService service;
     private final IpcCommand command;
 
     public CacheFilteredNoneTest() {
@@ -43,7 +42,7 @@ public final class CacheFilteredNoneTest extends AbstractCacheTest {
     @Before
     public void initialize() {
         this.filter = getFramework().getInstance(CacheFilter.class);
-        this.service = getFramework().getInstance(CommandCacheService.class);
+        getFramework().getInstance(CommandCacheService.class).setFactory(SCOPE_KEY_FACTORY);
     }
 
     @Override
@@ -76,10 +75,6 @@ public final class CacheFilteredNoneTest extends AbstractCacheTest {
     )
     private class FilteredCacheCommand extends DummyCommand { }
 
-    private void initScopes() {
-        this.service.setFactory(SCOPE_KEY_FACTORY);
-    }
-
     /**
      * Verifies that command passes the filters if no scope variables or arguments are set.
      */
@@ -94,7 +89,6 @@ public final class CacheFilteredNoneTest extends AbstractCacheTest {
      */
     @Test
     public void passedWrongLocale() {
-        initScopes();
         setupNoArguments();
         setupCall(getCall1(), "call", Locale.GERMAN);
         setupCall(getCall2(), "call", Locale.GERMAN);
@@ -106,7 +100,6 @@ public final class CacheFilteredNoneTest extends AbstractCacheTest {
      */
     @Test
     public void filteredOutLocaleFilter() {
-        initScopes();
         setupNoArguments();
         setupCall(getCall1(), "call", Locale.ENGLISH);
         setupCall(getCall2(), "call", Locale.ENGLISH);
@@ -129,7 +122,6 @@ public final class CacheFilteredNoneTest extends AbstractCacheTest {
      */
     @Test
     public void filteredOutBothFilters() {
-        initScopes();
         setupSameArguments();
         setupCall(getCall1(), "call", Locale.ENGLISH);
         setupCall(getCall2(), "call", Locale.ENGLISH);
