@@ -55,8 +55,8 @@ final class CacheFilter implements IpcCallFilter {
         // get annotations from command
         ComplexCacheAnnotation complexAnnotation = null;
         Annotation cacheAnnotation = null;
-        for (Annotation annotation: command.getClass().getAnnotations()) {
-            ComplexCacheAnnotation cca = annotation.getClass().getAnnotation(ComplexCacheAnnotation.class);
+        for (Annotation annotation : command.getClass().getAnnotations()) {
+            final ComplexCacheAnnotation cca = annotation.getClass().getAnnotation(ComplexCacheAnnotation.class);
             if (cca != null) {
                 Preconditions.checkState(complexAnnotation == null, "Multiple cache annotations found on %s", command.getClass().getName());
                 cacheAnnotation = annotation;
@@ -66,7 +66,7 @@ final class CacheFilter implements IpcCallFilter {
         Preconditions.checkState(complexAnnotation != null, "No cache annotation found on %s", command.getClass().getName());
 
         // already cached?
-        Map<String,Object> result = service.getCachedResult(command, call);
+        Map<String, Object> result = service.getCachedResult(command, call);
         if (result != null) {
             return result;
         }
@@ -75,8 +75,8 @@ final class CacheFilter implements IpcCallFilter {
         result = chain.filter(call, command);
 
         // check if we should cache it
-        CacheAnalyzer cacheAnalyzer = injector.getInstance(complexAnnotation.analyzer());
-        CacheDecision decision = cacheAnalyzer.analyze(cacheAnnotation, call, command);
+        final CacheAnalyzer cacheAnalyzer = injector.getInstance(complexAnnotation.analyzer());
+        final CacheDecision decision = cacheAnalyzer.analyze(cacheAnnotation, call, command);
 
         if (decision.shouldCache()) {
             service.setCachedResult(command, call, decision, result);

@@ -27,7 +27,8 @@ import de.cosmocode.palava.ipc.IpcCommand;
  * To change this template use File | Settings | File Templates.
  */
 public final class DefaultCacheKeyFactory implements CacheKeyFactory {
-    private final static CacheKeyFactory SINGLETON = new DefaultCacheKeyFactory();
+
+    private static final CacheKeyFactory SINGLETON = new DefaultCacheKeyFactory();
 
     public static CacheKeyFactory getFactory() {
         return SINGLETON;

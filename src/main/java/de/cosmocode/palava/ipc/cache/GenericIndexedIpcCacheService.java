@@ -40,7 +40,7 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 class GenericIndexedIpcCacheService extends AbstractIpcCacheService {
-    private final static Logger LOG = LoggerFactory.getLogger(GenericIndexedIpcCacheService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GenericIndexedIpcCacheService.class);
 
     private final CacheService cacheService;
 
@@ -56,11 +56,14 @@ class GenericIndexedIpcCacheService extends AbstractIpcCacheService {
 
     @Override
     public void setCachedResult(IpcCommand command, IpcCall call, CacheDecision decision, Map<String, Object> result) {
-        CacheKey key = createKey(call, command);
+        final CacheKey key = createKey(call, command);
         if (decision.getLifeTime() == 0) {
             cacheService.store(key, result);
+            LOG.trace("Caching content for {} with unlimited time to live", command);
         } else {
             cacheService.store(key, result, decision.getLifeTime(), decision.getLifeTimeUnit());
+            LOG.trace("Caching content for {} with life time", command);
+            LOG.trace("Time to live is {} {}", decision.getLifeTime(), decision.getLifeTimeUnit());
         }
         addToIndex(command, key);
     }

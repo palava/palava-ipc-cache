@@ -31,9 +31,9 @@ import java.util.Map;
  */
 public interface IpcCacheService {
 
-    Map<String,Object> getCachedResult(IpcCommand command, IpcCall call);
+    Map<String, Object> getCachedResult(IpcCommand command, IpcCall call);
 
-    void setCachedResult(IpcCommand command, IpcCall call, CacheDecision decision, Map<String,Object> result);
+    void setCachedResult(IpcCommand command, IpcCall call, CacheDecision decision, Map<String, Object> result);
 
     /**
      * Invalidates all cached versions of an {@link IpcCommand}.

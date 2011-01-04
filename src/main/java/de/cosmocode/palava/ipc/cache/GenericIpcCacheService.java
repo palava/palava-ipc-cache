@@ -36,7 +36,7 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 class GenericIpcCacheService extends AbstractIpcCacheService {
-    private final static Logger LOG = LoggerFactory.getLogger(GenericIpcCacheService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GenericIpcCacheService.class);
 
     private final CacheService cacheService;
 
@@ -54,8 +54,11 @@ class GenericIpcCacheService extends AbstractIpcCacheService {
     public void setCachedResult(IpcCommand command, IpcCall call, CacheDecision decision, Map<String, Object> result) {
         if (decision.getLifeTime() == 0) {
             cacheService.store(createKey(call, command), result);
+            LOG.trace("Caching content for {} with unlimited time to live", command);
         } else {
             cacheService.store(createKey(call, command), result, decision.getLifeTime(), decision.getLifeTimeUnit());
+            LOG.trace("Caching content for {} with life time", command);
+            LOG.trace("Time to live is {} {}", decision.getLifeTime(), decision.getLifeTimeUnit());
         }
     }
 
