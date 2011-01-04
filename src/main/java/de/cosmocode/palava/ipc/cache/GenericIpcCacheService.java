@@ -63,52 +63,8 @@ class GenericIpcCacheService extends AbstractIpcCacheService {
         }
     }
 
-    private void updateIndex(IpcCommand command, CacheKey cacheKey) {
-        final Class<? extends IpcCommand> type = command.getClass();
-        final IndexKey indexKey = IndexKey.create(type);
-        Set<CacheKey> index = cacheService.read(indexKey);
-
-        if (index == null) {
-            index = Sets.newHashSet();
-        }
-
-        index.add(cacheKey);
-        cacheService.store(indexKey, index);
-    }
-
     @Override
     public void invalidate(Class<? extends IpcCommand> command, Predicate<? super CacheKey> predicate) {
-        Preconditions.checkNotNull(command, "Command");
-        Preconditions.checkNotNull(predicate, "Predicate");
-
-        final IndexKey indexKey = IndexKey.create(command);
-        final Set<CacheKey> index = cacheService.read(indexKey);
-
-        if (index == null) {
-            LOG.trace("No cached versions of {} found.", command);
-        } else {
-            LOG.trace("Trying to invalidate {} cached versions of {}...", index.size(), command);
-
-            final Iterator<CacheKey> iterator = index.iterator();
-
-            while (iterator.hasNext()) {
-                final CacheKey cacheKey = iterator.next();
-                if (predicate.apply(cacheKey)) {
-                    LOG.trace("{} matches {}, invalidating...", cacheKey, predicate);
-                    cacheService.remove(cacheKey);
-                    iterator.remove();
-                } else {
-                    LOG.trace("{} does not match {}", cacheKey, predicate);
-                }
-            }
-
-            if (index.isEmpty()) {
-                LOG.trace("Removing empty index for {}", command);
-                cacheService.remove(indexKey);
-            } else {
-                LOG.trace("Updating index for {}", command);
-                cacheService.store(indexKey, index);
-            }
-        }
+        throw new UnsupportedOperationException();
     }
 }
