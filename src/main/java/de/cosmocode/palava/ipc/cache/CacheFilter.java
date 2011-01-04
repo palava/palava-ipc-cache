@@ -16,23 +16,18 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import java.lang.annotation.Annotation;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCallFilter;
 import de.cosmocode.palava.ipc.IpcCallFilterChain;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcCommandExecutionException;
+
+import java.lang.annotation.Annotation;
+import java.util.Map;
 
 /**
  * An {@link IpcCallFilter} which intercepts IpcCommand execution

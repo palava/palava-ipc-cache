@@ -24,7 +24,6 @@ import com.google.inject.Injector;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.cache.AbstractCacheAnalyzer;
-import de.cosmocode.palava.ipc.cache.CacheAnalyzer;
 import de.cosmocode.palava.ipc.cache.CacheDecision;
 
 import java.util.List;

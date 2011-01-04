@@ -16,10 +16,10 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import java.io.Serializable;
-
 import de.cosmocode.palava.ipc.IpcArguments;
 import de.cosmocode.palava.ipc.IpcCommand;
+
+import java.io.Serializable;
 
 /**
  * Represents a cache key.
