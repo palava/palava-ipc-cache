@@ -7,7 +7,9 @@ import org.junit.Test;
 import java.util.Date;
 
 /**
- * <p></p>
+ * <p>
+ * Tests {@link CaseCacheMode#ANY} for {@link CaseCacheAnalyzer}.
+ * </p>
  * <p>
  * Created on: 04.01.11
  * </p>

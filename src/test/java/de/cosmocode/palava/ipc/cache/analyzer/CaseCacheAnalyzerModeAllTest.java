@@ -8,7 +8,7 @@ import java.util.Date;
 
 /**
  * <p>
- * Abstract test class for testing {@link CaseCacheAnalyzer}.
+ * Tests {@link CaseCacheMode#ALL} for {@link CaseCacheAnalyzer}.
  * </p>
  * <p>
  * Created on: 04.01.11
