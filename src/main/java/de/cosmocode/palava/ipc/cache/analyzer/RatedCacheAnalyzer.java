@@ -43,7 +43,7 @@ final class RatedCacheAnalyzer extends AbstractCacheAnalyzer<RatedCached> {
     }
 
     @Override
-    public CacheDecision decide(final RatedCached annotation, IpcCall call, IpcCommand command) {
+    protected CacheDecision decide(final RatedCached annotation, IpcCall call, IpcCommand command) {
 
         final CacheRatingAnalyzer analyzer = injector.getInstance(annotation.analyzer());
         final Rating rating = analyzer.rate(call, command);

@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 final class TimeCacheAnalyzer extends AbstractCacheAnalyzer<TimeCached> {
 
     @Override
-    public CacheDecision decide(final TimeCached annotation, IpcCall call, IpcCommand command) {
+    protected CacheDecision decide(final TimeCached annotation, IpcCall call, IpcCommand command) {
         return new CacheDecision() {
 
             @Override

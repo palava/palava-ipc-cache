@@ -46,7 +46,7 @@ final class CaseCacheAnalyzer extends AbstractCacheAnalyzer<CaseCached> {
     }
 
     @Override
-    public CacheDecision decide(final CaseCached annotation, IpcCall call, IpcCommand command) {
+    protected CacheDecision decide(final CaseCached annotation, IpcCall call, IpcCommand command) {
         final boolean shouldCache;
 
         // filter handling

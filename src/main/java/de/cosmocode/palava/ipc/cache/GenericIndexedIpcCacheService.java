@@ -20,6 +20,7 @@ package de.cosmocode.palava.ipc.cache;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
+import com.google.inject.Inject;
 import de.cosmocode.palava.cache.CacheService;
 import de.cosmocode.palava.ipc.Ipc;
 import de.cosmocode.palava.ipc.IpcCall;
@@ -43,6 +44,7 @@ class GenericIndexedIpcCacheService extends AbstractIpcCacheService {
 
     private final CacheService cacheService;
 
+    @Inject
     GenericIndexedIpcCacheService(@Ipc CacheService cacheService) {
         this.cacheService = cacheService;
     }
