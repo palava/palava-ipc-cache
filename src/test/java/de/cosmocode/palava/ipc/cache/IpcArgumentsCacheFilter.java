@@ -16,25 +16,25 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import com.google.common.base.Predicate;
+import de.cosmocode.palava.ipc.IpcArguments;
+import de.cosmocode.palava.ipc.IpcCall;
+
+import javax.annotation.Nullable;
 
 /**
- * Runs all tests for the command cache module.
- *
- * @author Oliver Lorenz
+ * Simple Filter that checks whether the call has arguments set.
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-    CacheFilteredAnyTest.class,
-    CacheFilteredAllTest.class,
-    CacheFilteredNoneTest.class,
-    CacheStaticTest.class,
-    CacheStaticMaxAgeTest.class,
-    CacheSmartTest.class,
-    CacheSmartMaxAgeTest.class
-})
-public final class CacheTests {
+final class IpcArgumentsCacheFilter implements Predicate<IpcCall> {
+
+    @Override
+    public boolean apply(@Nullable IpcCall input) {
+        if (input == null) {
+            return false;
+        } else {
+            final IpcArguments args = input.getArguments();
+            return args.containsKey("arg1") && args.getString("arg1").equals("value1");
+        }
+    }
 
 }

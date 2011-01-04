@@ -24,15 +24,16 @@ import org.junit.Test;
 import java.util.Locale;
 
 /**
- * Tests the filters of {@link Cached}: {@link de.cosmocode.palava.ipc.cache.Cached#filters()}.
+ * Tests the filters of {@link Cached}: {@link Cached#filters()}
+ * with the filter mode {@link FilterMode#ANY}.
  */
-public final class CacheFilteredTest extends AbstractCacheTest {
+public final class CacheFilteredAnyTest extends AbstractCacheTest {
 
     private CacheFilter filter;
     private CommandCacheService service;
     private final IpcCommand command;
 
-    public CacheFilteredTest() {
+    public CacheFilteredAnyTest() {
         this.command = new FilteredCacheCommand();
     }
 
@@ -57,16 +58,22 @@ public final class CacheFilteredTest extends AbstractCacheTest {
 
     @Override
     protected IpcCommand getNamedCommand1() {
-        return command;
+        throw new UnsupportedOperationException("Unused");
     }
 
     @Override
     protected IpcCommand getNamedCommand2() {
-        return command;
+        throw new UnsupportedOperationException("Unused");
     }
 
     /** A dummy command with a defined filter. */
-    @Cached(filters = EnglishLocaleCacheFilter.class)
+    @Cached(
+        filters = {
+            EnglishLocaleCacheFilter.class,
+            IpcArgumentsCacheFilter.class
+        },
+        filterMode = FilterMode.ANY
+    )
     private class FilteredCacheCommand extends DummyCommand { }
 
     private void initScopes() {
@@ -74,11 +81,11 @@ public final class CacheFilteredTest extends AbstractCacheTest {
     }
 
     /**
-     * Verifies that command gets filtered out if no scope variables are set.
+     * Verifies that command gets filtered out if no scope variables or arguments are set.
      */
     @Test
     public void filteredOutNoScope() {
-        setupSameArguments();
+        setupNoArguments();
         assertNotCached();
     }
 
@@ -86,12 +93,11 @@ public final class CacheFilteredTest extends AbstractCacheTest {
      * Verifies that the command gets filtered out with the wrong language set in call context.
      */
     @Test
-    public void filteredOut() {
+    public void filteredOutWrongLocale() {
         initScopes();
         setupNoArguments();
         setupCall(getCall1(), "call", Locale.GERMAN);
         setupCall(getCall2(), "call", Locale.GERMAN);
-
         assertNotCached();
     }
 
@@ -99,12 +105,33 @@ public final class CacheFilteredTest extends AbstractCacheTest {
      * Verifies that the command is normally cached if the right language is set in call context.
      */
     @Test
-    public void passedFilter() {
+    public void passedLocaleFilter() {
         initScopes();
         setupNoArguments();
         setupCall(getCall1(), "call", Locale.ENGLISH);
         setupCall(getCall2(), "call", Locale.ENGLISH);
+        assertCached();
+    }
 
+    /**
+     * Verifies that the command is normally cached if the right arguments are set.
+     */
+    @Test
+    public void passedArgumentsFilter() {
+        setupSameArguments();
+        assertCached();
+    }
+
+    /**
+     * Verifies that the command is normally cached
+     * if the right language is set in call context and the right arguments are set.
+     */
+    @Test
+    public void passedBothFilter() {
+        initScopes();
+        setupSameArguments();
+        setupCall(getCall1(), "call", Locale.ENGLISH);
+        setupCall(getCall2(), "call", Locale.ENGLISH);
         assertCached();
     }
 
