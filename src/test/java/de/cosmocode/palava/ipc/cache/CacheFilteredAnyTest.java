@@ -127,7 +127,7 @@ public final class CacheFilteredAnyTest extends AbstractCacheTest {
      * if the right language is set in call context and the right arguments are set.
      */
     @Test
-    public void passedBothFilter() {
+    public void passedBothFilters() {
         initScopes();
         setupSameArguments();
         setupCall(getCall1(), "call", Locale.ENGLISH);

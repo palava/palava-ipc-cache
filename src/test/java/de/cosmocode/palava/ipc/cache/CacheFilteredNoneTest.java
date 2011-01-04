@@ -125,10 +125,10 @@ public final class CacheFilteredNoneTest extends AbstractCacheTest {
     /**
      * Verifies that the command is not cached
      * if the right language is set in call context and the right arguments are set,
-     * that means if it passes both filters.
+     * that means if both filters apply to the call.
      */
     @Test
-    public void filteredOutBothFilter() {
+    public void filteredOutBothFilters() {
         initScopes();
         setupSameArguments();
         setupCall(getCall1(), "call", Locale.ENGLISH);
