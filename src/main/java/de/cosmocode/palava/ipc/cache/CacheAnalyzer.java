@@ -16,21 +16,20 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import de.cosmocode.palava.ipc.Commands;
-import de.cosmocode.palava.ipc.FilterModule;
+import de.cosmocode.palava.ipc.IpcCall;
+import de.cosmocode.palava.ipc.IpcCommand;
+
+import java.lang.annotation.Annotation;
 
 /**
- * Binds {@link CacheFilter} to run before every command annotated
- * with {@link Cached}.
- * 
- * @since 2.2
- * @author Tobias Sarnowski
+ * Created by IntelliJ IDEA.
+ * User: olor
+ * Date: 04.01.11
+ * Time: 13:23
+ * To change this template use File | Settings | File Templates.
  */
-public final class CacheFilterOnlyModule extends FilterModule {
+public interface CacheAnalyzer {
 
-    @Override
-    protected void configure() {
-        filter(Commands.annotatedWith(Cached.class)).through(CacheFilter.class);
-    }
-    
+    CacheDecision analyze(Annotation annotation, IpcCall call, IpcCommand command);
+
 }

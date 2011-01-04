@@ -16,26 +16,31 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import de.cosmocode.palava.ipc.IpcCall;
-import de.cosmocode.palava.ipc.IpcCommand;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Creates the cache keys for the {@link IpcCacheService}.
- *
- * @since 2.1 uses CacheKey instead of Serializable
- * @author Oliver Lorenz
- * @author Tobias Sarnowski
+ * Created by IntelliJ IDEA.
+ * User: olor
+ * Date: 04.01.11
+ * Time: 13:20
+ * To change this template use File | Settings | File Templates.
  */
-public interface CacheKeyFactory {
-    
+public interface CacheDecision {
+
+    // TODO Documentation
+
     /**
-     * Creates the cache key for the {@link CacheFilter}.
-     * Must not return null.
-     * 
-     * @param call the current call
-     * @param command the current command
-     * @return a {@link CacheKey} that uniquely identifies the cache key
+     * Whether the command result should be cached or not.
+     * @return true if the result should be cached, false otherwise
      */
-    CacheKey create(IpcCall call, IpcCommand command);
+    boolean shouldCache();
+
+    long getLifeTime();
+
+    TimeUnit getLifeTimeUnit();
+
+    long getIdleTime();
+
+    TimeUnit getIdleTimeUnit();
 
 }

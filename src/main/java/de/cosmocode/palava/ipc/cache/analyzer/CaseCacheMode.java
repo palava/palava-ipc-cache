@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package de.cosmocode.palava.ipc.cache;
+package de.cosmocode.palava.ipc.cache.analyzer;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Predicate;
-
 import de.cosmocode.palava.ipc.IpcCall;
 
 /**
- * FilterMode used by {@link Cached}.
+ * CaseCacheMode used by {@link de.cosmocode.palava.ipc.cache.analyzer.CaseCached}.
  *
  * @since 2.3
  * @author Oliver Lorenz
  */
 @Beta
-public enum FilterMode {
+public enum CaseCacheMode {
 
     /**
      * All filters must apply, i.e. every filter must return true on its apply(call) method.

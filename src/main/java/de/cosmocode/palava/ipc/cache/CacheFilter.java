@@ -16,6 +16,7 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -42,11 +43,11 @@ import de.cosmocode.palava.ipc.IpcCommandExecutionException;
 @Singleton
 final class CacheFilter implements IpcCallFilter {
     
-    private final CommandCacheService service;
+    private final IpcCacheService service;
     private final Injector injector;
     
     @Inject
-    public CacheFilter(CommandCacheService service, Injector injector) {
+    public CacheFilter(IpcCacheService service, Injector injector) {
         this.service = Preconditions.checkNotNull(service, "Service");
         this.injector = Preconditions.checkNotNull(injector, "Injector");
     }
@@ -55,34 +56,38 @@ final class CacheFilter implements IpcCallFilter {
     public Map<String, Object> filter(
         final IpcCall call, final IpcCommand command, final IpcCallFilterChain chain)
         throws IpcCommandExecutionException {
-        
-        final Cached annotation = command.getClass().getAnnotation(Cached.class);
-        assert annotation != null : String.format("Expected @%s to be present on %s", 
-            Cached.class.getSimpleName(), command.getClass());
 
-        if (annotation.filters().length == 0) {
-            // no filters: just cache it
-            return service.cache(
-                call, command, chain, annotation.policy(),
-                annotation.maxAge(), annotation.maxAgeUnit());
-        } else {
-            // we have filters specified: create them via injector
-            final List<Predicate<IpcCall>> filters;
-            
-            if (annotation.filters().length == 0) {
-                filters = Collections.emptyList();
-            } else {
-                filters = Lists.newArrayListWithCapacity(annotation.filters().length);
-                
-                for (Class<? extends Predicate<IpcCall>> predicateClass : annotation.filters()) {
-                    filters.add(injector.getInstance(predicateClass));
-                }
+        // get annotations from command
+        ComplexCacheAnnotation complexAnnotation = null;
+        Annotation cacheAnnotation = null;
+        for (Annotation annotation: command.getClass().getAnnotations()) {
+            ComplexCacheAnnotation cca = annotation.getClass().getAnnotation(ComplexCacheAnnotation.class);
+            if (cca != null) {
+                Preconditions.checkState(complexAnnotation == null, "Multiple cache annotations found on %s", command.getClass().getName());
+                cacheAnnotation = annotation;
+                complexAnnotation = cca;
             }
-
-            return service.cache(call, command, chain, 
-                annotation.policy(), annotation.maxAge(), annotation.maxAgeUnit(),
-                filters, annotation.filterMode());
         }
+        Preconditions.checkState(complexAnnotation != null, "No cache annotation found on %s", command.getClass().getName());
+
+        // already cached?
+        Map<String,Object> result = service.getCachedResult(command, call);
+        if (result != null) {
+            return result;
+        }
+
+        // not cached, get the new result
+        result = chain.filter(call, command);
+
+        // check if we should cache it
+        CacheAnalyzer cacheAnalyzer = injector.getInstance(complexAnnotation.analyzer());
+        CacheDecision decision = cacheAnalyzer.analyze(cacheAnnotation, call, command);
+
+        if (decision.shouldCache()) {
+            service.setCachedResult(command, call, decision, result);
+        }
+
+        return result;
     }
 
 }

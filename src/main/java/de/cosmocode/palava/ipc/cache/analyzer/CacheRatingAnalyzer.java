@@ -14,27 +14,20 @@
  * limitations under the License.
  */
 
-package de.cosmocode.palava.ipc.cache;
+package de.cosmocode.palava.ipc.cache.analyzer;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import de.cosmocode.palava.ipc.IpcCall;
+import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
- * Runs all tests for the command cache module.
- *
- * @author Oliver Lorenz
+ * Created by IntelliJ IDEA.
+ * User: olor
+ * Date: 04.01.11
+ * Time: 14:28
+ * To change this template use File | Settings | File Templates.
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-    CacheFilteredAnyTest.class,
-    CacheFilteredAllTest.class,
-    CacheFilteredNoneTest.class,
-    CacheStaticTest.class,
-    CacheStaticMaxAgeTest.class,
-    CacheSmartTest.class,
-    CacheSmartMaxAgeTest.class
-})
-public final class CacheTests {
+public interface CacheRatingAnalyzer {
+
+    Rating rate(IpcCall call, IpcCommand command);
 
 }

@@ -18,28 +18,18 @@ package de.cosmocode.palava.ipc.cache;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-
-import de.cosmocode.palava.cache.EhCacheServiceModule;
-import de.cosmocode.palava.core.DefaultRegistryModule;
-import de.cosmocode.palava.core.inject.TypeConverterModule;
-import de.cosmocode.palava.core.lifecycle.LifecycleModule;
-import de.cosmocode.palava.ipc.Ipc;
+import com.google.inject.Singleton;
 
 /**
- * Test module.
- *
- * @since 2.0
- * @author Willi Schoenborn
+ * Created by IntelliJ IDEA.
+ * User: olor
+ * Date: 04.01.11
+ * Time: 17:00
+ * To change this template use File | Settings | File Templates.
  */
-public class CommandCacheTestModule implements Module {
-
+public final class GenericIpcCacheServiceModule implements Module {
     @Override
     public void configure(Binder binder) {
-        binder.install(new TypeConverterModule());
-        binder.install(new LifecycleModule());
-        binder.install(new DefaultRegistryModule());
-        binder.install(EhCacheServiceModule.annotatedWith(Ipc.class, "ipc"));
-        binder.install(new CacheFilterModule());
+        binder.bind(IpcCacheService.class).to(GenericIpcCacheService.class).in(Singleton.class);
     }
-
 }

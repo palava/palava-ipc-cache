@@ -16,25 +16,22 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import com.google.common.base.Predicate;
-import de.cosmocode.palava.ipc.IpcArguments;
-import de.cosmocode.palava.ipc.IpcCall;
+import de.cosmocode.palava.ipc.Commands;
+import de.cosmocode.palava.ipc.FilterModule;
 
-import javax.annotation.Nullable;
+import java.lang.annotation.Annotation;
 
 /**
- * Simple Filter that checks whether the call has arguments set.
+ * Created by IntelliJ IDEA.
+ * User: olor
+ * Date: 04.01.11
+ * Time: 14:48
+ * To change this template use File | Settings | File Templates.
  */
-final class IpcArgumentsCacheFilter implements Predicate<IpcCall> {
+public abstract class AbstractCacheModule extends FilterModule {
 
-    @Override
-    public boolean apply(@Nullable IpcCall input) {
-        if (input == null) {
-            return false;
-        } else {
-            final IpcArguments args = input.getArguments();
-            return args.containsKey("arg1") && args.getString("arg1").equals("value1");
-        }
+    public void use(Class<? extends Annotation> annotation) {
+        filter(Commands.annotatedWith(annotation)).through(CacheFilter.class);
     }
 
 }

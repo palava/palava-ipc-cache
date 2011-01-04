@@ -16,29 +16,26 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import com.google.inject.Binder;
-import com.google.inject.Module;
-import com.google.inject.Singleton;
-
+import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 
+import java.lang.annotation.Annotation;
+
 /**
- * Module that enables caching for {@link IpcCommand}s.
- * Cached commands are identified by an {@code @Cache} annotation.
- * 
- * <p>
- *  Caching can either be done {@linkplain CachePolicy#STATIC static} or {@linkplain CachePolicy#SMART smart}.
- * </p>
- * 
- * @author Willi Schoenborn
- * @author Oliver Lorenz
- * @author Tobias Sarnowski
+ * Created by IntelliJ IDEA.
+ * User: olor
+ * Date: 04.01.11
+ * Time: 16:17
+ * To change this template use File | Settings | File Templates.
  */
-public final class CacheFilterModule implements Module {
+public abstract class AbstractCacheAnalyzer<T extends Annotation> implements CacheAnalyzer {
+
+    protected abstract CacheDecision decide(T annotation, IpcCall call, IpcCommand command);
 
     @Override
-    public void configure(Binder binder) {
-        binder.install(new CacheFilterOnlyModule());
-        binder.bind(CommandCacheService.class).to(DefaultCommandCacheService.class).in(Singleton.class);
+    @SuppressWarnings("unchecked")
+    public CacheDecision analyze(Annotation annotation, IpcCall call, IpcCommand command) {
+        return decide((T) annotation, call, command);
     }
+
 }

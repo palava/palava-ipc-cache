@@ -16,26 +16,23 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import de.cosmocode.palava.ipc.IpcCall;
-import de.cosmocode.palava.ipc.IpcCommand;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Creates the cache keys for the {@link IpcCacheService}.
- *
- * @since 2.1 uses CacheKey instead of Serializable
- * @author Oliver Lorenz
- * @author Tobias Sarnowski
+ * Created by IntelliJ IDEA.
+ * User: olor
+ * Date: 04.01.11
+ * Time: 13:35
+ * To change this template use File | Settings | File Templates.
  */
-public interface CacheKeyFactory {
-    
-    /**
-     * Creates the cache key for the {@link CacheFilter}.
-     * Must not return null.
-     * 
-     * @param call the current call
-     * @param command the current command
-     * @return a {@link CacheKey} that uniquely identifies the cache key
-     */
-    CacheKey create(IpcCall call, IpcCommand command);
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.ANNOTATION_TYPE)
+public @interface ComplexCacheAnnotation {
+
+    Class<? extends CacheAnalyzer> analyzer();
 
 }

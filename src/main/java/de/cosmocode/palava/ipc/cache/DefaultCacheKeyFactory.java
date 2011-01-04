@@ -16,25 +16,28 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import com.google.common.base.Predicate;
 import de.cosmocode.palava.ipc.IpcCall;
-
-import javax.annotation.Nullable;
-import java.util.Locale;
+import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
- * A call predicate that returns true on apply if the call has the english locale set
- * in any of its scopes (call, connection or session).
+ * Created by IntelliJ IDEA.
+ * User: olor
+ * Date: 04.01.11
+ * Time: 16:40
+ * To change this template use File | Settings | File Templates.
  */
-final class EnglishLocaleCacheFilter implements Predicate<IpcCall> {
+public final class DefaultCacheKeyFactory implements CacheKeyFactory {
+    private final static CacheKeyFactory SINGLETON = new DefaultCacheKeyFactory();
 
-    @Override
-    public boolean apply(@Nullable IpcCall input) {
-        // tests whether any of: call, connection or session has the language "english" set
-        return input != null &&
-            (input.get("lang") == Locale.ENGLISH ||
-            input.getConnection().get("lang") == Locale.ENGLISH ||
-            input.getConnection().getSession().get("lang") == Locale.ENGLISH);
+    public static CacheKeyFactory getFactory() {
+        return SINGLETON;
     }
 
+    private DefaultCacheKeyFactory() {
+    }
+
+    @Override
+    public CacheKey create(IpcCall call, IpcCommand command) {
+        return new DefaultCacheKey(command.getClass(), call.getArguments());
+    }
 }
