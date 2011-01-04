@@ -50,7 +50,7 @@ public abstract class AbstractCaseCacheAnalyzerModeTest implements UnitProvider<
     }
 
     @Before
-    public void createAnnotationMock() {
+    public void mockAnnotation() {
         annotation = EasyMock.createMock(CaseCached.class);
 
         EasyMock.expect(annotation.filterMode()).andReturn(mode()).atLeastOnce();

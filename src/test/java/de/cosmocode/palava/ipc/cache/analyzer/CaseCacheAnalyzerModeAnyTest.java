@@ -30,7 +30,7 @@ public class CaseCacheAnalyzerModeAnyTest extends AbstractCaseCacheAnalyzerModeT
 
     @Test
     public void accountIdMatches() {
-        arguments.put("date", new Date());
+        arguments.put("account_id", 5);
         final CacheDecision decision = unit().analyze(annotation, call, command);
         Assert.assertTrue(decision.shouldCache());
     }
