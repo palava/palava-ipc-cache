@@ -24,11 +24,10 @@ import java.lang.annotation.Annotation;
 /**
  * Provides a "type-safe" implementation to analyze the command call with your cache annotation.
  *
- * @param <T> the type of the specific annotation
- *
  * @author Tobias Sarnowski
  * @author Oliver Lorenz
  * @since 3.0
+ * @param <T> generic annotation type
  */
 public abstract class AbstractCacheAnalyzer<T extends Annotation> implements CacheAnalyzer {
 
