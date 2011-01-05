@@ -22,14 +22,27 @@ import de.cosmocode.palava.ipc.IpcCommand;
 import java.lang.annotation.Annotation;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olor
- * Date: 04.01.11
- * Time: 13:23
- * To change this template use File | Settings | File Templates.
+ * Defines the implementation of an analyzer which calculates a decision about the cache behaviour
+ * of the given command call.
+ *
+ * @author Tobias Sarnowski
+ * @author Oliver Lorenz
+ * @since 3.0
+ * @see AbstractCacheAnalyzer
+ * @see CacheDecision
+ * @see ComplexCacheAnnotation
  */
 public interface CacheAnalyzer {
 
+    /**
+     * Will be called to get a decision about how to handle a result. The method will get
+     * cache annotation which triggered the analyzer.
+     *
+     * @param annotation the triggering cache annotation (your own)
+     * @param call the IPC call
+     * @param command the called command
+     * @return the calculated decision
+     */
     CacheDecision analyze(Annotation annotation, IpcCall call, IpcCommand command);
 
 }

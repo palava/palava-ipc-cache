@@ -22,14 +22,20 @@ import de.cosmocode.palava.ipc.FilterModule;
 import java.lang.annotation.Annotation;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olor
- * Date: 04.01.11
- * Time: 14:48
- * To change this template use File | Settings | File Templates.
+ * Provides {@link AbstractCacheModule#use(Class)} to register a cache annotation.
+ *
+ * @author Tobias Sarnowski
+ * @author Oliver Lorenz
+ * @since 3.0
+ * @see ComplexCacheAnnotation
  */
 public abstract class AbstractCacheModule extends FilterModule {
 
+    /**
+     * Registers the given annotation with the cache filter.
+     *
+     * @param annotation the cache annotation
+     */
     public void use(Class<? extends Annotation> annotation) {
         filter(Commands.annotatedWith(annotation)).through(CacheFilter.class);
     }

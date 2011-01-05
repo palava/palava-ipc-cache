@@ -29,11 +29,14 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olor
- * Date: 04.01.11
- * Time: 16:37
- * To change this template use File | Settings | File Templates.
+ * Binds an {@link IpcCacheService} to an implementation which uses a {@link de.cosmocode.palava.cache.CacheService}
+ * and requires the {@link de.cosmocode.palava.cache.CacheService} to be bound annotated with
+ * {@link de.cosmocode.palava.ipc.Ipc}.
+ *
+ * @see GenericIpcCacheServiceModule
+ * @author Tobias Sarnowski
+ * @author Oliver Lorenz
+ * @since 3.0
  */
 class GenericIpcCacheService extends AbstractIpcCacheService {
     private static final Logger LOG = LoggerFactory.getLogger(GenericIpcCacheService.class);

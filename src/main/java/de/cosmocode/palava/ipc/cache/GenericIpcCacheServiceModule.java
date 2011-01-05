@@ -21,11 +21,18 @@ import com.google.inject.Module;
 import com.google.inject.Singleton;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olor
- * Date: 04.01.11
- * Time: 17:00
- * To change this template use File | Settings | File Templates.
+ * Binds an {@link IpcCacheService} to an implementation which uses a {@link de.cosmocode.palava.cache.CacheService}
+ * and requires the {@link de.cosmocode.palava.cache.CacheService} to be bound annotated with
+ * {@link de.cosmocode.palava.ipc.Ipc}.
+ *
+ * <p>
+ * <strong>Note:</strong> The resulting {@link IpcCacheService} does not support {@link IpcCacheService#invalidate(Class)}
+ * and {@link IpcCacheService#invalidate(Class, com.google.common.base.Predicate)}.
+ * </p>
+ *
+ * @author Tobias Sarnowski
+ * @author Oliver Lorenz
+ * @since 3.0
  */
 public final class GenericIpcCacheServiceModule implements Module {
     @Override

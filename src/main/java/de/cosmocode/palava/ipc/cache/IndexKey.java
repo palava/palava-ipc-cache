@@ -27,6 +27,7 @@ import java.util.Set;
  * A "unique" key indentifying a {@link Set} of {@link CacheKey}s.
  * 
  * @author Tobias Sarnowski
+ * @since 2.1
  */
 final class IndexKey implements Serializable {
 

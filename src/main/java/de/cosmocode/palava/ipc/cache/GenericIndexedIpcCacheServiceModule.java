@@ -21,7 +21,19 @@ import com.google.inject.Module;
 import com.google.inject.Singleton;
 
 /**
- * <strong>THIS IS NOT FOR PRODUCTION ENVIRONMENTS</strong>
+ * Binds an {@link IpcCacheService} to an implementation which uses a {@link de.cosmocode.palava.cache.CacheService}
+ * and requires the {@link de.cosmocode.palava.cache.CacheService} to be bound annotated with
+ * {@link de.cosmocode.palava.ipc.Ipc}.
+ *
+ * <p>
+ * <strong>Note:</strong> The resulting {@link IpcCacheService} does support {@link IpcCacheService#invalidate(Class)}
+ * and {@link IpcCacheService#invalidate(Class, com.google.common.base.Predicate)} <strong>but is not recommended for
+ * production use!</strong>
+ * </p>
+ *
+ * @author Tobias Sarnowski
+ * @author Oliver Lorenz
+ * @since 3.0
  */
 public final class GenericIndexedIpcCacheServiceModule implements Module {
     @Override
