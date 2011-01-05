@@ -30,9 +30,9 @@ import de.cosmocode.palava.ipc.IpcCommand;
  * @author Oliver Lorenz
  * @since 3.0
  */
-public abstract class AbstractIpcCacheService implements IpcCacheService {
+public abstract class AbstractIpcCacheService implements IpcCacheService, CacheKeyFactory {
 
-    private CacheKeyFactory cacheKeyFactory = DefaultCacheKeyFactory.getFactory();
+    private CacheKeyFactory cacheKeyFactory = DefaultCacheKeyFactory.INSTANCE;
 
     /**
      * The configured {@link CacheKeyFactory} for your service.
@@ -53,7 +53,8 @@ public abstract class AbstractIpcCacheService implements IpcCacheService {
         this.cacheKeyFactory = cacheKeyFactory;
     }
 
-    public CacheKey createKey(IpcCall call, IpcCommand command) {
+    @Override
+    public CacheKey create(IpcCall call, IpcCommand command) {
         return getCacheKeyFactory().create(call, command);
     }
 
