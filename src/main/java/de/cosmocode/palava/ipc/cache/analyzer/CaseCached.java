@@ -25,11 +25,25 @@ import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olor
- * Date: 04.01.11
- * Time: 14:57
- * To change this template use File | Settings | File Templates.
+ * <p>
+ * Caches the results only if it passes a predefined set of predicates, which must implement {@link CachePredicate}.
+ * The mode in which these predicates are combined is defined by {@link #mode()}.
+ * </p>
+ * <p>
+ * Example for a CachePredicate:
+ * <pre>
+ * final class HasDatePredicate implements CachePredicate {
+ *     &#64;Override
+ *     public boolean apply(IpcCall call, IpcCommand command) {
+ *         return call.getArguments().get("date") instanceof Date;
+ *     }
+ * }
+ * </pre>
+ * </p>
+ *
+ * @since 3.0
+ * @author Oliver Lorenz
+ * @author Tobias Sarnowski
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -39,40 +53,80 @@ public @interface CaseCached {
     /**
      * <p>
      * List of predicate classes that are instantiated by guice.
-     * Each time a call comes in that should be cached it is run through the predicates.
-     * Depending on the filter mode either all, at least one or none of the predicates must apply
+     * Each time a command is called that is annotated with this annotation
+     * then that command and its call are run through the predicates.
+     * Depending on the {@link #mode()} either all, at least one or none of the predicates must apply
      * to continue caching, otherwise the call is not cached.
      * </p>
      * <p>
-     * <strong>Important:</strong> If no filters are specified then no filtering happens
-     * and all calls are cached.
+     * <strong>Important:</strong> If no predicates are specified (i.e. predicates is an empty array),
+     * then a RuntimeException will be thrown.
+     * If you want to have it always cached then use {@link TimeCached} instead.
      * </p>
      *
-     * @since 2.3
-     * @return a list of predicate filter classes, default is an empty list
+     * @since 3.0
+     * @return a list of predicate classes
      */
-    Class<? extends CachePredicate>[] filters() default { };
+    Class<? extends CachePredicate>[] predicates();
 
     /**
-     * The filter mode that determines how many filters must match to continue caching.
-     * Default is {@link de.cosmocode.palava.ipc.cache.analyzer.CaseCacheMode#ANY}.
+     * <p>
+     * The mode that determines how many predicates must match to continue caching.
+     * Default is {@link CaseCacheMode#ANY}.
+     * </p>
+     * <p>
+     * A predicate applies if it returns true on its
+     * {@link CachePredicate#apply(de.cosmocode.palava.ipc.IpcCall, de.cosmocode.palava.ipc.IpcCommand)}
+     * method.
+     * </p>
+     * <p>
+     * Possible modes:
+     * </p>
      * <ul>
-     *   <li> ALL: all predicates must apply (i.e. return true on apply(call)) </li>
-     *   <li> ANY: at least one of the predicates must apply (i.e. return true on apply(call) </li>
-     *   <li> NONE: none of the predicates must apply, or: all predicates must return true on apply(call) </li>
+     *   <li> ALL: all predicates must apply </li>
+     *   <li> ANY: at least one of the predicates must apply </li>
+     *   <li> NONE: none of the predicates must apply </li>
      * </ul>
      *
-     * @since 2.3
-     * @return the filter mode in which to apply the filters on the call
+     * @since 3.0
+     * @return the filter mode in which to apply the predicates on the call
      */
-    CaseCacheMode filterMode() default CaseCacheMode.ANY;
+    CaseCacheMode mode() default CaseCacheMode.ANY;
 
+    /**
+     * The amount of maximum lifetime.
+     *
+     * @since 3.0
+     * @return lifetime amount
+     * @see de.cosmocode.palava.ipc.cache.CacheDecision#getLifeTime()
+     */
     long lifeTime() default 0;
 
+    /**
+     * The unit of maximum lifetime.
+     *
+     * @since 3.0
+     * @return lifetime unit
+     * @see de.cosmocode.palava.ipc.cache.CacheDecision#getLifeTimeUnit()
+     */
     TimeUnit lifeTimeUnit() default TimeUnit.MINUTES;
 
+    /**
+     * The amount of maximum idletime.
+     *
+     * @since 3.0
+     * @return idletime amount
+     * @see de.cosmocode.palava.ipc.cache.CacheDecision#getIdleTime()
+     */
     long idleTime() default 0;
 
+    /**
+     * The unit of maximum idletime.
+     *
+     * @since 3.0
+     * @return idletime unit
+     * @see de.cosmocode.palava.ipc.cache.CacheDecision#getIdleTimeUnit()
+     */
     TimeUnit idleTimeUnit() default TimeUnit.MINUTES;
 
 }

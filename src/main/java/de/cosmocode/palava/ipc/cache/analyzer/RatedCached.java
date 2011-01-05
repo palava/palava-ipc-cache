@@ -68,8 +68,24 @@ public @interface RatedCached {
 
     TimeUnit idleTimeUnit() default TimeUnit.MINUTES;
 
+    /**
+     * <p>
+     * The rating target specifies which of the two gets rated: life time or idle time.
+     * </p>
+     * <p>
+     * If the target is set to {@link RatingTarget#LIFE_TIME}
+     * then the life time is rated by the analyzer while the idle time remains the same.
+     * If the target is set to {@link RatingTarget#IDLE_TIME},
+     * then the life time remains the same and the idle time is rated by the analyzer.
+     * </p>
+     *
+     * @return the rating target, default is {@link RatingTarget#LIFE_TIME}
+     */
     RatingTarget target() default RatedCached.RatingTarget.LIFE_TIME;
 
+    /**
+     * The rating target enum for {@link RatedCached#target()}.
+     */
     enum RatingTarget {
         LIFE_TIME,
         IDLE_TIME

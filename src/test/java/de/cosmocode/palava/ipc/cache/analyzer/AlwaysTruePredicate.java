@@ -18,23 +18,24 @@ package de.cosmocode.palava.ipc.cache.analyzer;
 
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
-import de.cosmocode.palava.ipc.cache.AbstractCacheAnalyzer;
-import de.cosmocode.palava.ipc.cache.CacheDecision;
+
+import javax.annotation.Nonnull;
 
 /**
- * {@link de.cosmocode.palava.ipc.cache.CacheAnalyzer} implementation for {@link TimeCached}.
+ * <p>
+ * A predicate that always returns true in its apply method.
+ * </p>
+ * <p>
+ * Created on: 05.01.11
+ * </p>
  *
- * @since 3.0
- * @author Tobias Sarnowski
  * @author Oliver Lorenz
- * @see TimeCached
- * @see TimeCachedModule
  */
-final class TimeCacheAnalyzer extends AbstractCacheAnalyzer<TimeCached> {
+final class AlwaysTruePredicate implements CachePredicate {
 
     @Override
-    protected CacheDecision decide(final TimeCached annotation, IpcCall call, IpcCommand command) {
-        return new TimeCacheDecision(annotation);
+    public boolean apply(@Nonnull IpcCall call, @Nonnull IpcCommand command) {
+        return true;
     }
 
 }

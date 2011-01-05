@@ -32,7 +32,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
- * Simple test for {@link de.cosmocode.palava.ipc.cache.analyzer.TimeCacheAnalyzer}.
+ * Simple test for {@link de.cosmocode.palava.ipc.cache.analyzer.CaseCacheAnalyzer}
+ * that only tests the time related methods.
  * </p>
  * <p>
  * Created on: 04.01.11
@@ -41,10 +42,11 @@ import java.util.concurrent.TimeUnit;
  * @since 3.0
  * @author Oliver Lorenz
  */
-public class CaseCacheAnalyzerNoFiltersTest implements UnitProvider<CaseCacheAnalyzer> {
+public class CaseCacheAnalyzerTimeTest implements UnitProvider<CaseCacheAnalyzer> {
 
     @SuppressWarnings("unchecked")
-    private static final Class<? extends CachePredicate>[] EMPTY_FILTERS = new Class[] {};
+    private static final Class<? extends CachePredicate>[] ALWAYS_TRUE_FILTERS =
+        new Class[] {AlwaysTruePredicate.class};
 
     private final Framework framework = Palava.newFramework();
 
@@ -72,8 +74,8 @@ public class CaseCacheAnalyzerNoFiltersTest implements UnitProvider<CaseCacheAna
 
         // annotation
         final CaseCached annotation = EasyMock.createMock(CaseCached.class);
-        EasyMock.expect(annotation.filterMode()).andStubReturn(CaseCacheMode.ANY);
-        EasyMock.expect(annotation.filters()).andStubReturn(EMPTY_FILTERS);
+        EasyMock.expect(annotation.mode()).andStubReturn(CaseCacheMode.ANY);
+        EasyMock.expect(annotation.predicates()).andStubReturn(ALWAYS_TRUE_FILTERS);
 
         EasyMock.expect(annotation.lifeTime()).andReturn(2L);
         EasyMock.expect(annotation.lifeTimeUnit()).andReturn(TimeUnit.HOURS);

@@ -38,7 +38,7 @@ import de.cosmocode.palava.ipc.IpcCommand;
 public enum CaseCacheMode {
 
     /**
-     * All filters must apply, i.e. every {@link CachePredicate} must return true on its apply method.
+     * All predicates must apply, i.e. every {@link CachePredicate} must return true on its apply method.
      */
     ALL {
 
@@ -74,7 +74,7 @@ public enum CaseCacheMode {
     },
 
     /**
-     * None of the filters must apply, i.e. every {@link CachePredicate} must return false on its apply method.
+     * None of the predicates must apply, i.e. every {@link CachePredicate} must return false on its apply method.
      */
     NONE {
 
@@ -91,12 +91,12 @@ public enum CaseCacheMode {
     };
 
     /**
-     * Returns true if the filters apply to the call in this filter mode.
+     * Returns true if the predicates apply to the call in this filter mode.
      *
-     * @param filters the filters to apply
-     * @param call the call to apply each of the filters on
-     * @param command the command to apply each of the filters on
-     * @return true if this mode applies to the filters, false otherwise
+     * @param filters the predicates to apply
+     * @param call the call to apply each of the predicates on
+     * @param command the command to apply each of the predicates on
+     * @return true if this mode applies to the predicates, false otherwise
      */
     public abstract boolean apply(Iterable<CachePredicate> filters, IpcCall call, IpcCommand command);
 

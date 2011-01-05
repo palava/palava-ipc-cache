@@ -56,7 +56,7 @@ public abstract class AbstractCaseCacheAnalyzerModeTest implements UnitProvider<
 
     /**
      * Returns the mode that is to be tested.
-     * @return the mode to be tested, returned on annotation.filterMode()
+     * @return the mode to be tested, returned by {@link CaseCached#mode()}
      */
     protected abstract CaseCacheMode mode();
 
@@ -69,8 +69,8 @@ public abstract class AbstractCaseCacheAnalyzerModeTest implements UnitProvider<
     public void mockAnnotation() {
         annotation = EasyMock.createMock(CaseCached.class);
 
-        EasyMock.expect(annotation.filterMode()).andReturn(mode()).atLeastOnce();
-        EasyMock.expect(annotation.filters()).andReturn(ALL_FILTERS).atLeastOnce();
+        EasyMock.expect(annotation.mode()).andReturn(mode()).atLeastOnce();
+        EasyMock.expect(annotation.predicates()).andReturn(ALL_FILTERS).atLeastOnce();
 
         EasyMock.expect(annotation.lifeTime()).andStubReturn(0L);
         EasyMock.expect(annotation.lifeTimeUnit()).andStubReturn(TimeUnit.MINUTES);
