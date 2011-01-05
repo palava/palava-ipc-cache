@@ -26,7 +26,6 @@ import de.cosmocode.palava.ipc.cache.AbstractCacheAnalyzer;
 import de.cosmocode.palava.ipc.cache.CacheDecision;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * {@link de.cosmocode.palava.ipc.cache.CacheAnalyzer} implementation for {@link CaseCached}.
@@ -46,51 +45,18 @@ final class CaseCacheAnalyzer extends AbstractCacheAnalyzer<CaseCached> {
 
     @Override
     protected CacheDecision decide(final CaseCached annotation, IpcCall call, IpcCommand command) {
-        final boolean shouldCache;
 
         // filter handling
-        if (annotation.filters().length == 0) {
-            // no filters: should always cache
-            shouldCache = true;
-        } else {
-            // we have filters specified: create them via injector
-            final List<CachePredicate> filters = Lists.newArrayListWithCapacity(annotation.filters().length);
+        // we have filters specified: create them via injector
+        final List<CachePredicate> filters = Lists.newArrayListWithCapacity(annotation.filters().length);
 
-            for (Class<? extends CachePredicate> predicateClass : annotation.filters()) {
-                filters.add(injector.getInstance(predicateClass));
-            }
-
-            shouldCache = annotation.filterMode().apply(filters, call, command);
+        for (Class<? extends CachePredicate> predicateClass : annotation.filters()) {
+            filters.add(injector.getInstance(predicateClass));
         }
 
-        return new CacheDecision() {
+        final boolean shouldCache = annotation.filterMode().apply(filters, call, command);
 
-            @Override
-            public boolean shouldCache() {
-                return shouldCache;
-            }
-
-            @Override
-            public long getLifeTime() {
-                return annotation.lifeTime();
-            }
-
-            @Override
-            public TimeUnit getLifeTimeUnit() {
-                return annotation.lifeTimeUnit();
-            }
-
-            @Override
-            public long getIdleTime() {
-                return annotation.idleTime();
-            }
-
-            @Override
-            public TimeUnit getIdleTimeUnit() {
-                return annotation.idleTimeUnit();
-            }
-
-        };
+        return new CaseCacheDecision(shouldCache, annotation);
     }
 
 }
