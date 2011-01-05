@@ -16,8 +16,6 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
-import com.google.common.base.Predicate;
-import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.cache.ComplexCacheAnnotation;
 
 import java.lang.annotation.ElementType;
@@ -53,7 +51,7 @@ public @interface CaseCached {
      * @since 2.3
      * @return a list of predicate filter classes, default is an empty list
      */
-    Class<? extends Predicate<IpcCall>>[] filters() default { };
+    Class<? extends CachePredicate>[] filters() default { };
 
     /**
      * The filter mode that determines how many filters must match to continue caching.

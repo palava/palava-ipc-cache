@@ -16,29 +16,25 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
-import com.google.common.base.Predicate;
 import de.cosmocode.palava.ipc.IpcCall;
-
-import javax.annotation.Nullable;
+import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
- * <p></p>
+ * <p>
+ * Simple cache predicate that asserts that a call has "account_id" with value 5 as argument.
+ * </p>
  * <p>
  * Created on: 04.01.11
  * </p>
  *
  * @author Oliver Lorenz
  */
-final class AccountIdIsFiveFilter implements Predicate<IpcCall> {
+final class AccountIdIsFiveFilter implements CachePredicate {
 
     @Override
-    public boolean apply(@Nullable IpcCall input) {
-        if (input == null) {
-            return false;
-        } else {
-            final Object accountId = input.getArguments().get("account_id");
-            return accountId instanceof Integer && Integer.class.cast(accountId) == 5;
-        }
+    public boolean apply(IpcCall call, IpcCommand command) {
+        final Object accountId = call.getArguments().get("account_id");
+        return accountId instanceof Integer && Integer.class.cast(accountId) == 5;
     }
 
 }

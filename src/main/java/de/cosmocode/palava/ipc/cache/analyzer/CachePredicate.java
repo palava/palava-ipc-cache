@@ -19,23 +19,31 @@ package de.cosmocode.palava.ipc.cache.analyzer;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 
-import java.util.Date;
+import javax.annotation.Nonnull;
 
 /**
  * <p>
- * Simple predicate that tests whether a call has a Date argument.
+ * Denotes a CachePredicate, usable as a filter in {@link CaseCached}.
+ * The naming convention is derived from {@link com.google.common.base.Predicate},
+ * but the method signature is specifically modified for ipc purposes.
  * </p>
  * <p>
- * Created on: 04.01.11
+ * Created on: 05.01.11
  * </p>
  *
+ * @since 3.0
  * @author Oliver Lorenz
  */
-final class HasDateFilter implements CachePredicate {
+public interface CachePredicate {
 
-    @Override
-    public boolean apply(IpcCall call, IpcCommand command) {
-        return call.getArguments().get("date") instanceof Date;
-    }
+    /**
+     * Returns true if this predicate applies to the given call and command.
+     * The given parameters can be assumed to be nonnull.
+     *
+     * @param call the current call
+     * @param command the current command
+     * @return true if this CachePredicate applies to the given call and command, false otherwise
+     */
+    boolean apply(@Nonnull IpcCall call, @Nonnull IpcCommand command);
 
 }

@@ -17,7 +17,6 @@
 package de.cosmocode.palava.ipc.cache.analyzer;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -30,11 +29,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olor
- * Date: 04.01.11
- * Time: 14:58
- * To change this template use File | Settings | File Templates.
+ * {@link de.cosmocode.palava.ipc.cache.CacheAnalyzer} implementation for {@link CaseCached}.
+ *
+ * @since 3.0
+ * @author Oliver Lorenz
+ * @author Tobias Sarnowski
  */
 final class CaseCacheAnalyzer extends AbstractCacheAnalyzer<CaseCached> {
 
@@ -55,13 +54,13 @@ final class CaseCacheAnalyzer extends AbstractCacheAnalyzer<CaseCached> {
             shouldCache = true;
         } else {
             // we have filters specified: create them via injector
-            final List<Predicate<IpcCall>> filters = Lists.newArrayListWithCapacity(annotation.filters().length);
+            final List<CachePredicate> filters = Lists.newArrayListWithCapacity(annotation.filters().length);
 
-            for (Class<? extends Predicate<IpcCall>> predicateClass : annotation.filters()) {
+            for (Class<? extends CachePredicate> predicateClass : annotation.filters()) {
                 filters.add(injector.getInstance(predicateClass));
             }
 
-            shouldCache = annotation.filterMode().apply(call, filters);
+            shouldCache = annotation.filterMode().apply(filters, call, command);
         }
 
         return new CacheDecision() {

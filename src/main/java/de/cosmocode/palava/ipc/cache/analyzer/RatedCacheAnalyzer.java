@@ -27,11 +27,11 @@ import de.cosmocode.palava.ipc.cache.CacheDecision;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olor
- * Date: 04.01.11
- * Time: 14:24
- * To change this template use File | Settings | File Templates.
+ * {@link de.cosmocode.palava.ipc.cache.CacheAnalyzer} implementation for {@link RatedCached}.
+ *
+ * @since 3.0
+ * @author Tobias Sarnowski
+ * @author Oliver Lorenz
  */
 final class RatedCacheAnalyzer extends AbstractCacheAnalyzer<RatedCached> {
 

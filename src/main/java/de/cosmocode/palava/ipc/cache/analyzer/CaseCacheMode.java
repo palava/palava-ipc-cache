@@ -17,28 +17,36 @@
 package de.cosmocode.palava.ipc.cache.analyzer;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Predicate;
 import de.cosmocode.palava.ipc.IpcCall;
+import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
+ * <p>
  * CaseCacheMode used by {@link de.cosmocode.palava.ipc.cache.analyzer.CaseCached}.
+ * It can be used to specify how the {@link CachePredicate}s should be combined.
+ * Each enum value gives detailed information what it does.
+ * </p>
+ * <p>
+ * A previous version of this enum was first introduced in 2.3 as FilterCacheMode,
+ * but since the name and the method signature of its only method changed it is now considered new.
+ * </p>
  *
- * @since 2.3
+ * @since 3.0
  * @author Oliver Lorenz
  */
 @Beta
 public enum CaseCacheMode {
 
     /**
-     * All filters must apply, i.e. every filter must return true on its apply(call) method.
+     * All filters must apply, i.e. every {@link CachePredicate} must return true on its apply method.
      */
     ALL {
 
         @Override
-        public boolean apply(IpcCall call, Iterable<Predicate<IpcCall>> filters) {
-            for (final Predicate<IpcCall> filter : filters) {
+        public boolean apply(Iterable<CachePredicate> filters, IpcCall call, IpcCommand command) {
+            for (final CachePredicate filter : filters) {
                 // if any filter does NOT apply to the call then we can exit here already (lazy evaluation)
-                if (!filter.apply(call)) {
+                if (!filter.apply(call, command)) {
                     return false;
                 }
             }
@@ -49,14 +57,14 @@ public enum CaseCacheMode {
     },
 
     /**
-     * Any filter must apply, i.e. at least one filter must return true on its apply(call) method.
+     * Any filter must apply, i.e. at least one {@link CachePredicate} must return true on its apply method.
      */
     ANY {
 
         @Override
-        public boolean apply(IpcCall call, Iterable<Predicate<IpcCall>> filters) {
-            for (final Predicate<IpcCall> filter : filters) {
-                if (filter.apply(call)) {
+        public boolean apply(Iterable<CachePredicate> filters, IpcCall call, IpcCommand command) {
+            for (final CachePredicate filter : filters) {
+                if (filter.apply(call, command)) {
                     return true;
                 }
             }
@@ -66,14 +74,14 @@ public enum CaseCacheMode {
     },
 
     /**
-     * None of the filters must apply, i.e. every filter must return false on its apply(call) method.
+     * None of the filters must apply, i.e. every {@link CachePredicate} must return false on its apply method.
      */
     NONE {
 
         @Override
-        public boolean apply(IpcCall call, Iterable<Predicate<IpcCall>> filters) {
-            for (final Predicate<IpcCall> filter : filters) {
-                if (filter.apply(call)) {
+        public boolean apply(Iterable<CachePredicate> filters, IpcCall call, IpcCommand command) {
+            for (final CachePredicate filter : filters) {
+                if (filter.apply(call, command)) {
                     return false;
                 }
             }
@@ -85,10 +93,11 @@ public enum CaseCacheMode {
     /**
      * Returns true if the filters apply to the call in this filter mode.
      *
-     * @param call the call to apply each of the filters on
      * @param filters the filters to apply
+     * @param call the call to apply each of the filters on
+     * @param command the command to apply each of the filters on
      * @return true if this mode applies to the filters, false otherwise
      */
-    public abstract boolean apply(IpcCall call, Iterable<Predicate<IpcCall>> filters);
+    public abstract boolean apply(Iterable<CachePredicate> filters, IpcCall call, IpcCommand command);
 
 }

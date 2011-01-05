@@ -16,7 +16,6 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import de.cosmocode.junit.UnitProvider;
 import de.cosmocode.palava.core.Framework;
@@ -44,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class AbstractCaseCacheAnalyzerModeTest implements UnitProvider<CaseCacheAnalyzer> {
 
     @SuppressWarnings("unchecked")
-    private static final Class<? extends Predicate<IpcCall>>[] ALL_FILTERS =
+    private static final Class<? extends CachePredicate>[] ALL_FILTERS =
         new Class[] {HasDateFilter.class, AccountIdIsFiveFilter.class};
 
     private final Framework framework = Palava.newFramework();

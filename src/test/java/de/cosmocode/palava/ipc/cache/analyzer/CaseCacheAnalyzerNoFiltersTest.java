@@ -16,7 +16,6 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
-import com.google.common.base.Predicate;
 import de.cosmocode.junit.UnitProvider;
 import de.cosmocode.palava.core.Framework;
 import de.cosmocode.palava.core.Palava;
@@ -44,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 public class CaseCacheAnalyzerNoFiltersTest implements UnitProvider<CaseCacheAnalyzer> {
 
     @SuppressWarnings("unchecked")
-    private static final Class<? extends Predicate<IpcCall>>[] EMPTY_FILTERS = new Class[] {};
+    private static final Class<? extends CachePredicate>[] EMPTY_FILTERS = new Class[] {};
 
     private final Framework framework = Palava.newFramework();
 
