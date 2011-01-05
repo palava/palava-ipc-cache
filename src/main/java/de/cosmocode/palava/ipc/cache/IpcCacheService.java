@@ -16,11 +16,13 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import java.util.Map;
+
 import com.google.common.base.Predicate;
+
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
-
-import java.util.Map;
+import de.cosmocode.palava.ipc.IpcCommandExecutionException;
 
 /**
  * This interface defines the core implementation for caching {@link IpcCommand} results.
@@ -35,21 +37,27 @@ public interface IpcCacheService {
      * Returns the cached value based on the input. If no value exists, returns null.
      *
      * @param command the called command
-     * @param call the IPC call
+     * @param call the call
      * @return cached result or null
      */
-    Map<String, Object> getCachedResult(IpcCommand command, IpcCall call);
-
+    Map<String, Object> read(IpcCommand command, IpcCall call);
+    
     /**
-     * Caches the given result for the given command call with a decision how the result should be cached.
+     * Computes and stores the result of the given computation if and only if
+     * neither a previously computed result exists nor the specified cache decision
+     * prevents caching. 
      *
-     * @param command the called command
-     * @param call the IPC call
-     * @param decision the decision how to cache
-     * @param result the result to cache
+     * @since 3.0
+     * @param command the command being executed
+     * @param call the incoming call
+     * @param decision the cache decision
+     * @param computation the pending command execution
+     * @return either a previously computed result or the result of the given computation
+     * @throws IpcCommandExecutionException if command execution failed
      */
-    void setCachedResult(IpcCommand command, IpcCall call, CacheDecision decision, Map<String, Object> result);
-
+    Map<String, Object> computeAndStore(IpcCommand command, IpcCall call, CacheDecision decision, 
+        IpcCommandExecution computation) throws IpcCommandExecutionException;
+    
     /**
      * Invalidates all cached versions of an {@link IpcCommand}.
      *

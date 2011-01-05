@@ -16,18 +16,19 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import java.lang.annotation.Annotation;
+import java.util.Map;
+
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCallFilter;
 import de.cosmocode.palava.ipc.IpcCallFilterChain;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcCommandExecutionException;
-
-import java.lang.annotation.Annotation;
-import java.util.Map;
 
 /**
  * An {@link IpcCallFilter} which intercepts IpcCommand execution
@@ -56,41 +57,35 @@ final class CacheFilter implements IpcCallFilter {
 
     @Override
     public Map<String, Object> filter(
-        final IpcCall call, final IpcCommand command, final IpcCallFilterChain chain)
+        IpcCall call, IpcCommand command, IpcCallFilterChain chain)
         throws IpcCommandExecutionException {
 
-        // get annotations from command
-        ComplexCacheAnnotation complexAnnotation = null;
-        Annotation cacheAnnotation = null;
+        final Annotation cacheAnnotation = getAnnotation(command);
+        final Class<? extends Annotation> annotationType = cacheAnnotation.annotationType();
+        final ComplexCacheAnnotation complexAnnotation = annotationType.getAnnotation(ComplexCacheAnnotation.class);
+        
+        final Map<String, Object> cached = service.read(command, call);
+        
+        if (cached == null) {
+            final CacheAnalyzer analyzer = injector.getInstance(complexAnnotation.analyzer());
+            final CacheDecision decision = analyzer.analyze(cacheAnnotation, call, command);
+            final IpcCommandExecution computation = new IpcFilterChainExecution(call, command, chain);
+            return service.computeAndStore(command, call, decision, computation);
+        } else {
+            return cached;
+        }
+    }
+    
+    private Annotation getAnnotation(IpcCommand command) {
+        Annotation found = null;
         for (Annotation annotation : command.getClass().getAnnotations()) {
-            final ComplexCacheAnnotation cca = annotation.getClass().getAnnotation(ComplexCacheAnnotation.class);
-            if (cca != null) {
-                final boolean neverSetBefore = complexAnnotation == null;
-                Preconditions.checkState(neverSetBefore, "Multiple cache annotations found on %s", command.getClass());
-                cacheAnnotation = annotation;
-                complexAnnotation = cca;
+            if (annotation.getClass().isAnnotationPresent(ComplexCacheAnnotation.class)) {
+                Preconditions.checkState(found == null, "Multiple cache annotations found on %s", command.getClass());
+                found = annotation;
             }
         }
-        Preconditions.checkState(complexAnnotation != null, "No cache annotation found on %s", command.getClass());
-
-        // already cached?
-        Map<String, Object> result = service.getCachedResult(command, call);
-        if (result != null) {
-            return result;
-        }
-
-        // not cached, get the new result
-        result = chain.filter(call, command);
-
-        // check if we should cache it
-        final CacheAnalyzer cacheAnalyzer = injector.getInstance(complexAnnotation.analyzer());
-        final CacheDecision decision = cacheAnalyzer.analyze(cacheAnnotation, call, command);
-
-        if (decision.shouldCache()) {
-            service.setCachedResult(command, call, decision, result);
-        }
-
-        return result;
+        Preconditions.checkState(found != null, "No cache annotation found on %s", command.getClass());
+        return found;
     }
 
 }

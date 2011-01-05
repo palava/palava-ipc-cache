@@ -17,51 +17,117 @@
 package de.cosmocode.palava.ipc.cache;
 
 
-import com.google.common.base.Predicate;
-import com.google.inject.Inject;
-import de.cosmocode.palava.cache.CacheService;
-import de.cosmocode.palava.ipc.Ipc;
-import de.cosmocode.palava.ipc.IpcCall;
-import de.cosmocode.palava.ipc.IpcCommand;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.inject.Inject;
+
+import de.cosmocode.palava.cache.CacheService;
+import de.cosmocode.palava.cache.ComputingCacheService;
+import de.cosmocode.palava.ipc.Ipc;
+import de.cosmocode.palava.ipc.IpcCall;
+import de.cosmocode.palava.ipc.IpcCommand;
+import de.cosmocode.palava.ipc.IpcCommandExecutionException;
 
 /**
- * Binds an {@link IpcCacheService} to an implementation which uses a {@link de.cosmocode.palava.cache.CacheService}
- * and requires the {@link de.cosmocode.palava.cache.CacheService} to be bound annotated with
- * {@link de.cosmocode.palava.ipc.Ipc}.
+ * Binds an {@link IpcCacheService} to an implementation which uses a {@link CacheService}
+ * and requires the {@link CacheService} to be bound annotated with {@link Ipc}.
  *
  * @see GenericIpcCacheServiceModule
  * @author Tobias Sarnowski
  * @author Oliver Lorenz
  * @since 3.0
  */
-class GenericIpcCacheService extends AbstractIpcCacheService {
+final class GenericIpcCacheService extends AbstractIpcCacheService {
+    
     private static final Logger LOG = LoggerFactory.getLogger(GenericIpcCacheService.class);
 
     private final CacheService cacheService;
+    private ComputingCacheService computingCacheService;
 
     @Inject
     GenericIpcCacheService(@Ipc CacheService cacheService) {
         this.cacheService = cacheService;
     }
+    
+    @Inject(optional = true)
+    void setComputingCacheService(@Ipc ComputingCacheService computingCacheService) {
+        this.computingCacheService = Preconditions.checkNotNull(computingCacheService, "ComputingCacheService");
+    }
 
     @Override
-    public Map<String, Object> getCachedResult(IpcCommand command, IpcCall call) {
+    public Map<String, Object> read(IpcCommand command, IpcCall call) {
+        Preconditions.checkNotNull(command, "Command");
+        Preconditions.checkNotNull(call, "Call");
         return cacheService.read(create(call, command));
     }
 
     @Override
-    public void setCachedResult(IpcCommand command, IpcCall call, CacheDecision decision, Map<String, Object> result) {
-        if (decision.getLifeTime() == 0) {
-            cacheService.store(create(call, command), result);
-            LOG.trace("Caching content for {} with unlimited time to live", command);
+    public Map<String, Object> computeAndStore(IpcCommand command, IpcCall call, CacheDecision decision,
+            IpcCommandExecution computation) throws IpcCommandExecutionException {
+        
+        Preconditions.checkNotNull(command, "Command");
+        Preconditions.checkNotNull(call, "Call");
+        Preconditions.checkNotNull(decision, "Decision");
+        Preconditions.checkNotNull(computation, "Computation");
+
+        if (decision.shouldCache()) {
+            final CacheKey key = create(call, command);
+            if (computingCacheService == null) {
+                return computeAndDelegateStore(key, computation, decision);
+            } else {
+                return delegateComputeAndStore(key, computation, decision);
+            }
         } else {
-            cacheService.store(create(call, command), result, decision.getLifeTime(), decision.getLifeTimeUnit());
-            LOG.trace("Caching content for {} with life time", command);
-            LOG.trace("Time to live is {} {}", decision.getLifeTime(), decision.getLifeTimeUnit());
+            return compute(computation);
+        }
+    }
+    
+    private Map<String, Object> compute(IpcCommandExecution computation) throws IpcCommandExecutionException {
+        LOG.trace("Suppressing caching of {}", computation);
+        return computation.call();
+    }
+    
+    private Map<String, Object> computeAndDelegateStore(CacheKey key, IpcCommandExecution computation, 
+            CacheDecision decision) throws IpcCommandExecutionException {
+        
+        final Map<String, Object> result = computation.call();
+        final long maxAge = decision.getLifeTime();
+        
+        if (maxAge == 0) {
+            cacheService.store(key, result);
+        } else {
+            final TimeUnit maxAgeUnit = decision.getLifeTimeUnit();
+            cacheService.store(key, result, maxAge, maxAgeUnit);
+        }
+        
+        return result;
+    }
+    
+    private Map<String, Object> delegateComputeAndStore(CacheKey key, IpcCommandExecution computation, 
+            CacheDecision decision) throws IpcCommandExecutionException {
+        
+        final long maxAge = decision.getLifeTime();
+        
+        if (maxAge == 0) {
+            try {
+                return computingCacheService.computeAndStore(key, computation);
+            } catch (ExecutionException e) {
+                throw new IpcCommandExecutionException(e.getCause());
+            }
+        } else {
+            final TimeUnit maxAgeUnit = decision.getLifeTimeUnit();
+            try {
+                return computingCacheService.computeAndStore(key, computation, maxAge, maxAgeUnit);
+            } catch (ExecutionException e) {
+                throw new IpcCommandExecutionException(e.getCause());
+            }
         }
     }
 
@@ -69,4 +135,5 @@ class GenericIpcCacheService extends AbstractIpcCacheService {
     public void invalidate(Class<? extends IpcCommand> command, Predicate<? super CacheKey> predicate) {
         throw new UnsupportedOperationException();
     }
+    
 }

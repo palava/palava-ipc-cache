@@ -22,6 +22,7 @@ import de.cosmocode.junit.UnitProvider;
 import de.cosmocode.palava.ipc.IpcArguments;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
+import de.cosmocode.palava.ipc.IpcCommandExecutionException;
 import de.cosmocode.palava.ipc.MapIpcArguments;
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -49,7 +50,15 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
     private IpcCall secondCall;
     private Map<String, Object> secondResult;
 
-    protected abstract boolean canNotInvalidate();
+    /**
+     * Configuration hook for sub classes to enable/disable invalidation tests.
+     *
+     * @since 3.0
+     * @return true if the unit under test supports {@link IpcCacheService#invalidate(Class)}
+     */
+    protected boolean supportsInvalidate() {
+        return true;
+    }
 
     @Before
     public void createMocks() {
@@ -108,67 +117,90 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
         secondResult.put("account_id", 7);
     }
 
+    private IpcCommandExecution returning(final Map<String, Object> r) {
+        return new IpcCommandExecution() {
+            
+            @Override
+            public Map<String, Object> call() throws IpcCommandExecutionException {
+                return r;
+            }
+            
+        };
+    }
+    
     @Test
-    public void getBeforeSet() {
-        final Map<String, Object> unitResult = unit().getCachedResult(command, call);
-        unit().setCachedResult(command, call, decision, result);
+    public void getBeforeSet() throws IpcCommandExecutionException {
+        final Map<String, Object> unitResult = unit().read(command, call);
+        unit().computeAndStore(command, call, decision, returning(result));
 
         Assert.assertNull(unitResult);
         verifyFirstCallMocks();
     }
 
     @Test
-    public void getAfterSet() {
-        unit().setCachedResult(command, call, decision, result);
-        final Map<String, Object> unitResult = unit().getCachedResult(command, call);
+    public void getAfterSet() throws IpcCommandExecutionException {
+        unit().computeAndStore(command, call, decision, returning(result));
+        final Map<String, Object> unitResult = unit().read(command, call);
 
         Assert.assertEquals(result, unitResult);
         verifyFirstCallMocks();
     }
 
     @Test
-    public void invalidateAll() {
-        if (canNotInvalidate()) {
-            return;
+    public void invalidateAll() throws IpcCommandExecutionException {
+        if (supportsInvalidate()) {
+
+            // set cached results
+            unit().computeAndStore(command, call, decision, returning(result));
+            unit().computeAndStore(command, secondCall, decision, returning(secondResult));
+    
+            // call invalidate (main function)
+            unit().invalidate(command.getClass());
+    
+            // assert that both calls are invalidated
+            Assert.assertNull(unit().read(command, call));
+            Assert.assertNull(unit().read(command, secondCall));
+    
+            verifyAllMocks();
+        } else {
+            try {
+                unit().invalidate(command.getClass());
+                Assert.fail("Expected " + unit() + ".invalidate(" + command.getClass() + ") to throw");
+            } catch (UnsupportedOperationException expected) {
+                return;
+            }
         }
-
-        // set cached results
-        unit().setCachedResult(command, call, decision, result);
-        unit().setCachedResult(command, secondCall, decision, secondResult);
-
-        // call invalidate (main function)
-        unit().invalidate(command.getClass());
-
-        // assert that both calls are invalidated
-        Assert.assertNull(unit().getCachedResult(command, call));
-        Assert.assertNull(unit().getCachedResult(command, secondCall));
-
-        verifyAllMocks();
     }
 
     @Test
-    public void invalidateSingle() {
-        if (canNotInvalidate()) {
-            return;
-        }
-
-        // set cached results
-        unit().setCachedResult(command, call, decision, result);
-        unit().setCachedResult(command, secondCall, decision, secondResult);
-
-        // invalidate with predicate
-        unit().invalidate(command.getClass(), new Predicate<CacheKey>() {
-            @Override
-            public boolean apply(@Nullable CacheKey input) {
-                return input != null && input.getArguments().getInt("account_id") == 5;
+    public void invalidateSingle() throws IpcCommandExecutionException {
+        if (supportsInvalidate()) {
+            // set cached results
+            unit().computeAndStore(command, call, decision, returning(result));
+            unit().computeAndStore(command, secondCall, decision, returning(secondResult));
+            
+            // invalidate with predicate
+            unit().invalidate(command.getClass(), new Predicate<CacheKey>() {
+                @Override
+                public boolean apply(@Nullable CacheKey input) {
+                    return input != null && input.getArguments().getInt("account_id") == 5;
+                }
+            });
+            
+            // assert that only the first call was invalidated
+            Assert.assertNull(unit().read(command, call));
+            Assert.assertEquals(secondResult, unit().read(command, secondCall));
+            
+            verifyAllMocks();
+        } else {
+            try {
+                final IpcCacheService unit = unit();
+                unit.invalidate(command.getClass());
+                Assert.fail("Expected " + unit + ".invalidate(" + command.getClass() + ") to throw");
+            } catch (UnsupportedOperationException expected) {
+                return;
             }
-        });
-
-        // assert that only the first call was invalidated
-        Assert.assertNull(unit().getCachedResult(command, call));
-        Assert.assertEquals(secondResult, unit().getCachedResult(command, secondCall));
-
-        verifyAllMocks();
+        }
     }
 
 }
