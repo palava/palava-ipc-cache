@@ -26,7 +26,8 @@ import com.google.inject.Singleton;
  * {@link de.cosmocode.palava.ipc.Ipc}.
  *
  * <p>
- * <strong>Note:</strong> The resulting {@link IpcCacheService} does not support {@link IpcCacheService#invalidate(Class)}
+ * <strong>Note:</strong> The resulting {@link IpcCacheService} does not 
+ * support {@link IpcCacheService#invalidate(Class)}
  * and {@link IpcCacheService#invalidate(Class, com.google.common.base.Predicate)}.
  * </p>
  *

@@ -27,6 +27,7 @@ import java.lang.annotation.Annotation;
  * @author Tobias Sarnowski
  * @author Oliver Lorenz
  * @since 3.0
+ * @param <T> generic annotation type
  */
 public abstract class AbstractCacheAnalyzer<T extends Annotation> implements CacheAnalyzer {
 
@@ -38,7 +39,7 @@ public abstract class AbstractCacheAnalyzer<T extends Annotation> implements Cac
      * @param call the IPC call
      * @param command the command
      * @return your decision
-     * @see CacheAnalyzer#analyze(java.lang.annotation.Annotation, de.cosmocode.palava.ipc.IpcCall, de.cosmocode.palava.ipc.IpcCommand)
+     * @see CacheAnalyzer#analyze(Annotation, IpcCall, IpcCommand)
      */
     protected abstract CacheDecision decide(T annotation, IpcCall call, IpcCommand command);
 

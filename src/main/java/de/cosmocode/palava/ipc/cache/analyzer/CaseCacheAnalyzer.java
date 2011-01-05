@@ -45,9 +45,6 @@ final class CaseCacheAnalyzer extends AbstractCacheAnalyzer<CaseCached> {
 
     @Override
     protected CacheDecision decide(final CaseCached annotation, IpcCall call, IpcCommand command) {
-
-        // filter handling
-        // we have filters specified: create them via injector
         final List<CachePredicate> filters = Lists.newArrayListWithCapacity(annotation.filters().length);
 
         for (Class<? extends CachePredicate> predicateClass : annotation.filters()) {
@@ -55,7 +52,6 @@ final class CaseCacheAnalyzer extends AbstractCacheAnalyzer<CaseCached> {
         }
 
         final boolean shouldCache = annotation.filterMode().apply(filters, call, command);
-
         return new CaseCacheDecision(shouldCache, annotation);
     }
 
