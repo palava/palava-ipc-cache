@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
  * Created on: 04.01.11
  * </p>
  *
+ * @since 3.0
  * @author Oliver Lorenz
  */
 public class TimeCacheAnalyzerTest implements UnitProvider<TimeCacheAnalyzer> {

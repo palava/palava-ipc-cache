@@ -38,6 +38,7 @@ import java.util.concurrent.TimeUnit;
  * Created on: 04.01.11
  * </p>
  *
+ * @since 3.0
  * @author Oliver Lorenz
  */
 public abstract class AbstractCaseCacheAnalyzerModeTest implements UnitProvider<CaseCacheAnalyzer> {

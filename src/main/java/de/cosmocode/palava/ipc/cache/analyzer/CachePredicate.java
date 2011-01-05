@@ -38,7 +38,7 @@ public interface CachePredicate {
 
     /**
      * Returns true if this predicate applies to the given call and command.
-     * The given parameters can be assumed to be nonnull.
+     * The given parameters can be assumed to never be null.
      *
      * @param call the current call
      * @param command the current command
