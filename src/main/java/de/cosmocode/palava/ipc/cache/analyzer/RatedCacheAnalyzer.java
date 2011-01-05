@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
  * @since 3.0
  * @author Tobias Sarnowski
  * @author Oliver Lorenz
+ * @see RatedCached
  */
 final class RatedCacheAnalyzer extends AbstractCacheAnalyzer<RatedCached> {
 

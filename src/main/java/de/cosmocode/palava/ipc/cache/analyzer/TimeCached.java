@@ -25,23 +25,48 @@ import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olor
- * Date: 04.01.11
- * Time: 14:39
- * To change this template use File | Settings | File Templates.
+ * Caches the result for the given amount of time.
+ *
+ * @author Tobias Sarnowski
+ * @author Oliver Lorenz
+ * @since 3.0
+ * @see TimeCachedModule
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ComplexCacheAnnotation(analyzer = TimeCacheAnalyzer.class)
 public @interface TimeCached {
 
+    /**
+     * The amount of maximum lifetime.
+     *
+     * @return lifetime amount
+     * @see de.cosmocode.palava.ipc.cache.CacheDecision#getLifeTime()
+     */
     long lifeTime() default 0;
 
+    /**
+     * The unit of maximum lifetime.
+     *
+     * @return lifetime unit
+     * @see de.cosmocode.palava.ipc.cache.CacheDecision#getLifeTimeUnit()
+     */
     TimeUnit lifeTimeUnit() default TimeUnit.MINUTES;
 
+    /**
+     * The amount of maximum idletime.
+     *
+     * @return idletime amount
+     * @see de.cosmocode.palava.ipc.cache.CacheDecision#getIdleTime()
+     */
     long idleTime() default 0;
 
+    /**
+     * The unit of maximum idletime.
+     *
+     * @return idletime unit
+     * @see de.cosmocode.palava.ipc.cache.CacheDecision#getIdleTimeUnit()
+     */
     TimeUnit idleTimeUnit() default TimeUnit.MINUTES;
 
 }

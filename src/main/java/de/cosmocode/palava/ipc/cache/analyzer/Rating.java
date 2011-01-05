@@ -17,18 +17,34 @@
 package de.cosmocode.palava.ipc.cache.analyzer;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olor
- * Date: 04.01.11
- * Time: 15:11
- * To change this template use File | Settings | File Templates.
+ * Used by {@link CacheRatingAnalyzer} to define their rating.
+ *
+ * @author Tobias Sarnowski
+ * @author Oliver Lorenz
+ * @since 3.0
+ * @see CacheRatingAnalyzer
  */
 public interface Rating {
 
+    /**
+     * The actual rating of the analyzed command call.
+     *
+     * @return the rating
+     */
     int value();
 
+    /**
+     * The minimal possible rating.
+     *
+     * @return the minimal rating
+     */
     int min();
 
+    /**
+     * the maximum possible rating.
+     *
+     * @return the maximum rating
+     */
     int max();
 
 }

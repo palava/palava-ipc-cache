@@ -25,11 +25,29 @@ import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olor
- * Date: 04.01.11
- * Time: 14:23
- * To change this template use File | Settings | File Templates.
+ * Caches the command call result depending of the
+ * {@link de.cosmocode.palava.ipc.cache.analyzer.RatedCached#analyzer()}'s rating.
+ *
+ * <p>
+ * The annotation can operate in two modi:
+ * <ul>
+ * <li>{@link RatedCached.RatingTarget#LIFE_TIME}: the lifetime will be shorten depending of the rating.</li>
+ * <li>{@link RatedCached.RatingTarget#IDLE_TIME}: the idletime will be shorten depending of the rating.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Configure lifetime and idletime to their maximum amount and provide a minimum amount of time a result should be given
+ * to the cache.
+  * </p>
+ * <p>
+ * <i>The higher the rating, the longer the result will be cached.</i>
+ * </p>
+ *
+ * @author Tobias Sarnowski
+ * @author Oliver Lorenz
+ * @since 3.0
+ * @see CacheRatingAnalyzer
+ * @see RatedCachedModule
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
