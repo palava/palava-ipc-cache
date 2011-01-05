@@ -19,11 +19,12 @@ package de.cosmocode.palava.ipc.cache.analyzer;
 import de.cosmocode.palava.ipc.cache.AbstractCacheModule;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olor
- * Date: 04.01.11
- * Time: 14:42
- * To change this template use File | Settings | File Templates.
+ * Provides {@link TimeCached}.
+ *
+ * @author Tobias Sarnowski
+ * @author Oliver Lorenz
+ * @since 3.0
+ * @see TimeCached
  */
 public final class TimeCachedModule extends AbstractCacheModule {
 

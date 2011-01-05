@@ -20,14 +20,23 @@ import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olor
- * Date: 04.01.11
- * Time: 14:28
- * To change this template use File | Settings | File Templates.
+ * Defines the implementation to rate a command call.
+ *
+ * @author Tobias Sarnowski
+ * @author Oliver Lorenz
+ * @since 3.0
+ * @see RatedCached
+ * @see Rating
  */
 public interface CacheRatingAnalyzer {
 
+    /**
+     * Calculates the rating.
+     *
+     * @param call the IPC call
+     * @param command the command
+     * @return the rating
+     */
     Rating rate(IpcCall call, IpcCommand command);
 
 }

@@ -24,12 +24,13 @@ import de.cosmocode.palava.ipc.cache.CacheDecision;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
  * {@link de.cosmocode.palava.ipc.cache.CacheAnalyzer} implementation for {@link TimeCached}.
  *
  * @since 3.0
  * @author Tobias Sarnowski
  * @author Oliver Lorenz
+ * @see TimeCached
+ * @see TimeCachedModule
  */
 final class TimeCacheAnalyzer extends AbstractCacheAnalyzer<TimeCached> {
 
