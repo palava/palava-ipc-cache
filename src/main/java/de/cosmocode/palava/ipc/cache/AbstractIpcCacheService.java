@@ -22,20 +22,32 @@ import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olor
- * Date: 04.01.11
- * Time: 16:52
- * To change this template use File | Settings | File Templates.
+ * Utility class to perform some basic and trivial tasks. Implementations have to use
+ * {@link de.cosmocode.palava.ipc.cache.AbstractIpcCacheService#getCacheKeyFactory()} to get a serializable key for
+ * their cache.
+ *
+ * @author Tobias Sarnowski
+ * @author Oliver Lorenz
+ * @since 3.0
  */
 public abstract class AbstractIpcCacheService implements IpcCacheService {
 
     private CacheKeyFactory cacheKeyFactory = DefaultCacheKeyFactory.getFactory();
 
+    /**
+     * The configured {@link CacheKeyFactory} for your service.
+     *
+     * @return the configured factory
+     */
     public CacheKeyFactory getCacheKeyFactory() {
         return cacheKeyFactory;
     }
 
+    /**
+     * Optional possibility to change the default {@link CacheKeyFactory} with another implementation.
+     *
+     * @param cacheKeyFactory the new factory to use
+     */
     @Inject(optional = true)
     public void setCacheKeyFactory(CacheKeyFactory cacheKeyFactory) {
         this.cacheKeyFactory = cacheKeyFactory;

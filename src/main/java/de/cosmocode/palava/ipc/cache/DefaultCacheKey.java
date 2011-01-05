@@ -25,6 +25,7 @@ import de.cosmocode.palava.ipc.IpcCommand;
  * Default {@link CacheKey} implementation.
  * 
  * @author Tobias Sarnowski
+ * @since 2.1
  */
 final class DefaultCacheKey implements CacheKey {
 

@@ -22,11 +22,24 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olor
- * Date: 04.01.11
- * Time: 13:35
- * To change this template use File | Settings | File Templates.
+ * Used to connect cache annotations with their analyzer.
+ *
+ * <p>
+ * Example:
+ * <pre>
+ * &#64;Retention(RetentionPolicy.RUNTIME)
+ * &#64;ComplexCacheAnnotation(analyzer = ExampleCachedAnalyzerImpl.class)
+ * public &#64;interface ExampleCached {
+ *
+ * }
+ * </pre>
+ * </p>
+ *
+ * @author Tobias Sarnowski
+ * @author Oliver Lorenz
+ * @since 3.0
+ * @see CacheAnalyzer
+ * @see AbstractCacheModule
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)

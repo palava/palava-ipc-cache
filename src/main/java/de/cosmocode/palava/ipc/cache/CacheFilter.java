@@ -32,8 +32,15 @@ import java.util.Map;
 /**
  * An {@link IpcCallFilter} which intercepts IpcCommand execution
  * to provide caching. This reduces repeated re-execution of the given IpcCommand.
+ *
+ * <p>
+ * To get your annotation processed by the filter extend the {@link AbstractCacheModule} and
+ * call {@link AbstractCacheModule#use(Class)} with your annotation.
+ * </p>
  * 
  * @author Oliver Lorenz
+ * @author Tobias Sarnowski
+ * @since 1.0
  */
 @Singleton
 final class CacheFilter implements IpcCallFilter {

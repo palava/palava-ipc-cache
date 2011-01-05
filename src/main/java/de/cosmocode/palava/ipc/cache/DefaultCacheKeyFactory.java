@@ -20,11 +20,11 @@ import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olor
- * Date: 04.01.11
- * Time: 16:40
- * To change this template use File | Settings | File Templates.
+ * A common utility to generate a serializable and unique cache key from a command call.
+ *
+ * @author Tobias Sarnowski
+ * @author Oliver Lorenz
+ * @since 3.0
  */
 public final class DefaultCacheKeyFactory implements CacheKeyFactory {
 

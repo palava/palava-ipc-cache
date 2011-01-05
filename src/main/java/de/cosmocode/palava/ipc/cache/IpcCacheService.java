@@ -23,16 +23,31 @@ import de.cosmocode.palava.ipc.IpcCommand;
 import java.util.Map;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olor
- * Date: 04.01.11
- * Time: 15:49
- * To change this template use File | Settings | File Templates.
+ * This interface defines the core implementation for caching {@link IpcCommand} results.
+ *
+ * @author Tobias Sarnowski
+ * @author Oliver Lorenz
+ * @since 3.0
  */
 public interface IpcCacheService {
 
+    /**
+     * Returns the cached value based on the input. If no value exists, returns null.
+     *
+     * @param command the called command
+     * @param call the IPC call
+     * @return cached result or null
+     */
     Map<String, Object> getCachedResult(IpcCommand command, IpcCall call);
 
+    /**
+     * Caches the given result for the given command call with a decision how the result should be cached.
+     *
+     * @param command the called command
+     * @param call the IPC call
+     * @param decision the decision how to cache
+     * @param result the result to cache
+     */
     void setCachedResult(IpcCommand command, IpcCall call, CacheDecision decision, Map<String, Object> result);
 
     /**

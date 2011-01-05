@@ -33,11 +33,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olor
- * Date: 04.01.11
- * Time: 16:37
- * To change this template use File | Settings | File Templates.
+ * Binds an {@link IpcCacheService} to an implementation which uses a {@link de.cosmocode.palava.cache.CacheService}
+ * and requires the {@link de.cosmocode.palava.cache.CacheService} to be bound annotated with
+ * {@link de.cosmocode.palava.ipc.Ipc}.
+ *
+ * @see GenericIndexedIpcCacheServiceModule
+ * @author Tobias Sarnowski
+ * @author Oliver Lorenz
+ * @since 3.0
  */
 class GenericIndexedIpcCacheService extends AbstractIpcCacheService {
     private static final Logger LOG = LoggerFactory.getLogger(GenericIndexedIpcCacheService.class);
