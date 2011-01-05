@@ -16,8 +16,10 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
+
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 
@@ -50,16 +52,19 @@ public abstract class AbstractIpcCacheService implements IpcCacheService, CacheK
      */
     @Inject(optional = true)
     public void setCacheKeyFactory(CacheKeyFactory cacheKeyFactory) {
-        this.cacheKeyFactory = cacheKeyFactory;
+        this.cacheKeyFactory = Preconditions.checkNotNull(cacheKeyFactory, "CacheKeyFactory");
     }
 
     @Override
     public CacheKey create(IpcCall call, IpcCommand command) {
+        Preconditions.checkNotNull(command, "Command");
+        Preconditions.checkNotNull(call, "Call");
         return getCacheKeyFactory().create(call, command);
     }
 
     @Override
     public void invalidate(Class<? extends IpcCommand> command) {
+        Preconditions.checkNotNull(command, "Command");
         invalidate(command, Predicates.alwaysTrue());
     }
 
