@@ -23,6 +23,8 @@ import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.cache.AbstractCacheAnalyzer;
 import de.cosmocode.palava.ipc.cache.CacheDecision;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -35,6 +37,8 @@ import java.util.concurrent.TimeUnit;
  * @see RatedCached
  */
 final class RatedCacheAnalyzer extends AbstractCacheAnalyzer<RatedCached> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RatedCacheAnalyzer.class);
 
     private final Injector injector;
 
@@ -50,7 +54,6 @@ final class RatedCacheAnalyzer extends AbstractCacheAnalyzer<RatedCached> {
         final Rating rating = analyzer.rate(call, command);
         final long range = rating.max() - rating.min();
         final long realValue = rating.value() - rating.min();
-        final long ratio = realValue / range;
 
         final long lifeTime;
         final TimeUnit lifeTimeUnit;
@@ -65,7 +68,12 @@ final class RatedCacheAnalyzer extends AbstractCacheAnalyzer<RatedCached> {
             idleTimeUnit = annotation.idleTimeUnit();
 
             lifeTimeUnit = TimeUnit.SECONDS;
-            lifeTime = annotation.lifeTimeUnit().toSeconds(annotation.lifeTime()) * ratio;
+            lifeTime = annotation.lifeTimeUnit().toSeconds(annotation.lifeTime()) * realValue / range;
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Calculated lifeTime of {} seconds from {}, {}, {}",
+                    new Object[] {lifeTime, annotation, call, command.getClass()});
+            }
 
             shouldCache = lifeTime >= annotation.minTimeUnit().toSeconds(annotation.minTime());
 
@@ -76,14 +84,18 @@ final class RatedCacheAnalyzer extends AbstractCacheAnalyzer<RatedCached> {
             lifeTimeUnit = annotation.lifeTimeUnit();
 
             idleTimeUnit = TimeUnit.SECONDS;
-            idleTime = annotation.idleTimeUnit().toSeconds(annotation.idleTime()) * ratio;
+            idleTime = annotation.idleTimeUnit().toSeconds(annotation.idleTime()) * realValue / range;
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Calculated idleTime of {} seconds from {}, {}, {}",
+                    new Object[] {idleTime, annotation, call, command.getClass()});
+            }
 
             shouldCache = idleTime >= annotation.minTimeUnit().toSeconds(annotation.minTime());
 
         } else {
             throw new IllegalStateException("Unknown rating target " + annotation.target());
         }
-
 
         return new CacheDecision() {
 

@@ -65,4 +65,30 @@ final class TimeCacheDecision implements CacheDecision {
         return annotation.idleTimeUnit();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (o instanceof TimeCacheDecision) {
+            final TimeCacheDecision that = (TimeCacheDecision) o;
+            return annotation.equals(that.annotation);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return annotation.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "CacheDecision{" +
+            "shouldCache=" + shouldCache() +
+            ", lifeTime=" + getLifeTime() + " " + getLifeTimeUnit() +
+            ", idleTime=" + getIdleTime() + " " + getIdleTimeUnit() +
+            '}';
+    }
+
 }

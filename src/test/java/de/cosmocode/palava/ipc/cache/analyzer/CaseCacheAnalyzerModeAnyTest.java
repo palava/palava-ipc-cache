@@ -33,7 +33,7 @@ import java.util.Date;
  * @since 3.0
  * @author Oliver Lorenz
  */
-public class CaseCacheAnalyzerModeAnyTest extends AbstractCaseCacheAnalyzerModeTest {
+public final class CaseCacheAnalyzerModeAnyTest extends AbstractCaseCacheAnalyzerModeTest {
 
     @Override
     protected CaseCacheMode mode() {

@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
  * @since 3.0
  * @author Oliver Lorenz
  */
-public class TimeCacheAnalyzerTest implements UnitProvider<TimeCacheAnalyzer> {
+public final class TimeCacheAnalyzerTest implements UnitProvider<TimeCacheAnalyzer> {
 
     @Override
     public TimeCacheAnalyzer unit() {

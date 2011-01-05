@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
  * @since 3.0
  * @author Oliver Lorenz
  */
-public class CaseCacheAnalyzerTimeTest implements UnitProvider<CaseCacheAnalyzer> {
+public final class CaseCacheAnalyzerTimeTest implements UnitProvider<CaseCacheAnalyzer> {
 
     @SuppressWarnings("unchecked")
     private static final Class<? extends CachePredicate>[] ALWAYS_TRUE_FILTERS =
