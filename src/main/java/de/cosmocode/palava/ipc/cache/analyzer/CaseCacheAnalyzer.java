@@ -48,8 +48,6 @@ final class CaseCacheAnalyzer extends AbstractCacheAnalyzer<CaseCached> {
         final int filterCount = annotation.predicates().length;
         Preconditions.checkArgument(filterCount > 0, "CaseCached must define at least one filter");
 
-        // filter handling
-        // we have predicates specified: create them via injector
         final List<CachePredicate> filters = Lists.newArrayListWithCapacity(filterCount);
 
         for (Class<? extends CachePredicate> predicateClass : annotation.predicates()) {
@@ -57,7 +55,6 @@ final class CaseCacheAnalyzer extends AbstractCacheAnalyzer<CaseCached> {
         }
 
         final boolean shouldCache = annotation.mode().apply(filters, call, command);
-
         return new CaseCacheDecision(shouldCache, annotation);
     }
 
