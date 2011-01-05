@@ -35,34 +35,41 @@ final class TimeCacheAnalyzer extends AbstractCacheAnalyzer<TimeCached> {
 
     @Override
     protected CacheDecision decide(final TimeCached annotation, IpcCall call, IpcCommand command) {
-        return new CacheDecision() {
-
-            @Override
-            public boolean shouldCache() {
-                return true;
-            }
-
-            @Override
-            public long getLifeTime() {
-                return annotation.lifeTime();
-            }
-
-            @Override
-            public TimeUnit getLifeTimeUnit() {
-                return annotation.lifeTimeUnit();
-            }
-
-            @Override
-            public long getIdleTime() {
-                return annotation.idleTime();
-            }
-
-            @Override
-            public TimeUnit getIdleTimeUnit() {
-                return annotation.idleTimeUnit();
-            }
-
-        };
+        return new TimeCacheDecision(annotation);
     }
 
+    private static final class TimeCacheDecision implements CacheDecision {
+
+        private final TimeCached annotation;
+
+        public TimeCacheDecision(TimeCached annotation) {
+            this.annotation = annotation;
+        }
+
+        @Override
+        public boolean shouldCache() {
+            return true;
+        }
+
+        @Override
+        public long getLifeTime() {
+            return annotation.lifeTime();
+        }
+
+        @Override
+        public TimeUnit getLifeTimeUnit() {
+            return annotation.lifeTimeUnit();
+        }
+
+        @Override
+        public long getIdleTime() {
+            return annotation.idleTime();
+        }
+
+        @Override
+        public TimeUnit getIdleTimeUnit() {
+            return annotation.idleTimeUnit();
+        }
+
+    }
 }
