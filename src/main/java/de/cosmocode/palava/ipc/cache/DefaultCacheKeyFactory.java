@@ -26,19 +26,18 @@ import de.cosmocode.palava.ipc.IpcCommand;
  * @author Oliver Lorenz
  * @since 3.0
  */
-public final class DefaultCacheKeyFactory implements CacheKeyFactory {
+public enum DefaultCacheKeyFactory implements CacheKeyFactory {
 
-    private static final CacheKeyFactory SINGLETON = new DefaultCacheKeyFactory();
-
-    public static CacheKeyFactory getFactory() {
-        return SINGLETON;
-    }
-
-    private DefaultCacheKeyFactory() {
-    }
+    INSTANCE;
 
     @Override
     public CacheKey create(IpcCall call, IpcCommand command) {
         return new DefaultCacheKey(command.getClass(), call.getArguments());
     }
+    
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
+    
 }

@@ -50,16 +50,16 @@ class GenericIpcCacheService extends AbstractIpcCacheService {
 
     @Override
     public Map<String, Object> getCachedResult(IpcCommand command, IpcCall call) {
-        return cacheService.read(createKey(call, command));
+        return cacheService.read(create(call, command));
     }
 
     @Override
     public void setCachedResult(IpcCommand command, IpcCall call, CacheDecision decision, Map<String, Object> result) {
         if (decision.getLifeTime() == 0) {
-            cacheService.store(createKey(call, command), result);
+            cacheService.store(create(call, command), result);
             LOG.trace("Caching content for {} with unlimited time to live", command);
         } else {
-            cacheService.store(createKey(call, command), result, decision.getLifeTime(), decision.getLifeTimeUnit());
+            cacheService.store(create(call, command), result, decision.getLifeTime(), decision.getLifeTimeUnit());
             LOG.trace("Caching content for {} with life time", command);
             LOG.trace("Time to live is {} {}", decision.getLifeTime(), decision.getLifeTimeUnit());
         }

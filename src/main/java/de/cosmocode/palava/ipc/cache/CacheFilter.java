@@ -65,12 +65,12 @@ final class CacheFilter implements IpcCallFilter {
         for (Annotation annotation : command.getClass().getAnnotations()) {
             final ComplexCacheAnnotation cca = annotation.getClass().getAnnotation(ComplexCacheAnnotation.class);
             if (cca != null) {
-                Preconditions.checkState(complexAnnotation == null, "Multiple cache annotations found on %s", command.getClass().getName());
+                Preconditions.checkState(complexAnnotation == null, "Multiple cache annotations found on %s", command.getClass());
                 cacheAnnotation = annotation;
                 complexAnnotation = cca;
             }
         }
-        Preconditions.checkState(complexAnnotation != null, "No cache annotation found on %s", command.getClass().getName());
+        Preconditions.checkState(complexAnnotation != null, "No cache annotation found on %s", command.getClass());
 
         // already cached?
         Map<String, Object> result = service.getCachedResult(command, call);

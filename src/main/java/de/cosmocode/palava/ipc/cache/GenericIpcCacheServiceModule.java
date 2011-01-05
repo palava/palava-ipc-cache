@@ -35,8 +35,10 @@ import com.google.inject.Singleton;
  * @since 3.0
  */
 public final class GenericIpcCacheServiceModule implements Module {
+    
     @Override
     public void configure(Binder binder) {
         binder.bind(IpcCacheService.class).to(GenericIpcCacheService.class).in(Singleton.class);
     }
+    
 }
