@@ -20,6 +20,7 @@ import java.util.Map;
 
 import com.google.common.base.Predicate;
 
+import de.cosmocode.palava.cache.CacheExpiration;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcCommandExecutionException;
@@ -50,12 +51,12 @@ public interface IpcCacheService {
      * @since 3.0
      * @param command the command being executed
      * @param call the incoming call
-     * @param decision the cache decision
+     * @param expiration the cache expiraton
      * @param computation the pending command execution
      * @return either a previously computed result or the result of the given computation
      * @throws IpcCommandExecutionException if command execution failed
      */
-    Map<String, Object> computeAndStore(IpcCommand command, IpcCall call, CacheDecision decision, 
+    Map<String, Object> computeAndStore(IpcCommand command, IpcCall call, CacheExpiration expiration, 
         IpcCommandExecution computation) throws IpcCommandExecutionException;
     
     /**

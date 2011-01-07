@@ -69,8 +69,12 @@ final class CacheFilter implements IpcCallFilter {
         if (cached == null) {
             final CacheAnalyzer analyzer = injector.getInstance(complexAnnotation.analyzer());
             final CacheDecision decision = analyzer.analyze(cacheAnnotation, call, command);
-            final IpcCommandExecution computation = new IpcFilterChainExecution(call, command, chain);
-            return service.computeAndStore(command, call, decision, computation);
+            if (decision.shouldCache()) {
+                final IpcCommandExecution computation = new IpcFilterChainExecution(call, command, chain);
+                return service.computeAndStore(command, call, decision, computation);
+            } else {
+                return chain.filter(call, command);
+            }
         } else {
             return cached;
         }
