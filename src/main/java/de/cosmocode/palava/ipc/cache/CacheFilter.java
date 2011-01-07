@@ -60,7 +60,7 @@ final class CacheFilter implements IpcCallFilter {
         IpcCall call, IpcCommand command, IpcCallFilterChain chain)
         throws IpcCommandExecutionException {
 
-        final Annotation cacheAnnotation = getAnnotation(command);
+        final Annotation cacheAnnotation = checkAndGetAnnotation(command);
         final Class<? extends Annotation> annotationType = cacheAnnotation.annotationType();
         final ComplexCacheAnnotation complexAnnotation = annotationType.getAnnotation(ComplexCacheAnnotation.class);
         
@@ -76,7 +76,7 @@ final class CacheFilter implements IpcCallFilter {
         }
     }
     
-    private Annotation getAnnotation(IpcCommand command) {
+    private Annotation checkAndGetAnnotation(IpcCommand command) {
         Annotation found = null;
         for (Annotation annotation : command.getClass().getAnnotations()) {
             if (annotation.getClass().isAnnotationPresent(ComplexCacheAnnotation.class)) {
