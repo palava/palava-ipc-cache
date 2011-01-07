@@ -27,9 +27,9 @@ import de.cosmocode.palava.ipc.IpcCommand;
  * Utility class to perform some basic and trivial tasks. Implementations have to use
  * {@link #create(IpcCall, IpcCommand)}to get a serializable key for their cache.
  *
+ * @since 3.0
  * @author Tobias Sarnowski
  * @author Oliver Lorenz
- * @since 3.0
  */
 public abstract class AbstractIpcCacheService implements IpcCacheService, CacheKeyFactory {
 
