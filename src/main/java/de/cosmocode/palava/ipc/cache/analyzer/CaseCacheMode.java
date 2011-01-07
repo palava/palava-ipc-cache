@@ -44,9 +44,10 @@ public enum CaseCacheMode {
 
         @Override
         public boolean apply(Iterable<CachePredicate> filters, IpcCall call, IpcCommand command) {
-            for (final CachePredicate filter : filters) {
-                // if any filter does NOT apply to the call then we can exit here already (lazy evaluation)
-                if (!filter.apply(call, command)) {
+            for (CachePredicate filter : filters) {
+                if (filter.apply(call, command)) {
+                    continue;
+                } else {
                     return false;
                 }
             }
