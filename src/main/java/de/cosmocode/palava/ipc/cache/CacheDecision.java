@@ -16,17 +16,17 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import java.util.concurrent.TimeUnit;
+import de.cosmocode.palava.cache.CacheExpiration;
 
 /**
  * Represents the decision of a {@link CacheAnalyzer} how to cache a {@link de.cosmocode.palava.ipc.IpcCommand}s result.
  *
+ * @since 3.0
  * @author Tobias Sarnowski
  * @author Oliver Lorenz
- * @since 3.0
  * @see CacheAnalyzer
  */
-public interface CacheDecision {
+public interface CacheDecision extends CacheExpiration {
 
     /**
      * Whether the result should be cached or not.
@@ -34,37 +34,5 @@ public interface CacheDecision {
      * @return true if the result should be cached, false otherwise
      */
     boolean shouldCache();
-
-    /**
-     * How long the maximum amount of time is the result should be cached.
-     *
-     * @return amount of time or zero for infinite caching.
-     * @see de.cosmocode.palava.ipc.cache.CacheDecision#getLifeTimeUnit()
-     */
-    long getLifeTime();
-
-    /**
-     * Timeunit of the amount of lifetime.
-     *
-     * @return unit of the lifetime.
-     * @see de.cosmocode.palava.ipc.cache.CacheDecision#getLifeTime()
-     */
-    TimeUnit getLifeTimeUnit();
-
-    /**
-     * How long the maximum amount of time is the result should idle in the cache.
-     *
-     * @return amount of time or zero for infinite caching.
-     * @see de.cosmocode.palava.ipc.cache.CacheDecision#getIdleTimeUnit()
-     */
-    long getIdleTime();
-
-    /**
-     * Timeunit of the amount of idletime.
-     *
-     * @return unit of the idletime.
-     * @see de.cosmocode.palava.ipc.cache.CacheDecision#getIdleTime()
-     */
-    TimeUnit getIdleTimeUnit();
 
 }

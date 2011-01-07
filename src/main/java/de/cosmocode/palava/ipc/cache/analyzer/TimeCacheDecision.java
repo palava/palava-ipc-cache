@@ -21,18 +21,13 @@ import de.cosmocode.palava.ipc.cache.CacheDecision;
 import java.util.concurrent.TimeUnit;
 
 /**
- * <p>
- * This is the {@link CacheDecision} that the {@link TimeCacheAnalyzer} creates.
- * </p>
- * <p>
- * Created on: 05.01.11
- * </p>
+ * A {@link TimeCached} based {@link CacheDecision}.
  *
  * @since 3.0
  * @author Oliver Lorenz
  * @author Tobias Sarnowski
  */
-final class TimeCacheDecision implements CacheDecision {
+final class TimeCacheDecision extends AbstractCacheDecision {
 
     private final TimeCached annotation;
 
@@ -63,32 +58,6 @@ final class TimeCacheDecision implements CacheDecision {
     @Override
     public TimeUnit getIdleTimeUnit() {
         return annotation.idleTimeUnit();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        } else if (o instanceof TimeCacheDecision) {
-            final TimeCacheDecision that = (TimeCacheDecision) o;
-            return annotation.equals(that.annotation);
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public int hashCode() {
-        return annotation.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "CacheDecision{" +
-            "shouldCache=" + shouldCache() +
-            ", lifeTime=" + getLifeTime() + " " + getLifeTimeUnit() +
-            ", idleTime=" + getIdleTime() + " " + getIdleTimeUnit() +
-            '}';
     }
 
 }

@@ -26,7 +26,7 @@ import de.cosmocode.palava.ipc.cache.CacheDecision;
  * @since 3.0
  * @author Willi Schoenborn
  */
-final class CaseCacheDecision implements CacheDecision {
+final class CaseCacheDecision extends AbstractCacheDecision {
     
     private final boolean shouldCache;
     private final CaseCached annotation;
