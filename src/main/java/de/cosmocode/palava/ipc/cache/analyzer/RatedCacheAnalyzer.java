@@ -48,7 +48,7 @@ final class RatedCacheAnalyzer extends AbstractCacheAnalyzer<RatedCached> {
     }
 
     @Override
-    protected CacheDecision decide(final RatedCached annotation, IpcCall call, IpcCommand command) {
+    protected CacheDecision decide(RatedCached annotation, IpcCall call, IpcCommand command) {
 
         final CacheRatingAnalyzer analyzer = injector.getInstance(annotation.analyzer());
         final Rating rating = analyzer.rate(call, command);
@@ -97,34 +97,7 @@ final class RatedCacheAnalyzer extends AbstractCacheAnalyzer<RatedCached> {
             throw new IllegalStateException("Unknown rating target " + annotation.target());
         }
 
-        return new CacheDecision() {
-
-            @Override
-            public boolean shouldCache() {
-                return shouldCache;
-            }
-
-            @Override
-            public long getLifeTime() {
-                return lifeTime;
-            }
-
-            @Override
-            public TimeUnit getLifeTimeUnit() {
-                return lifeTimeUnit;
-            }
-
-            @Override
-            public long getIdleTime() {
-                return idleTime;
-            }
-
-            @Override
-            public TimeUnit getIdleTimeUnit() {
-                return idleTimeUnit;
-            }
-
-        };
+        return new RatedCacheDecision(shouldCache, lifeTime, lifeTimeUnit, idleTime, idleTimeUnit);
     }
 
 }
