@@ -25,8 +25,7 @@ import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
  * Utility class to perform some basic and trivial tasks. Implementations have to use
- * {@link de.cosmocode.palava.ipc.cache.AbstractIpcCacheService#getCacheKeyFactory()} to get a serializable key for
- * their cache.
+ * {@link #create(IpcCall, IpcCommand)}to get a serializable key for their cache.
  *
  * @author Tobias Sarnowski
  * @author Oliver Lorenz
@@ -35,15 +34,6 @@ import de.cosmocode.palava.ipc.IpcCommand;
 public abstract class AbstractIpcCacheService implements IpcCacheService, CacheKeyFactory {
 
     private CacheKeyFactory cacheKeyFactory = DefaultCacheKeyFactory.INSTANCE;
-
-    /**
-     * The configured {@link CacheKeyFactory} for your service.
-     *
-     * @return the configured factory
-     */
-    public CacheKeyFactory getCacheKeyFactory() {
-        return cacheKeyFactory;
-    }
 
     /**
      * Optional possibility to change the default {@link CacheKeyFactory} with another implementation.
@@ -59,7 +49,7 @@ public abstract class AbstractIpcCacheService implements IpcCacheService, CacheK
     public CacheKey create(IpcCall call, IpcCommand command) {
         Preconditions.checkNotNull(command, "Command");
         Preconditions.checkNotNull(call, "Call");
-        return getCacheKeyFactory().create(call, command);
+        return cacheKeyFactory.create(call, command);
     }
 
     @Override
