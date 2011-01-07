@@ -31,8 +31,8 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * The annotation can operate in two modi:
  * <ul>
- * <li>{@link RatedCached.RatingTarget#LIFE_TIME}: the lifetime will be shorten depending of the rating.</li>
- * <li>{@link RatedCached.RatingTarget#IDLE_TIME}: the idletime will be shorten depending of the rating.</li>
+ * <li>{@link RatingTarget#LIFE_TIME}: the lifetime will be shorten depending of the rating.</li>
+ * <li>{@link RatingTarget#IDLE_TIME}: the idletime will be shorten depending of the rating.</li>
  * </ul>
  * </p>
  * <p>
@@ -81,14 +81,6 @@ public @interface RatedCached {
      *
      * @return the rating target, default is {@link RatingTarget#LIFE_TIME}
      */
-    RatingTarget target() default RatedCached.RatingTarget.LIFE_TIME;
-
-    /**
-     * The rating target enum for {@link RatedCached#target()}.
-     */
-    enum RatingTarget {
-        LIFE_TIME,
-        IDLE_TIME
-    }
+    RatingTarget target() default RatingTarget.LIFE_TIME;
 
 }

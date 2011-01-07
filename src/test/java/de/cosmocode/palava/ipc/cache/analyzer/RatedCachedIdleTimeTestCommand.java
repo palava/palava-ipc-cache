@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * <p>
  * A test command that has the {@link RatedCached} annotation with target set to
- * {@link de.cosmocode.palava.ipc.cache.analyzer.RatedCached.RatingTarget#IDLE_TIME}.
+ * {@link de.cosmocode.palava.ipc.cache.analyzer.RatingTarget#IDLE_TIME}.
  * </p>
  * <p>
  * Created on: 05.01.11
@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
     minTime = 6, minTimeUnit = TimeUnit.MINUTES,
     lifeTime = RatedCachedIdleTimeTestCommand.LIFE_TIME, lifeTimeUnit = TimeUnit.MINUTES,
     idleTime = RatedCachedIdleTimeTestCommand.IDLE_TIME, idleTimeUnit = TimeUnit.MINUTES,
-    target = RatedCached.RatingTarget.IDLE_TIME
+    target = RatingTarget.IDLE_TIME
 )
 final class RatedCachedIdleTimeTestCommand implements IpcCommand {
 

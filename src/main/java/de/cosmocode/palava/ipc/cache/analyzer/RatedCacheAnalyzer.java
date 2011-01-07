@@ -61,7 +61,7 @@ final class RatedCacheAnalyzer extends AbstractCacheAnalyzer<RatedCached> {
         final TimeUnit idleTimeUnit;
         final boolean shouldCache;
 
-        if (annotation.target() == RatedCached.RatingTarget.LIFE_TIME) {
+        if (annotation.target() == RatingTarget.LIFE_TIME) {
             Preconditions.checkArgument(annotation.lifeTime() > 0, "lifeTime must be greater than 0");
 
             idleTime = annotation.idleTime();
@@ -77,7 +77,7 @@ final class RatedCacheAnalyzer extends AbstractCacheAnalyzer<RatedCached> {
 
             shouldCache = lifeTime >= annotation.minTimeUnit().toSeconds(annotation.minTime());
 
-        } else if (annotation.target() == RatedCached.RatingTarget.IDLE_TIME) {
+        } else if (annotation.target() == RatingTarget.IDLE_TIME) {
             Preconditions.checkArgument(annotation.idleTime() > 0, "idleTime must be greater than 0");
 
             lifeTime = annotation.lifeTime();
