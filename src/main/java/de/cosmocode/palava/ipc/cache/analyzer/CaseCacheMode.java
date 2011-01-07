@@ -64,7 +64,7 @@ public enum CaseCacheMode {
 
         @Override
         public boolean apply(Iterable<CachePredicate> filters, IpcCall call, IpcCommand command) {
-            for (final CachePredicate filter : filters) {
+            for (CachePredicate filter : filters) {
                 if (filter.apply(call, command)) {
                     return true;
                 }
