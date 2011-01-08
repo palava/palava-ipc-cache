@@ -16,12 +16,13 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import com.google.common.base.Preconditions;
-import com.google.inject.internal.Objects;
-import de.cosmocode.palava.ipc.IpcCommand;
-
 import java.io.Serializable;
 import java.util.Set;
+
+import com.google.common.base.Preconditions;
+import com.google.inject.internal.Objects;
+
+import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
  * A "unique" key indentifying a {@link Set} of {@link CacheKey}s.

@@ -16,10 +16,10 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import java.lang.annotation.Annotation;
+
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
-
-import java.lang.annotation.Annotation;
 
 /**
  * Defines the implementation of an analyzer which calculates a decision about the cache behaviour

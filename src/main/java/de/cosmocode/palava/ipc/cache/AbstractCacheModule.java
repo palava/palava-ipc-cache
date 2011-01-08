@@ -16,10 +16,10 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import java.lang.annotation.Annotation;
+
 import de.cosmocode.palava.ipc.Commands;
 import de.cosmocode.palava.ipc.FilterModule;
-
-import java.lang.annotation.Annotation;
 
 /**
  * Provides {@link AbstractCacheModule#use(Class)} to register a cache annotation.

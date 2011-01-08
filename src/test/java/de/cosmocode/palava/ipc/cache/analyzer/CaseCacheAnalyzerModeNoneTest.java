@@ -16,11 +16,12 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
-import de.cosmocode.palava.ipc.cache.CacheDecision;
+import java.util.Date;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Date;
+import de.cosmocode.palava.ipc.cache.CacheDecision;
 
 /**
  * <p>

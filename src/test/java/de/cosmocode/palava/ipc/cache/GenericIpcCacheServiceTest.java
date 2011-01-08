@@ -16,12 +16,12 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import org.junit.After;
+import org.junit.Before;
+
 import de.cosmocode.palava.core.Framework;
 import de.cosmocode.palava.core.Palava;
 import de.cosmocode.palava.core.lifecycle.Startable;
-
-import org.junit.After;
-import org.junit.Before;
 
 /**
  * <p>

@@ -16,10 +16,10 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
+import javax.annotation.Nonnull;
+
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
-
-import javax.annotation.Nonnull;
 
 /**
  * <p>

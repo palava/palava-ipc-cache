@@ -16,10 +16,10 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
+import java.util.Date;
+
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
-
-import java.util.Date;
 
 /**
  * <p>

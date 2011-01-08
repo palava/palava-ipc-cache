@@ -16,19 +16,20 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
-import de.cosmocode.junit.UnitProvider;
-import de.cosmocode.palava.core.Framework;
-import de.cosmocode.palava.core.Palava;
-import de.cosmocode.palava.ipc.IpcCall;
-import de.cosmocode.palava.ipc.IpcCommand;
-import de.cosmocode.palava.ipc.cache.CacheDecision;
+import java.util.concurrent.TimeUnit;
+
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.concurrent.TimeUnit;
+import de.cosmocode.junit.UnitProvider;
+import de.cosmocode.palava.core.Framework;
+import de.cosmocode.palava.core.Palava;
+import de.cosmocode.palava.ipc.IpcCall;
+import de.cosmocode.palava.ipc.IpcCommand;
+import de.cosmocode.palava.ipc.cache.CacheDecision;
 
 /**
  * <p>

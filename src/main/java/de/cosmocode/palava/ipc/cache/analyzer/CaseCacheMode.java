@@ -17,6 +17,7 @@
 package de.cosmocode.palava.ipc.cache.analyzer;
 
 import com.google.common.annotations.Beta;
+
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 

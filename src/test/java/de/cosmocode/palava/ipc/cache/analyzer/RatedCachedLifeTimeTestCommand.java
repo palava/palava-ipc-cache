@@ -16,12 +16,12 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcCommandExecutionException;
-
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * <p>

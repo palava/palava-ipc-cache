@@ -16,10 +16,10 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import java.lang.annotation.Annotation;
+
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
-
-import java.lang.annotation.Annotation;
 
 /**
  * Provides a "type-safe" implementation to analyze the command call with your cache annotation.

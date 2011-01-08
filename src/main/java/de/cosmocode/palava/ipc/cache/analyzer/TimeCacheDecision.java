@@ -16,9 +16,9 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
-import de.cosmocode.palava.ipc.cache.CacheDecision;
-
 import java.util.concurrent.TimeUnit;
+
+import de.cosmocode.palava.ipc.cache.CacheDecision;
 
 /**
  * A {@link TimeCached} based {@link CacheDecision}.

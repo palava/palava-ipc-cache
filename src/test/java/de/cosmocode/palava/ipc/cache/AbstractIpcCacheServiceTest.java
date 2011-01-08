@@ -16,22 +16,25 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Nullable;
+
+import org.easymock.EasyMock;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
+
 import de.cosmocode.junit.UnitProvider;
 import de.cosmocode.palava.ipc.IpcArguments;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcCommandExecutionException;
 import de.cosmocode.palava.ipc.MapIpcArguments;
-import org.easymock.EasyMock;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import javax.annotation.Nullable;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Abstract test for the {@link IpcCacheService} interface.

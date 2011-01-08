@@ -16,13 +16,13 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
-import de.cosmocode.palava.ipc.cache.ComplexCacheAnnotation;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
+
+import de.cosmocode.palava.ipc.cache.ComplexCacheAnnotation;
 
 /**
  * Caches the command call result depending of the

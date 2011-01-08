@@ -16,16 +16,18 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
+import org.easymock.EasyMock;
+import org.junit.After;
+import org.junit.Before;
+
 import com.google.common.collect.Maps;
+
 import de.cosmocode.junit.UnitProvider;
 import de.cosmocode.palava.core.Framework;
 import de.cosmocode.palava.core.Palava;
 import de.cosmocode.palava.ipc.IpcArguments;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.MapIpcArguments;
-import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.Before;
 
 /**
  * <p>

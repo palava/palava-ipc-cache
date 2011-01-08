@@ -16,17 +16,19 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.cache.AbstractCacheAnalyzer;
 import de.cosmocode.palava.ipc.cache.CacheDecision;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * {@link de.cosmocode.palava.ipc.cache.CacheAnalyzer} implementation for {@link RatedCached}.

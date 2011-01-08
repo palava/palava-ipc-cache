@@ -18,6 +18,7 @@ package de.cosmocode.palava.ipc.cache;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+
 import de.cosmocode.palava.cache.EhCacheServiceModule;
 import de.cosmocode.palava.core.DefaultRegistryModule;
 import de.cosmocode.palava.core.inject.TypeConverterModule;

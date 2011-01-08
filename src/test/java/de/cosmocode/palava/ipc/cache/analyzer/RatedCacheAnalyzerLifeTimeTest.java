@@ -16,13 +16,14 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
-import de.cosmocode.palava.ipc.IpcCommand;
-import de.cosmocode.palava.ipc.cache.CacheDecision;
+import java.util.concurrent.TimeUnit;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.concurrent.TimeUnit;
+import de.cosmocode.palava.ipc.IpcCommand;
+import de.cosmocode.palava.ipc.cache.CacheDecision;
 
 /**
  * <p>
