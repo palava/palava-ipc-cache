@@ -20,14 +20,12 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 
-import com.google.common.collect.Maps;
-
 import de.cosmocode.junit.UnitProvider;
 import de.cosmocode.palava.core.Framework;
 import de.cosmocode.palava.core.Palava;
+import de.cosmocode.palava.core.lifecycle.Startable;
 import de.cosmocode.palava.ipc.IpcArguments;
 import de.cosmocode.palava.ipc.IpcCall;
-import de.cosmocode.palava.ipc.MapIpcArguments;
 
 /**
  * <p>
@@ -40,49 +38,39 @@ import de.cosmocode.palava.ipc.MapIpcArguments;
  *
  * @author Oliver Lorenz
  */
-public abstract class AbstractRatedCacheAnalyzerTest implements UnitProvider<RatedCacheAnalyzer> {
+public abstract class AbstractRatedCacheAnalyzerTest implements UnitProvider<RatedCacheAnalyzer>, Startable {
 
     private final Framework framework = Palava.newFramework();
 
-    protected IpcArguments arguments = new MapIpcArguments(Maps.<String, Object>newHashMap());
-    protected IpcCall call;
-
-    /**
-     * Starts palava.
-     */
     @Before
-    public final void startPalava() {
+    @Override
+    public final void start() {
         framework.start();
     }
 
-    /**
-     * Create a mock for call.
-     */
-    @Before
-    public void mockCall() {
-        call = EasyMock.createMock("call", IpcCall.class);
-        EasyMock.expect(call.getArguments()).andReturn(arguments).atLeastOnce();
-        EasyMock.replay(call);
-    }
-
-    /**
-     * Verify mocked up call.
-     */
-    @After
-    public void verifyCall() {
-        EasyMock.verify(call);
-    }
-
-    /**
-     * Stops palava.
-     */
-    @After
-    public final void stopPalava() {
-        framework.stop();
-    }
-
     @Override
-    public RatedCacheAnalyzer unit() {
+    public final RatedCacheAnalyzer unit() {
         return framework.getInstance(RatedCacheAnalyzer.class);
     }
+
+    /**
+     * Creates an {@link IpcCall} mock.
+     *
+     * @param arguments the arguments to be returned by {@link IpcCall#getArguments()}
+     * @return the mocked call
+     */
+    @Before
+    public IpcCall createCallMock(IpcArguments arguments) {
+        final IpcCall call = EasyMock.createMock("call", IpcCall.class);
+        EasyMock.expect(call.getArguments()).andReturn(arguments).atLeastOnce();
+        EasyMock.replay(call);
+        return call;
+    }
+
+    @After
+    @Override
+    public final void stop() {
+        framework.stop();
+    }
+    
 }

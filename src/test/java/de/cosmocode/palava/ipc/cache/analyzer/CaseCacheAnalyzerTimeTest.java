@@ -27,6 +27,7 @@ import org.junit.Test;
 import de.cosmocode.junit.UnitProvider;
 import de.cosmocode.palava.core.Framework;
 import de.cosmocode.palava.core.Palava;
+import de.cosmocode.palava.core.lifecycle.Startable;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.cache.CacheDecision;
@@ -43,7 +44,7 @@ import de.cosmocode.palava.ipc.cache.CacheDecision;
  * @since 3.0
  * @author Oliver Lorenz
  */
-public final class CaseCacheAnalyzerTimeTest implements UnitProvider<CaseCacheAnalyzer> {
+public final class CaseCacheAnalyzerTimeTest implements UnitProvider<CaseCacheAnalyzer>, Startable {
 
     @SuppressWarnings("unchecked")
     private static final Class<? extends CachePredicate>[] ALWAYS_TRUE_FILTERS =
@@ -52,20 +53,25 @@ public final class CaseCacheAnalyzerTimeTest implements UnitProvider<CaseCacheAn
     private final Framework framework = Palava.newFramework();
 
     @Before
-    public final void startPalava() {
+    @Override
+    public void start() {
         framework.start();
     }
 
     @After
-    public final void stopPalava() {
+    @Override
+    public void stop() {
         framework.stop();
     }
 
     @Override
-    public final CaseCacheAnalyzer unit() {
+    public CaseCacheAnalyzer unit() {
         return framework.getInstance(CaseCacheAnalyzer.class);
     }
 
+    /**
+     * Tests {@link CaseCacheAnalyzer#analyze(java.lang.annotation.Annotation, IpcCall, IpcCommand)}.
+     */
     @Test
     public void analyze() {
         // create dummy command and call (should not be parsed by analyzer)

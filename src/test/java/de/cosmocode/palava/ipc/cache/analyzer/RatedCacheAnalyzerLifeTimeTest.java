@@ -22,7 +22,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.cosmocode.palava.ipc.IpcArguments;
+import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
+import de.cosmocode.palava.ipc.MapIpcArguments;
 import de.cosmocode.palava.ipc.cache.CacheDecision;
 
 /**
@@ -57,6 +60,8 @@ public final class RatedCacheAnalyzerLifeTimeTest extends AbstractRatedCacheAnal
      */
     @Test
     public void noArguments() {
+        final IpcArguments arguments = new MapIpcArguments();
+        final IpcCall call = createCallMock(arguments);
         final CacheDecision decision = unit().analyze(annotation, call, command);
 
         Assert.assertEquals(false, decision.shouldCache());
@@ -71,7 +76,9 @@ public final class RatedCacheAnalyzerLifeTimeTest extends AbstractRatedCacheAnal
      */
     @Test
     public void underMinimum() {
+        final IpcArguments arguments = new MapIpcArguments();
         arguments.put("test", "argument");
+        final IpcCall call = createCallMock(arguments);
 
         final CacheDecision decision = unit().analyze(annotation, call, command);
 
@@ -87,8 +94,10 @@ public final class RatedCacheAnalyzerLifeTimeTest extends AbstractRatedCacheAnal
      */
     @Test
     public void atMinimum() {
+        final IpcArguments arguments = new MapIpcArguments();
         arguments.put("test", "argument");
         arguments.put("arg2", "foobar");
+        final IpcCall call = createCallMock(arguments);
 
         final CacheDecision decision = unit().analyze(annotation, call, command);
 
@@ -104,10 +113,12 @@ public final class RatedCacheAnalyzerLifeTimeTest extends AbstractRatedCacheAnal
      */
     @Test
     public void overMinimum() {
+        final IpcArguments arguments = new MapIpcArguments();
         arguments.put("key1", "value1");
         arguments.put("key2", "value2");
         arguments.put("key3", "value3");
         arguments.put("key4", "value4");
+        final IpcCall call = createCallMock(arguments);
 
         final CacheDecision decision = unit().analyze(annotation, call, command);
 
@@ -123,9 +134,11 @@ public final class RatedCacheAnalyzerLifeTimeTest extends AbstractRatedCacheAnal
      */
     @Test
     public void maxArguments() {
+        final IpcArguments arguments = new MapIpcArguments();
         for (int i = 0; i < CountArgumentsCacheRatingAnalyzer.MAX; i++) {
             arguments.put("key" + i, "value" + i);
         }
+        final IpcCall call = createCallMock(arguments);
 
         final long lifeTimeInSeconds = TimeUnit.MINUTES.toSeconds(RatedCachedLifeTimeTestCommand.LIFE_TIME);
 

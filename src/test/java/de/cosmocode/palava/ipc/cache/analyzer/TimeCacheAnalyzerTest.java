@@ -45,6 +45,9 @@ public final class TimeCacheAnalyzerTest implements UnitProvider<TimeCacheAnalyz
         return new TimeCacheAnalyzer();
     }
 
+    /**
+     * Tests {@link TimeCacheAnalyzer#analyze(java.lang.annotation.Annotation, IpcCall, IpcCommand)}.
+     */
     @Test
     public void analyze() {
         // create dummy call and command (should not be parsed by analyzer)

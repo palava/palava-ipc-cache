@@ -19,8 +19,10 @@ package de.cosmocode.palava.ipc.cache.analyzer;
 import java.util.Date;
 
 import org.junit.Assert;
-import org.junit.Test;
 
+import de.cosmocode.palava.ipc.IpcArguments;
+import de.cosmocode.palava.ipc.IpcCall;
+import de.cosmocode.palava.ipc.MapIpcArguments;
 import de.cosmocode.palava.ipc.cache.CacheDecision;
 
 /**
@@ -41,32 +43,40 @@ public final class CaseCacheAnalyzerModeAllTest extends AbstractCaseCacheAnalyze
         return CaseCacheMode.ALL;
     }
 
-    @Test
+    @Override
     public void dateMatches() {
+        final IpcArguments arguments = new MapIpcArguments(); 
         arguments.put("date", new Date());
-        final CacheDecision decision = unit().analyze(annotation, call, command);
+        final IpcCall call = createCallMock(arguments);
+        final CacheDecision decision = unit().analyze(annotation(), call, command());
         Assert.assertFalse(decision.shouldCache());
     }
 
-    @Test
+    @Override
     public void accountIdMatches() {
+        final IpcArguments arguments = new MapIpcArguments(); 
         arguments.put("account_id", 5);
-        final CacheDecision decision = unit().analyze(annotation, call, command);
+        final IpcCall call = createCallMock(arguments);
+        final CacheDecision decision = unit().analyze(annotation(), call, command());
         Assert.assertFalse(decision.shouldCache());
     }
 
-    @Test
+    @Override
     public void bothMatch() {
+        final IpcArguments arguments = new MapIpcArguments(); 
         arguments.put("account_id", 5);
         arguments.put("date", new Date());
-        final CacheDecision decision = unit().analyze(annotation, call, command);
+        final IpcCall call = createCallMock(arguments);
+        final CacheDecision decision = unit().analyze(annotation(), call, command());
         Assert.assertTrue(decision.shouldCache());
     }
 
-    @Test
+    @Override
     public void noneMatches() {
+        final IpcArguments arguments = new MapIpcArguments(); 
         arguments.put("anything", "bla");
-        final CacheDecision decision = unit().analyze(annotation, call, command);
+        final IpcCall call = createCallMock(arguments);
+        final CacheDecision decision = unit().analyze(annotation(), call, command());
         Assert.assertFalse(decision.shouldCache());
     }
 
