@@ -63,6 +63,9 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
         return true;
     }
 
+    /**
+     * Creates all mocks before each test.
+     */
     @Before
     public void createMocks() {
         // command
@@ -108,6 +111,9 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
         EasyMock.verify(command, call, decision, secondCall);
     }
 
+    /**
+     * Creates all results before each test.
+     */
     @Before
     public void createResults() {
         result = Maps.newHashMap();
@@ -131,6 +137,11 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
         };
     }
     
+    /**
+     * Tests {@link IpcCacheService#read(IpcCommand, IpcCall)} before any store operation.
+     *
+     * @throws IpcCommandExecutionException should not happen
+     */
     @Test
     public void getBeforeSet() throws IpcCommandExecutionException {
         final Map<String, Object> unitResult = unit().read(command, call);
@@ -140,6 +151,11 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
         verifyFirstCallMocks();
     }
 
+    /**
+     * Tests {@link IpcCacheService#read(IpcCommand, IpcCall)} after a successful store operation.
+     *
+     * @throws IpcCommandExecutionException should not happen 
+     */
     @Test
     public void getAfterSet() throws IpcCommandExecutionException {
         unit().computeAndStore(command, call, decision, returning(result));
@@ -149,6 +165,11 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
         verifyFirstCallMocks();
     }
 
+    /**
+     * Tests {@link IpcCacheService#invalidate(Class)}.
+     *
+     * @throws IpcCommandExecutionException should not happen
+     */
     @Test
     public void invalidateAll() throws IpcCommandExecutionException {
         if (supportsInvalidate()) {
@@ -175,6 +196,11 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
         }
     }
 
+    /**
+     * Tests {@link IpcCacheService#invalidate(Class, Predicate)}.
+     *
+     * @throws IpcCommandExecutionException should not happen
+     */
     @Test
     public void invalidateSingle() throws IpcCommandExecutionException {
         if (supportsInvalidate()) {
