@@ -16,6 +16,7 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.easymock.EasyMock;
@@ -31,6 +32,7 @@ import de.cosmocode.palava.core.lifecycle.Startable;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.cache.CacheDecision;
+import de.cosmocode.palava.ipc.cache.IpcCacheTestModule;
 
 /**
  * <p>
@@ -50,7 +52,7 @@ public final class CaseCacheAnalyzerTimeTest implements UnitProvider<CaseCacheAn
     private static final Class<? extends CachePredicate>[] ALWAYS_TRUE_FILTERS =
         new Class[] {AlwaysTruePredicate.class};
 
-    private final Framework framework = Palava.newFramework();
+    private final Framework framework = Palava.newFramework(new IpcCacheTestModule(), new Properties());
 
     @Before
     @Override

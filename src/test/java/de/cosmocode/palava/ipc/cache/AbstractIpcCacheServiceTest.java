@@ -85,6 +85,7 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
         EasyMock.expect(decision.getLifeTimeUnit()).andStubReturn(TimeUnit.MINUTES);
         EasyMock.expect(decision.getIdleTime()).andStubReturn(0L);
         EasyMock.expect(decision.getIdleTimeUnit()).andStubReturn(TimeUnit.MINUTES);
+        EasyMock.expect(decision.isEternal()).andStubReturn(true);
 
         // create special second call which will not be verified
         secondCall = EasyMock.createMock("secondCall", IpcCall.class);
@@ -101,7 +102,7 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
      * Verifies the mocks created for the first call.
      */
     protected void verifyFirstCallMocks() {
-        EasyMock.verify(command, call, decision);
+        EasyMock.verify(command, call);
     }
 
     /**

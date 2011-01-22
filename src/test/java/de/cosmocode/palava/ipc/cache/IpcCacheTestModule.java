@@ -16,13 +16,19 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
 import com.google.inject.Binder;
 import com.google.inject.Module;
 
-import de.cosmocode.palava.cache.EhCacheServiceModule;
+import de.cosmocode.palava.cache.BackedComputingCacheServiceModule;
+import de.cosmocode.palava.cache.ConcurrentMapCacheServiceModule;
 import de.cosmocode.palava.core.DefaultRegistryModule;
 import de.cosmocode.palava.core.inject.TypeConverterModule;
 import de.cosmocode.palava.core.lifecycle.LifecycleModule;
+import de.cosmocode.palava.cron.Cron;
+import de.cosmocode.palava.cron.DefaultCronServiceModule;
 import de.cosmocode.palava.ipc.Ipc;
 
 /**
@@ -44,7 +50,12 @@ public class IpcCacheTestModule implements Module {
         binder.install(new TypeConverterModule());
         binder.install(new LifecycleModule());
         binder.install(new DefaultRegistryModule());
-        binder.install(EhCacheServiceModule.annotatedWith(Ipc.class, "ipc"));
+        binder.install(new GenericIpcCacheServiceModule());
+        binder.install(ConcurrentMapCacheServiceModule.annotatedWith(Real.class));
+        binder.install(BackedComputingCacheServiceModule.annotatedWithAndBackedBy(Ipc.class, Real.class));
+        binder.install(new DefaultCronServiceModule());
+        binder.bind(ScheduledExecutorService.class).annotatedWith(Cron.class).
+            toInstance(Executors.newScheduledThreadPool(5));
     }
 
 }

@@ -16,6 +16,8 @@
 
 package de.cosmocode.palava.ipc.cache;
 
+import java.util.Properties;
+
 import org.junit.After;
 import org.junit.Before;
 
@@ -36,18 +38,12 @@ import de.cosmocode.palava.core.lifecycle.Startable;
  */
 public class GenericIpcCacheServiceTest extends AbstractIpcCacheServiceTest implements Startable {
 
-    private final Framework framework = Palava.newFramework();
+    private final Framework framework = Palava.newFramework(new IpcCacheTestModule(), new Properties());
 
     @Before
     @Override
     public void start() {
         framework.start();
-    }
-
-    @After
-    @Override
-    public void stop() {
-        framework.stop();
     }
 
     @Override
@@ -58,6 +54,12 @@ public class GenericIpcCacheServiceTest extends AbstractIpcCacheServiceTest impl
     @Override
     protected boolean supportsInvalidate() {
         return false;
+    }
+
+    @After
+    @Override
+    public void stop() {
+        framework.stop();
     }
 
 }

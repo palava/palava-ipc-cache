@@ -16,6 +16,8 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
+import java.util.Properties;
+
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -26,6 +28,7 @@ import de.cosmocode.palava.core.Palava;
 import de.cosmocode.palava.core.lifecycle.Startable;
 import de.cosmocode.palava.ipc.IpcArguments;
 import de.cosmocode.palava.ipc.IpcCall;
+import de.cosmocode.palava.ipc.cache.IpcCacheTestModule;
 
 /**
  * <p>
@@ -40,7 +43,7 @@ import de.cosmocode.palava.ipc.IpcCall;
  */
 public abstract class AbstractRatedCacheAnalyzerTest implements UnitProvider<RatedCacheAnalyzer>, Startable {
 
-    private final Framework framework = Palava.newFramework();
+    private final Framework framework = Palava.newFramework(new IpcCacheTestModule(), new Properties());
 
     @Before
     @Override
@@ -59,7 +62,6 @@ public abstract class AbstractRatedCacheAnalyzerTest implements UnitProvider<Rat
      * @param arguments the arguments to be returned by {@link IpcCall#getArguments()}
      * @return the mocked call
      */
-    @Before
     public IpcCall createCallMock(IpcArguments arguments) {
         final IpcCall call = EasyMock.createMock("call", IpcCall.class);
         EasyMock.expect(call.getArguments()).andReturn(arguments).atLeastOnce();

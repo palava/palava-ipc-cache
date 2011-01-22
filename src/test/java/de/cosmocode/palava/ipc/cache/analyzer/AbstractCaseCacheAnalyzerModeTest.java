@@ -16,6 +16,7 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.easymock.EasyMock;
@@ -30,6 +31,7 @@ import de.cosmocode.palava.core.lifecycle.Startable;
 import de.cosmocode.palava.ipc.IpcArguments;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
+import de.cosmocode.palava.ipc.cache.IpcCacheTestModule;
 
 /**
  * <p>
@@ -50,7 +52,7 @@ public abstract class AbstractCaseCacheAnalyzerModeTest implements UnitProvider<
         AccountIdIsFiveFilter.class
     };
 
-    private final Framework framework = Palava.newFramework();
+    private final Framework framework = Palava.newFramework(new IpcCacheTestModule(), new Properties());
 
     /**
      * Returns the mode that is to be tested.
@@ -101,7 +103,6 @@ public abstract class AbstractCaseCacheAnalyzerModeTest implements UnitProvider<
      * @param arguments the arguments to be returned by {@link IpcCall#getArguments()}
      * @return the mocked call
      */
-    @Before
     public IpcCall createCallMock(IpcArguments arguments) {
         final IpcCall call = EasyMock.createMock("call", IpcCall.class);
         EasyMock.expect(call.getArguments()).andReturn(arguments).atLeastOnce();
