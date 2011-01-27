@@ -148,7 +148,7 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
      * @throws IpcCommandExecutionException should not happen
      */
     @Test
-    public void getBeforeSet() throws IpcCommandExecutionException {
+    public void readBeforeStore() throws IpcCommandExecutionException {
         final Map<String, Object> unitResult = unit().read(command, call);
         unit().computeAndStore(command, call, decision, returning(result));
 
@@ -162,7 +162,7 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
      * @throws IpcCommandExecutionException should not happen 
      */
     @Test
-    public void getAfterSet() throws IpcCommandExecutionException {
+    public void readAfterStore() throws IpcCommandExecutionException {
         unit().computeAndStore(command, call, decision, returning(result));
         final Map<String, Object> unitResult = unit().read(command, call);
 
