@@ -29,6 +29,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
 import de.cosmocode.junit.UnitProvider;
+import de.cosmocode.palava.cache.CacheExpiration;
 import de.cosmocode.palava.ipc.IpcArguments;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
@@ -128,6 +129,18 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
             }
             
         };
+    }
+    
+    /**
+     * Tests {@link IpcCacheService#computeAndStore(IpcCommand, IpcCall, CacheExpiration, IpcCommandExecution)}.
+     * 
+     * @throws IpcCommandExecutionException should not happen
+     */
+    @Test
+    public void computeAndStore() throws IpcCommandExecutionException {
+        final Map<String, Object> computed = unit().computeAndStore(command, call, decision, returning(result));
+        Assert.assertEquals(result, computed);
+        verifyFirstCallMocks();
     }
     
     /**
