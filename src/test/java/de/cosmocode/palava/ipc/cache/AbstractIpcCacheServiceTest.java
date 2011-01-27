@@ -76,16 +76,14 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
 
         // call
         call = EasyMock.createMock("call", IpcCall.class);
-        final Map<String, Object> argumentsRaw = Maps.newHashMap();
-        argumentsRaw.put("account_id", 5);
-        final IpcArguments arguments = new MapIpcArguments(argumentsRaw);
+        final IpcArguments arguments = new MapIpcArguments();
+        arguments.put("account_id", 5);
         EasyMock.expect(call.getArguments()).andReturn(arguments).atLeastOnce();
 
         // create special second call for invalidation tests
         secondCall = EasyMock.createMock("secondCall", IpcCall.class);
-        final Map<String, Object> secondArgumentsRaw = Maps.newHashMap();
-        secondArgumentsRaw.put("account_id", 7);
-        final IpcArguments secondArguments = new MapIpcArguments(secondArgumentsRaw);
+        final IpcArguments secondArguments = new MapIpcArguments();
+        secondArguments.put("account_id", 7);
         EasyMock.expect(secondCall.getArguments()).andReturn(secondArguments).atLeastOnce();
 
         // set all to replay mode (ready to use)
