@@ -47,12 +47,13 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
     
     private final CacheDecision decision = new EternalCacheDecision();
 
+    // mocks
     private IpcCommand command;
     private IpcCall call;
-    private CacheDecision decision;
-    private Map<String, Object> result;
-
     private IpcCall secondCall;
+
+    // results (normal maps)
+    private Map<String, Object> result;
     private Map<String, Object> secondResult;
 
     /**
