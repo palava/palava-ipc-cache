@@ -17,7 +17,6 @@
 package de.cosmocode.palava.ipc.cache;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
@@ -44,6 +43,8 @@ import de.cosmocode.palava.ipc.MapIpcArguments;
  * @author Oliver Lorenz
  */
 public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCacheService> {
+    
+    private final CacheDecision decision = new EternalCacheDecision();
 
     private IpcCommand command;
     private IpcCall call;
@@ -78,16 +79,7 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
         final IpcArguments arguments = new MapIpcArguments(argumentsRaw);
         EasyMock.expect(call.getArguments()).andReturn(arguments).atLeastOnce();
 
-        // decision
-        decision = EasyMock.createMock("decision", CacheDecision.class);
-        EasyMock.expect(decision.shouldCache()).andStubReturn(true);
-        EasyMock.expect(decision.getLifeTime()).andStubReturn(0L);
-        EasyMock.expect(decision.getLifeTimeUnit()).andStubReturn(TimeUnit.MINUTES);
-        EasyMock.expect(decision.getIdleTime()).andStubReturn(0L);
-        EasyMock.expect(decision.getIdleTimeUnit()).andStubReturn(TimeUnit.MINUTES);
-        EasyMock.expect(decision.isEternal()).andStubReturn(true);
-
-        // create special second call which will not be verified
+        // create special second call for invalidation tests
         secondCall = EasyMock.createMock("secondCall", IpcCall.class);
         final Map<String, Object> secondArgumentsRaw = Maps.newHashMap();
         secondArgumentsRaw.put("account_id", 7);
@@ -95,21 +87,7 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
         EasyMock.expect(secondCall.getArguments()).andReturn(secondArguments).atLeastOnce();
 
         // set all to replay mode (ready to use)
-        EasyMock.replay(command, call, decision, secondCall);
-    }
-
-    /**
-     * Verifies the mocks created for the first call.
-     */
-    protected void verifyFirstCallMocks() {
-        EasyMock.verify(command, call);
-    }
-
-    /**
-     * Verifies all created mocks.
-     */
-    protected void verifyAllMocks() {
-        EasyMock.verify(command, call, decision, secondCall);
+        EasyMock.replay(command, call, secondCall);
     }
 
     /**
@@ -125,6 +103,20 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
         secondResult.put("test", "another value");
         secondResult.put("a boo", "fancy value");
         secondResult.put("account_id", 7);
+    }
+
+    /**
+     * Verifies the mocks created for the first call.
+     */
+    protected void verifyFirstCallMocks() {
+        EasyMock.verify(command, call);
+    }
+
+    /**
+     * Verifies all created mocks.
+     */
+    protected void verifyAllMocks() {
+        EasyMock.verify(command, call, secondCall);
     }
 
     private IpcCommandExecution returning(final Map<String, Object> r) {
