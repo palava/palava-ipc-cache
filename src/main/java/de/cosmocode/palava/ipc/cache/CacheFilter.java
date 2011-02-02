@@ -18,8 +18,13 @@ package de.cosmocode.palava.ipc.cache;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -45,9 +50,13 @@ import de.cosmocode.palava.ipc.IpcCommandExecutionException;
  */
 @Singleton
 final class CacheFilter implements IpcCallFilter {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CacheFilter.class);
     
     private final IpcCacheService service;
     private final Injector injector;
+
+    private final ConcurrentMap<Class<? extends IpcCommand>, Annotation> cache = Maps.newConcurrentMap();
     
     @Inject
     public CacheFilter(IpcCacheService service, Injector injector) {
@@ -81,15 +90,25 @@ final class CacheFilter implements IpcCallFilter {
     }
     
     private Annotation checkAndGetAnnotation(IpcCommand command) {
-        Annotation found = null;
-        for (Annotation annotation : command.getClass().getAnnotations()) {
-            if (annotation.getClass().isAnnotationPresent(ComplexCacheAnnotation.class)) {
-                Preconditions.checkState(found == null, "Multiple cache annotations found on %s", command.getClass());
-                found = annotation;
+        final Class<? extends IpcCommand> type = command.getClass();
+        final Annotation cached = cache.get(type);
+
+        if (cached == null) {
+            Annotation found = null;
+            for (Annotation annotation : type.getAnnotations()) {
+                LOG.trace("Analyzing annotation {} on command {}", annotation, type);
+                if (annotation.annotationType().isAnnotationPresent(ComplexCacheAnnotation.class)) {
+                    Preconditions.checkState(found == null, "Multiple cache annotations found on %s", type);
+                    found = annotation;
+                }
             }
+            Preconditions.checkState(found != null, "No cache annotation found on %s", type);
+            LOG.trace("Found cache annotation {} on command {}", found, type);
+            cache.putIfAbsent(type, found);
+            return found;
+        } else {
+            return cached;
         }
-        Preconditions.checkState(found != null, "No cache annotation found on %s", command.getClass());
-        return found;
     }
 
 }
