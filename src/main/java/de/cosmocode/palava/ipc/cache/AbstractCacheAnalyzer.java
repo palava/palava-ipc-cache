@@ -32,8 +32,8 @@ import de.cosmocode.palava.ipc.IpcCommand;
 public abstract class AbstractCacheAnalyzer<T extends Annotation> implements CacheAnalyzer {
 
     /**
-     * Will be called to get a decision about how to handle a result. The method will get cache annotation which
-     * triggered the analyzer.
+     * Will be called to get a decision about how to handle a result.
+     * The method will get the cache annotation which triggered the analyzer.
      *
      * @param annotation your annotation
      * @param call the IPC call
