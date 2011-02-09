@@ -17,7 +17,6 @@
 package de.cosmocode.palava.ipc.cache;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
@@ -32,6 +31,7 @@ import com.google.common.collect.Maps;
 
 import de.cosmocode.junit.LoggingRunner;
 import de.cosmocode.junit.UnitProvider;
+import de.cosmocode.palava.cache.CacheExpiration;
 import de.cosmocode.palava.ipc.IpcArguments;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
@@ -47,13 +47,16 @@ import de.cosmocode.palava.ipc.MapIpcArguments;
  */
 @RunWith(LoggingRunner.class)
 public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCacheService> {
+    
+    private final CacheDecision decision = new EternalCacheDecision();
 
+    // mocks
     private IpcCommand command;
     private IpcCall call;
-    private CacheDecision decision;
-    private Map<String, Object> result;
-
     private IpcCall secondCall;
+
+    // results (normal maps)
+    private Map<String, Object> result;
     private Map<String, Object> secondResult;
 
     /**
@@ -76,43 +79,18 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
 
         // call
         call = EasyMock.createMock("call", IpcCall.class);
-        final Map<String, Object> argumentsRaw = Maps.newHashMap();
-        argumentsRaw.put("account_id", 5);
-        final IpcArguments arguments = new MapIpcArguments(argumentsRaw);
+        final IpcArguments arguments = new MapIpcArguments();
+        arguments.put("account_id", 5);
         EasyMock.expect(call.getArguments()).andReturn(arguments).atLeastOnce();
 
-        // decision
-        decision = EasyMock.createMock("decision", CacheDecision.class);
-        EasyMock.expect(decision.shouldCache()).andStubReturn(true);
-        EasyMock.expect(decision.getLifeTime()).andStubReturn(0L);
-        EasyMock.expect(decision.getLifeTimeUnit()).andStubReturn(TimeUnit.MINUTES);
-        EasyMock.expect(decision.getIdleTime()).andStubReturn(0L);
-        EasyMock.expect(decision.getIdleTimeUnit()).andStubReturn(TimeUnit.MINUTES);
-        EasyMock.expect(decision.isEternal()).andStubReturn(true);
-
-        // create special second call which will not be verified
+        // create special second call for invalidation tests
         secondCall = EasyMock.createMock("secondCall", IpcCall.class);
-        final Map<String, Object> secondArgumentsRaw = Maps.newHashMap();
-        secondArgumentsRaw.put("account_id", 7);
-        final IpcArguments secondArguments = new MapIpcArguments(secondArgumentsRaw);
+        final IpcArguments secondArguments = new MapIpcArguments();
+        secondArguments.put("account_id", 7);
         EasyMock.expect(secondCall.getArguments()).andReturn(secondArguments).atLeastOnce();
 
         // set all to replay mode (ready to use)
-        EasyMock.replay(command, call, decision, secondCall);
-    }
-
-    /**
-     * Verifies the mocks created for the first call.
-     */
-    protected void verifyFirstCallMocks() {
-        EasyMock.verify(command, call);
-    }
-
-    /**
-     * Verifies all created mocks.
-     */
-    protected void verifyAllMocks() {
-        EasyMock.verify(command, call, decision, secondCall);
+        EasyMock.replay(command, call, secondCall);
     }
 
     /**
@@ -130,6 +108,20 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
         secondResult.put("account_id", 7);
     }
 
+    /**
+     * Verifies the mocks created for the first call.
+     */
+    protected void verifyFirstCallMocks() {
+        EasyMock.verify(command, call);
+    }
+
+    /**
+     * Verifies all created mocks.
+     */
+    protected void verifyAllMocks() {
+        EasyMock.verify(command, call, secondCall);
+    }
+
     private IpcCommandExecution returning(final Map<String, Object> r) {
         return new IpcCommandExecution() {
             
@@ -142,12 +134,24 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
     }
     
     /**
+     * Tests {@link IpcCacheService#computeAndStore(IpcCommand, IpcCall, CacheExpiration, IpcCommandExecution)}.
+     * 
+     * @throws IpcCommandExecutionException should not happen
+     */
+    @Test
+    public void computeAndStore() throws IpcCommandExecutionException {
+        final Map<String, Object> computed = unit().computeAndStore(command, call, decision, returning(result));
+        Assert.assertEquals(result, computed);
+        verifyFirstCallMocks();
+    }
+    
+    /**
      * Tests {@link IpcCacheService#read(IpcCommand, IpcCall)} before any store operation.
      *
      * @throws IpcCommandExecutionException should not happen
      */
     @Test
-    public void getBeforeSet() throws IpcCommandExecutionException {
+    public void readBeforeStore() throws IpcCommandExecutionException {
         final Map<String, Object> unitResult = unit().read(command, call);
         unit().computeAndStore(command, call, decision, returning(result));
 
@@ -161,7 +165,7 @@ public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCac
      * @throws IpcCommandExecutionException should not happen 
      */
     @Test
-    public void getAfterSet() throws IpcCommandExecutionException {
+    public void readAfterStore() throws IpcCommandExecutionException {
         unit().computeAndStore(command, call, decision, returning(result));
         final Map<String, Object> unitResult = unit().read(command, call);
 
