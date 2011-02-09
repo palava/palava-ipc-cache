@@ -25,10 +25,12 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
+import de.cosmocode.junit.LoggingRunner;
 import de.cosmocode.junit.UnitProvider;
 import de.cosmocode.palava.ipc.IpcArguments;
 import de.cosmocode.palava.ipc.IpcCall;
@@ -43,6 +45,7 @@ import de.cosmocode.palava.ipc.MapIpcArguments;
  * @since 3.0
  * @author Oliver Lorenz
  */
+@RunWith(LoggingRunner.class)
 public abstract class AbstractIpcCacheServiceTest implements UnitProvider<IpcCacheService> {
 
     private IpcCommand command;
