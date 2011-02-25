@@ -43,24 +43,25 @@ final class Calculate implements IpcCommand {
 
     private static final Logger LOG = LoggerFactory.getLogger(Calculate.class);
 
-    private boolean calledOnce;
+    private boolean calledBefore;
 
     @Override
     public void execute(final IpcCall call, final Map<String, Object> result) throws IpcCommandExecutionException {
-        if (calledOnce) {
+        if (calledBefore) {
             Assert.fail("I was called before!");
+        } else {
+            // read arguments
+            final IpcArguments arguments = call.getArguments();
+            final int a = arguments.getInt("a");
+            final int b = arguments.getInt("b");
+            
+            result.put("sum", a + b);
+            result.put("product", a * b);
+            result.put("exponentiation", (int) Math.pow(a, b));
+            LOG.trace("Calculated sum, product and exponentiation of {} and {}", a, b);
+            
+            calledBefore = true;
         }
-
-        // read arguments
-        final IpcArguments arguments = call.getArguments();
-        final int a = arguments.getInt("a");
-        final int b = arguments.getInt("b");
-
-        result.put("sum", a + b);
-        result.put("product", a * b);
-        result.put("exponentiation", (int) Math.pow(a, b));
-        LOG.trace("Calculated sum, product and exponentiation of {} and {}", a, b);
-
-        calledOnce = true;
     }
+    
 }

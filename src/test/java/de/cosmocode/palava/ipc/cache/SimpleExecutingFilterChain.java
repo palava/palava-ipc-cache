@@ -26,14 +26,12 @@ import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcCommandExecutionException;
 
 /**
- * <p></p>
- * <p>
- * Created on: 02.02.11
- * </p>
+ * A simple implementation of {@link IpcCallFilterChain} used by {@link TimeCachedIntegrationTest}.
  *
  * @author Oliver Lorenz
  */
 enum SimpleExecutingFilterChain implements IpcCallFilterChain {
+    
     INSTANCE;
 
     @Override

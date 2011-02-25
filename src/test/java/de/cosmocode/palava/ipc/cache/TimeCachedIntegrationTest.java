@@ -44,6 +44,7 @@ import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcCommandExecutionException;
 import de.cosmocode.palava.ipc.MapIpcArguments;
+import de.cosmocode.palava.ipc.cache.analyzer.TimeCached;
 import de.cosmocode.palava.ipc.cache.analyzer.TimeCachedModule;
 
 /**
@@ -52,7 +53,7 @@ import de.cosmocode.palava.ipc.cache.analyzer.TimeCachedModule;
  * @author Oliver Lorenz
  */
 @RunWith(LoggingRunner.class)
-public class RealWorldTest implements UnitProvider<CacheFilter> {
+public class TimeCachedIntegrationTest implements UnitProvider<CacheFilter> {
 
     @Override
     public CacheFilter unit() {
@@ -88,6 +89,11 @@ public class RealWorldTest implements UnitProvider<CacheFilter> {
         return call;
     }
 
+    /**
+     * Test execution and caching of a @{@link TimeCached} annotated command.
+     *
+     * @throws IpcCommandExecutionException should not happen
+     */
     @Test
     public void timeCached() throws IpcCommandExecutionException {
         final IpcArguments arguments = new MapIpcArguments();
