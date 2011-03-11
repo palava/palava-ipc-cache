@@ -49,6 +49,7 @@ import de.cosmocode.palava.ipc.cache.analyzer.TimeCachedModule;
 
 /**
  * Tests the {@link CacheFilter} under quasi real-world conditions.
+ * Created on: 02.02.11
  *
  * @author Oliver Lorenz
  */
