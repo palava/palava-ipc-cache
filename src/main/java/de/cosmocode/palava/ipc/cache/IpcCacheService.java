@@ -43,6 +43,12 @@ public interface IpcCacheService {
      */
     Map<String, Object> read(IpcCommand command, IpcCall call);
 
+    /**
+     * Returns the cached value based on the input. If no value exists, returns null.
+     *
+     * @param key the cache key
+     * @return cached result or null
+     */
     Map<String, Object> read(CacheKey key);
     
     /**
@@ -61,6 +67,17 @@ public interface IpcCacheService {
     Map<String, Object> computeAndStore(IpcCommand command, IpcCall call, CacheExpiration expiration, 
         IpcCommandExecution computation) throws IpcCommandExecutionException;
 
+    /**
+     * Computes and stores the result of the given computation if and only if
+     * neither a previously computed result exists nor the specified cache decision
+     * prevents caching.
+     *
+     * @param key the cache key
+     * @param expiration the cache expiraton
+     * @param computation the pending command execution
+     * @return either a previously computed result or the result of the given computation
+     * @throws IpcCommandExecutionException if command execution failed
+     */
     Map<String, Object> computeAndStore(CacheKey key, CacheExpiration expiration,
         IpcCommandExecution computation) throws IpcCommandExecutionException;
     

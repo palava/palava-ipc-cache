@@ -37,6 +37,13 @@ public interface CacheDecision extends CacheExpiration {
      */
     boolean shouldCache();
 
+    /**
+     * Computes the cache key.
+     *
+     * @param call the current call
+     * @param command the executing command
+     * @return the cache key
+     */
     CacheKey computeKey(IpcCall call, IpcCommand command);
 
 }
