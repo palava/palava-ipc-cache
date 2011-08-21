@@ -18,6 +18,8 @@ package de.cosmocode.palava.ipc.cache.analyzer;
 
 import java.util.concurrent.TimeUnit;
 
+import de.cosmocode.palava.ipc.cache.CacheKeyFactory;
+import de.cosmocode.palava.ipc.cache.DefaultCacheKeyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +101,15 @@ final class RatedCacheAnalyzer extends AbstractCacheAnalyzer<RatedCached> {
             throw new IllegalStateException("Unknown rating target " + annotation.target());
         }
 
-        return new RatedCacheDecision(shouldCache, lifeTime, lifeTimeUnit, idleTime, idleTimeUnit);
+        final CacheKeyFactory keyFactory;
+
+        if (annotation.keyFactory() == DefaultCacheKeyFactory.class) {
+            keyFactory = DefaultCacheKeyFactory.INSTANCE;
+        } else {
+            keyFactory = injector.getInstance(annotation.keyFactory());
+        }
+
+        return new RatedCacheDecision(shouldCache, lifeTime, lifeTimeUnit, idleTime, idleTimeUnit, keyFactory);
     }
 
 }

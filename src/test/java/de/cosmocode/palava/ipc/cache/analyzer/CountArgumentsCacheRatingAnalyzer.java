@@ -20,12 +20,7 @@ import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
- * <p>
  * An {@link CacheRatingAnalyzer} that rates by counting the number of arguments in the call.
- * </p>
- * <p>
- * Created on: 05.01.11
- * </p>
  *
  * @author Oliver Lorenz
  */
@@ -35,12 +30,11 @@ final class CountArgumentsCacheRatingAnalyzer implements CacheRatingAnalyzer {
 
     @Override
     public Rating rate(final IpcCall call, IpcCommand command) {
-        final int argumentCount = Math.min(call.getArguments().size(), MAX);
-
         return new Rating() {
+
             @Override
             public int value() {
-                return argumentCount;
+                return Math.min(call.getArguments().size(), MAX);
             }
 
             @Override
@@ -52,6 +46,7 @@ final class CountArgumentsCacheRatingAnalyzer implements CacheRatingAnalyzer {
             public int max() {
                 return MAX;
             }
+
         };
     }
 

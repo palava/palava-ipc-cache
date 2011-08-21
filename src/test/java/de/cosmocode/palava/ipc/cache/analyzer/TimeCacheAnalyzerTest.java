@@ -16,16 +16,19 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
-import java.util.concurrent.TimeUnit;
-
-import org.easymock.EasyMock;
-import org.junit.Assert;
-import org.junit.Test;
-
+import com.google.inject.Guice;
 import de.cosmocode.junit.UnitProvider;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.cache.CacheDecision;
+import de.cosmocode.palava.ipc.cache.CacheKeyFactory;
+import de.cosmocode.palava.ipc.cache.DefaultCacheKeyFactory;
+import org.easymock.EasyMock;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.lang.annotation.Annotation;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -35,14 +38,14 @@ import de.cosmocode.palava.ipc.cache.CacheDecision;
  * Created on: 04.01.11
  * </p>
  *
- * @since 3.0
  * @author Oliver Lorenz
+ * @since 3.0
  */
 public final class TimeCacheAnalyzerTest implements UnitProvider<TimeCacheAnalyzer> {
 
     @Override
     public TimeCacheAnalyzer unit() {
-        return new TimeCacheAnalyzer();
+        return new TimeCacheAnalyzer(Guice.createInjector());
     }
 
     /**
@@ -56,12 +59,39 @@ public final class TimeCacheAnalyzerTest implements UnitProvider<TimeCacheAnalyz
         EasyMock.replay(command, call);
 
         // annotation
-        final TimeCached annotation = EasyMock.createMock(TimeCached.class);
-        EasyMock.expect(annotation.lifeTime()).andReturn(2L);
-        EasyMock.expect(annotation.lifeTimeUnit()).andReturn(TimeUnit.HOURS);
-        EasyMock.expect(annotation.idleTime()).andReturn(20L);
-        EasyMock.expect(annotation.idleTimeUnit()).andReturn(TimeUnit.MINUTES);
-        EasyMock.replay(annotation);
+        final TimeCached annotation = new TimeCached() {
+
+            @Override
+            public long lifeTime() {
+                return 2;
+            }
+
+            @Override
+            public TimeUnit lifeTimeUnit() {
+                return TimeUnit.HOURS;
+            }
+
+            @Override
+            public long idleTime() {
+                return 20;
+            }
+
+            @Override
+            public TimeUnit idleTimeUnit() {
+                return TimeUnit.MINUTES;
+            }
+
+            @Override
+            public Class<? extends CacheKeyFactory> keyFactory() {
+                return DefaultCacheKeyFactory.class;
+            }
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return TimeCached.class;
+            }
+
+        };
 
         final CacheDecision decision = unit().analyze(annotation, call, command);
 
@@ -70,7 +100,8 @@ public final class TimeCacheAnalyzerTest implements UnitProvider<TimeCacheAnalyz
         Assert.assertEquals(TimeUnit.HOURS, decision.getLifeTimeUnit());
         Assert.assertEquals(20L, decision.getIdleTime());
         Assert.assertEquals(TimeUnit.MINUTES, decision.getIdleTimeUnit());
-        EasyMock.verify(annotation);
+
+        EasyMock.verify(command, call);
     }
 
 }

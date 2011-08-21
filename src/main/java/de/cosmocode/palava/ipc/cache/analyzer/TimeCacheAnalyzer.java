@@ -16,10 +16,14 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.cache.AbstractCacheAnalyzer;
 import de.cosmocode.palava.ipc.cache.CacheDecision;
+import de.cosmocode.palava.ipc.cache.CacheKeyFactory;
+import de.cosmocode.palava.ipc.cache.DefaultCacheKeyFactory;
 
 /**
  * {@link de.cosmocode.palava.ipc.cache.CacheAnalyzer} implementation for {@link TimeCached}.
@@ -32,9 +36,25 @@ import de.cosmocode.palava.ipc.cache.CacheDecision;
  */
 final class TimeCacheAnalyzer extends AbstractCacheAnalyzer<TimeCached> {
 
+    private final Injector injector;
+
+    @Inject
+    public TimeCacheAnalyzer(Injector injector) {
+        this.injector = injector;
+    }
+
     @Override
     protected CacheDecision decide(final TimeCached annotation, IpcCall call, IpcCommand command) {
-        return new TimeCacheDecision(annotation);
+
+        final CacheKeyFactory keyFactory;
+
+        if (annotation.keyFactory() == DefaultCacheKeyFactory.class) {
+            keyFactory = DefaultCacheKeyFactory.INSTANCE;
+        } else {
+            keyFactory = injector.getInstance(annotation.keyFactory());
+        }
+
+        return new TimeCacheDecision(annotation, keyFactory);
     }
 
 }

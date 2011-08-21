@@ -16,24 +16,18 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import java.lang.annotation.Annotation;
-import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import de.cosmocode.palava.ipc.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import de.cosmocode.palava.ipc.IpcCall;
-import de.cosmocode.palava.ipc.IpcCallFilter;
-import de.cosmocode.palava.ipc.IpcCallFilterChain;
-import de.cosmocode.palava.ipc.IpcCommand;
-import de.cosmocode.palava.ipc.IpcCommandExecutionException;
+import java.lang.annotation.Annotation;
+import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * An {@link IpcCallFilter} which intercepts IpcCommand execution
@@ -72,15 +66,15 @@ final class CacheFilter implements IpcCallFilter {
         final Annotation cacheAnnotation = checkAndGetAnnotation(command);
         final Class<? extends Annotation> annotationType = cacheAnnotation.annotationType();
         final ComplexCacheAnnotation complexAnnotation = annotationType.getAnnotation(ComplexCacheAnnotation.class);
-        
-        final Map<String, Object> cached = service.read(command, call);
-        
+        final CacheAnalyzer analyzer = injector.getInstance(complexAnnotation.analyzer());
+        final CacheDecision decision = analyzer.analyze(cacheAnnotation, call, command);
+        final CacheKey cacheKey = decision.computeKey(call, command);
+
+        final Map<String, Object> cached = service.read(cacheKey);
+
         if (cached == null) {
-            final CacheAnalyzer analyzer = injector.getInstance(complexAnnotation.analyzer());
-            final CacheDecision decision = analyzer.analyze(cacheAnnotation, call, command);
             if (decision.shouldCache()) {
-                final IpcCommandExecution computation = new IpcFilterChainExecution(call, command, chain);
-                return service.computeAndStore(command, call, decision, computation);
+                return service.computeAndStore(cacheKey, decision, new IpcFilterChainExecution(call, command, chain));
             } else {
                 return chain.filter(call, command);
             }

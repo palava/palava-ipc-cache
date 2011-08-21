@@ -17,6 +17,8 @@
 package de.cosmocode.palava.ipc.cache;
 
 import de.cosmocode.palava.cache.CacheExpiration;
+import de.cosmocode.palava.ipc.IpcCall;
+import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
  * Represents the decision of a {@link CacheAnalyzer} how to cache a {@link de.cosmocode.palava.ipc.IpcCommand}s result.
@@ -34,5 +36,7 @@ public interface CacheDecision extends CacheExpiration {
      * @return true if the result should be cached, false otherwise
      */
     boolean shouldCache();
+
+    CacheKey computeKey(IpcCall call, IpcCommand command);
 
 }

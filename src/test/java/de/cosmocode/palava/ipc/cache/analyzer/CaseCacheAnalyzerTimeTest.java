@@ -16,15 +16,6 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
-import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import de.cosmocode.junit.UnitProvider;
 import de.cosmocode.palava.core.Framework;
 import de.cosmocode.palava.core.Palava;
@@ -32,7 +23,18 @@ import de.cosmocode.palava.core.lifecycle.Startable;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.cache.CacheDecision;
+import de.cosmocode.palava.ipc.cache.CacheKeyFactory;
+import de.cosmocode.palava.ipc.cache.DefaultCacheKeyFactory;
 import de.cosmocode.palava.ipc.cache.IpcCacheTestModule;
+import org.easymock.EasyMock;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.lang.annotation.Annotation;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -82,15 +84,49 @@ public final class CaseCacheAnalyzerTimeTest implements UnitProvider<CaseCacheAn
         EasyMock.replay(command, call);
 
         // annotation
-        final CaseCached annotation = EasyMock.createMock(CaseCached.class);
-        EasyMock.expect(annotation.mode()).andStubReturn(CaseCacheMode.ANY);
-        EasyMock.expect(annotation.predicates()).andStubReturn(ALWAYS_TRUE_FILTERS);
+        final CaseCached annotation = new CaseCached() {
 
-        EasyMock.expect(annotation.lifeTime()).andReturn(2L);
-        EasyMock.expect(annotation.lifeTimeUnit()).andReturn(TimeUnit.HOURS);
-        EasyMock.expect(annotation.idleTime()).andReturn(20L);
-        EasyMock.expect(annotation.idleTimeUnit()).andReturn(TimeUnit.MINUTES);
-        EasyMock.replay(annotation);
+            @Override
+            public Class<? extends CachePredicate>[] predicates() {
+                return ALWAYS_TRUE_FILTERS;
+            }
+
+            @Override
+            public CaseCacheMode mode() {
+                return CaseCacheMode.ANY;
+            }
+
+            @Override
+            public long lifeTime() {
+                return 2;
+            }
+
+            @Override
+            public TimeUnit lifeTimeUnit() {
+                return TimeUnit.HOURS;
+            }
+
+            @Override
+            public long idleTime() {
+                return 20;
+            }
+
+            @Override
+            public TimeUnit idleTimeUnit() {
+                return TimeUnit.MINUTES;
+            }
+
+            @Override
+            public Class<? extends CacheKeyFactory> keyFactory() {
+                return DefaultCacheKeyFactory.class;
+            }
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return CaseCached.class;
+            }
+
+        };
 
         final CacheDecision decision = unit().analyze(annotation, call, command);
 
@@ -100,7 +136,7 @@ public final class CaseCacheAnalyzerTimeTest implements UnitProvider<CaseCacheAn
         Assert.assertEquals(20L, decision.getIdleTime());
         Assert.assertEquals(TimeUnit.MINUTES, decision.getIdleTimeUnit());
 
-        EasyMock.verify(command, call, annotation);
+        EasyMock.verify(command, call);
     }
 
 }

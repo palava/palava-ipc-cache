@@ -16,17 +16,18 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
-import java.util.List;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.cache.AbstractCacheAnalyzer;
 import de.cosmocode.palava.ipc.cache.CacheDecision;
+import de.cosmocode.palava.ipc.cache.CacheKeyFactory;
+import de.cosmocode.palava.ipc.cache.DefaultCacheKeyFactory;
+
+import java.util.List;
 
 /**
  * {@link de.cosmocode.palava.ipc.cache.CacheAnalyzer} implementation for {@link CaseCached}.
@@ -54,7 +55,15 @@ final class CaseCacheAnalyzer extends AbstractCacheAnalyzer<CaseCached> {
         }
 
         final boolean shouldCache = annotation.mode().apply(filters, call, command);
-        return new CaseCacheDecision(shouldCache, annotation);
+        final CacheKeyFactory keyFactory;
+
+        if (annotation.keyFactory() == DefaultCacheKeyFactory.class) {
+            keyFactory = DefaultCacheKeyFactory.INSTANCE;
+        } else {
+            keyFactory = injector.getInstance(annotation.keyFactory());
+        }
+
+        return new CaseCacheDecision(shouldCache, annotation, keyFactory);
     }
 
 }

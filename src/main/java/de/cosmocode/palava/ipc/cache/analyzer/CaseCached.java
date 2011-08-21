@@ -22,7 +22,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
 
+import de.cosmocode.palava.ipc.cache.CacheKeyFactory;
 import de.cosmocode.palava.ipc.cache.ComplexCacheAnnotation;
+import de.cosmocode.palava.ipc.cache.DefaultCacheKeyFactory;
 
 /**
  * <p>
@@ -128,5 +130,7 @@ public @interface CaseCached {
      * @see de.cosmocode.palava.ipc.cache.CacheDecision#getIdleTimeUnit()
      */
     TimeUnit idleTimeUnit() default TimeUnit.MINUTES;
+
+    Class<? extends CacheKeyFactory> keyFactory() default DefaultCacheKeyFactory.class;
 
 }

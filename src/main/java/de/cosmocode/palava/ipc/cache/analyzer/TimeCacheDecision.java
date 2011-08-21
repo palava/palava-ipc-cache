@@ -16,9 +16,13 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
-import java.util.concurrent.TimeUnit;
-
+import de.cosmocode.palava.ipc.IpcCall;
+import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.cache.CacheDecision;
+import de.cosmocode.palava.ipc.cache.CacheKey;
+import de.cosmocode.palava.ipc.cache.CacheKeyFactory;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * A {@link TimeCached} based {@link CacheDecision}.
@@ -30,9 +34,11 @@ import de.cosmocode.palava.ipc.cache.CacheDecision;
 final class TimeCacheDecision extends AbstractCacheDecision {
 
     private final TimeCached annotation;
+    private final CacheKeyFactory keyFactory;
 
-    public TimeCacheDecision(TimeCached annotation) {
+    public TimeCacheDecision(TimeCached annotation, CacheKeyFactory keyFactory) {
         this.annotation = annotation;
+        this.keyFactory = keyFactory;
     }
 
     @Override
@@ -58,6 +64,11 @@ final class TimeCacheDecision extends AbstractCacheDecision {
     @Override
     public TimeUnit getIdleTimeUnit() {
         return annotation.idleTimeUnit();
+    }
+
+    @Override
+    public CacheKey computeKey(IpcCall call, IpcCommand command) {
+        return keyFactory.create(call, command);
     }
 
 }

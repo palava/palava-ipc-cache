@@ -16,20 +16,18 @@
 
 package de.cosmocode.palava.ipc.cache;
 
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.inject.Inject;
-
 import de.cosmocode.palava.cache.CacheExpiration;
 import de.cosmocode.palava.cache.CacheService;
 import de.cosmocode.palava.cache.ComputingCacheService;
 import de.cosmocode.palava.ipc.Ipc;
-import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcCommandExecutionException;
+
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Binds an {@link IpcCacheService} to an implementation which uses a {@link CacheService}
@@ -50,24 +48,19 @@ final class GenericIpcCacheService extends AbstractIpcCacheService {
     }
 
     @Override
-    public Map<String, Object> read(IpcCommand command, IpcCall call) {
-        Preconditions.checkNotNull(command, "Command");
-        Preconditions.checkNotNull(call, "Call");
-        final CacheKey key = create(call, command);
+    public Map<String, Object> read(CacheKey key) {
+        Preconditions.checkNotNull(key, "CacheKey");
         return service.read(key);
     }
 
     @Override
-    public Map<String, Object> computeAndStore(IpcCommand command, IpcCall call, CacheExpiration expiration,
+    public Map<String, Object> computeAndStore(CacheKey key, CacheExpiration expiration,
             IpcCommandExecution computation) throws IpcCommandExecutionException {
         
-        Preconditions.checkNotNull(command, "Command");
-        Preconditions.checkNotNull(call, "Call");
+        Preconditions.checkNotNull(key, "CacheKey");
         Preconditions.checkNotNull(expiration, "Decision");
         Preconditions.checkNotNull(computation, "Computation");
 
-        final CacheKey key = create(call, command);
-        
         try {
             return service.computeAndStore(key, computation, expiration);
         } catch (ExecutionException e) {

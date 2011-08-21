@@ -18,6 +18,8 @@ package de.cosmocode.palava.ipc.cache;
 
 import java.util.concurrent.TimeUnit;
 
+import de.cosmocode.palava.ipc.IpcCall;
+import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.cache.analyzer.AbstractCacheDecision;
 
 /**
@@ -32,7 +34,7 @@ public final class EternalCacheDecision extends AbstractCacheDecision {
     public boolean shouldCache() {
         return true;
     }
-    
+
     @Override
     public boolean isEternal() {
         return true;
@@ -56,6 +58,11 @@ public final class EternalCacheDecision extends AbstractCacheDecision {
     @Override
     public TimeUnit getLifeTimeUnit() {
         return TimeUnit.MINUTES;
+    }
+
+    @Override
+    public CacheKey computeKey(IpcCall call, IpcCommand command) {
+        return DefaultCacheKeyFactory.INSTANCE.create(call, command);
     }
 
 }

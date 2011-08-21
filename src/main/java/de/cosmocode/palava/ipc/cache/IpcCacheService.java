@@ -42,6 +42,8 @@ public interface IpcCacheService {
      * @return cached result or null
      */
     Map<String, Object> read(IpcCommand command, IpcCall call);
+
+    Map<String, Object> read(CacheKey key);
     
     /**
      * Computes and stores the result of the given computation if and only if
@@ -57,6 +59,9 @@ public interface IpcCacheService {
      * @throws IpcCommandExecutionException if command execution failed
      */
     Map<String, Object> computeAndStore(IpcCommand command, IpcCall call, CacheExpiration expiration, 
+        IpcCommandExecution computation) throws IpcCommandExecutionException;
+
+    Map<String, Object> computeAndStore(CacheKey key, CacheExpiration expiration,
         IpcCommandExecution computation) throws IpcCommandExecutionException;
     
     /**

@@ -16,13 +16,15 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
+import de.cosmocode.palava.ipc.cache.CacheKeyFactory;
+import de.cosmocode.palava.ipc.cache.ComplexCacheAnnotation;
+import de.cosmocode.palava.ipc.cache.DefaultCacheKeyFactory;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
-
-import de.cosmocode.palava.ipc.cache.ComplexCacheAnnotation;
 
 /**
  * Caches the result for the given amount of time.
@@ -68,5 +70,7 @@ public @interface TimeCached {
      * @see de.cosmocode.palava.ipc.cache.CacheDecision#getIdleTimeUnit()
      */
     TimeUnit idleTimeUnit() default TimeUnit.MINUTES;
+
+    Class<? extends CacheKeyFactory> keyFactory() default DefaultCacheKeyFactory.class;
 
 }

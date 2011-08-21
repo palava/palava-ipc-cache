@@ -16,9 +16,13 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
-import java.util.concurrent.TimeUnit;
-
+import de.cosmocode.palava.ipc.IpcCall;
+import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.cache.CacheDecision;
+import de.cosmocode.palava.ipc.cache.CacheKey;
+import de.cosmocode.palava.ipc.cache.CacheKeyFactory;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * A {@link RatedCached} based {@link CacheDecision}.
@@ -33,14 +37,16 @@ final class RatedCacheDecision extends AbstractCacheDecision {
     private final TimeUnit lifeTimeUnit;
     private final long idleTime;
     private final TimeUnit idleTimeUnit;
+    private final CacheKeyFactory keyFactory;
 
     RatedCacheDecision(boolean shouldCache, long lifeTime, TimeUnit lifeTimeUnit, long idleTime,
-            TimeUnit idleTimeUnit) {
+                       TimeUnit idleTimeUnit, CacheKeyFactory keyFactory) {
         this.lifeTime = lifeTime;
         this.shouldCache = shouldCache;
         this.idleTime = idleTime;
         this.idleTimeUnit = idleTimeUnit;
         this.lifeTimeUnit = lifeTimeUnit;
+        this.keyFactory = keyFactory;
     }
 
     @Override
@@ -67,5 +73,10 @@ final class RatedCacheDecision extends AbstractCacheDecision {
     public TimeUnit getIdleTimeUnit() {
         return idleTimeUnit;
     }
-    
+
+    @Override
+    public CacheKey computeKey(IpcCall call, IpcCommand command) {
+        return keyFactory.create(call, command);
+    }
+
 }

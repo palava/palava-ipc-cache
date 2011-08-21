@@ -18,7 +18,11 @@ package de.cosmocode.palava.ipc.cache.analyzer;
 
 import java.util.concurrent.TimeUnit;
 
+import de.cosmocode.palava.ipc.IpcCall;
+import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.cache.CacheDecision;
+import de.cosmocode.palava.ipc.cache.CacheKey;
+import de.cosmocode.palava.ipc.cache.CacheKeyFactory;
 
 /**
  * A {@link CaseCached} based {@link CacheDecision}.
@@ -30,9 +34,11 @@ final class CaseCacheDecision extends AbstractCacheDecision {
     
     private final boolean shouldCache;
     private final CaseCached annotation;
+    private final CacheKeyFactory keyFactory;
 
-    CaseCacheDecision(boolean shouldCache, CaseCached annotation) {
+    CaseCacheDecision(boolean shouldCache, CaseCached annotation, CacheKeyFactory keyFactory) {
         this.shouldCache = shouldCache;
+        this.keyFactory = keyFactory;
         this.annotation = annotation;
     }
 
@@ -60,4 +66,10 @@ final class CaseCacheDecision extends AbstractCacheDecision {
     public TimeUnit getIdleTimeUnit() {
         return annotation.idleTimeUnit();
     }
+
+    @Override
+    public CacheKey computeKey(IpcCall call, IpcCommand command) {
+        return keyFactory.create(call, command);
+    }
+
 }

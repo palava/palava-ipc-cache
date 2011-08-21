@@ -19,9 +19,12 @@ package de.cosmocode.palava.ipc.cache;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
-
+import de.cosmocode.palava.cache.CacheExpiration;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
+import de.cosmocode.palava.ipc.IpcCommandExecutionException;
+
+import java.util.Map;
 
 /**
  * Utility class to perform some basic and trivial tasks. Implementations have to use
@@ -50,6 +53,18 @@ public abstract class AbstractIpcCacheService implements IpcCacheService, CacheK
         Preconditions.checkNotNull(command, "Command");
         Preconditions.checkNotNull(call, "Call");
         return cacheKeyFactory.create(call, command);
+    }
+
+    @Override
+    public Map<String, Object> read(IpcCommand command, IpcCall call) {
+        return read(cacheKeyFactory.create(call, command));
+    }
+
+    @Override
+    public Map<String, Object> computeAndStore(IpcCommand command, IpcCall call, CacheExpiration expiration,
+        IpcCommandExecution computation) throws IpcCommandExecutionException {
+
+        return computeAndStore(cacheKeyFactory.create(call, command), expiration, computation);
     }
 
     @Override

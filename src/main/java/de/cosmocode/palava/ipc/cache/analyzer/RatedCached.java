@@ -22,7 +22,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
 
+import de.cosmocode.palava.ipc.cache.CacheKeyFactory;
 import de.cosmocode.palava.ipc.cache.ComplexCacheAnnotation;
+import de.cosmocode.palava.ipc.cache.DefaultCacheKeyFactory;
 
 /**
  * Caches the command call result depending of the
@@ -82,5 +84,7 @@ public @interface RatedCached {
      * @return the rating target, default is {@link RatingTarget#LIFE_TIME}
      */
     RatingTarget target() default RatingTarget.LIFE_TIME;
+
+    Class<? extends CacheKeyFactory> keyFactory() default DefaultCacheKeyFactory.class;
 
 }

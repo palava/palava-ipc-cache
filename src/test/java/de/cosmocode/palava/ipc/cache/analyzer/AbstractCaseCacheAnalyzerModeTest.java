@@ -16,14 +16,6 @@
 
 package de.cosmocode.palava.ipc.cache.analyzer;
 
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
-import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import de.cosmocode.junit.UnitProvider;
 import de.cosmocode.palava.core.Framework;
 import de.cosmocode.palava.core.Palava;
@@ -31,7 +23,17 @@ import de.cosmocode.palava.core.lifecycle.Startable;
 import de.cosmocode.palava.ipc.IpcArguments;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCommand;
+import de.cosmocode.palava.ipc.cache.CacheKeyFactory;
+import de.cosmocode.palava.ipc.cache.DefaultCacheKeyFactory;
 import de.cosmocode.palava.ipc.cache.IpcCacheTestModule;
+import org.easymock.EasyMock;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.lang.annotation.Annotation;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -72,18 +74,49 @@ public abstract class AbstractCaseCacheAnalyzerModeTest implements UnitProvider<
      * @return the mocked annotation
      */
     public final CaseCached annotation() {
-        final CaseCached annotation = EasyMock.createMock(CaseCached.class);
-        
-        EasyMock.expect(annotation.mode()).andReturn(mode()).atLeastOnce();
-        EasyMock.expect(annotation.predicates()).andReturn(ALL_FILTERS).atLeastOnce();
-        
-        EasyMock.expect(annotation.lifeTime()).andStubReturn(0L);
-        EasyMock.expect(annotation.lifeTimeUnit()).andStubReturn(TimeUnit.MINUTES);
-        EasyMock.expect(annotation.idleTime()).andStubReturn(0L);
-        EasyMock.expect(annotation.idleTimeUnit()).andStubReturn(TimeUnit.MINUTES);
-        EasyMock.replay(annotation);
-        
-        return annotation;
+        return new CaseCached() {
+
+            @Override
+            public Class<? extends CachePredicate>[] predicates() {
+                return ALL_FILTERS;
+            }
+
+            @Override
+            public CaseCacheMode mode() {
+                return AbstractCaseCacheAnalyzerModeTest.this.mode();
+            }
+
+            @Override
+            public long lifeTime() {
+                return 0;
+            }
+
+            @Override
+            public TimeUnit lifeTimeUnit() {
+                return TimeUnit.MINUTES;
+            }
+
+            @Override
+            public long idleTime() {
+                return 0;
+            }
+
+            @Override
+            public TimeUnit idleTimeUnit() {
+                return TimeUnit.MINUTES;
+            }
+
+            @Override
+            public Class<? extends CacheKeyFactory> keyFactory() {
+                return DefaultCacheKeyFactory.class;
+            }
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return CaseCached.class;
+            }
+
+        };
     }
 
     /**
